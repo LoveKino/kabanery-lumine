@@ -71,16 +71,36 @@
 
 
 let {
-    mount
+    mount, n
 } = __webpack_require__(4);
 
 let FunctionBar = __webpack_require__(26);
+let Button = __webpack_require__(28);
 
-mount(FunctionBar({
-    state: {
-        title: 'demo'
-    }
-}), document.body);
+let log = console.log; // eslint-disable-line
+
+mount([
+
+    FunctionBar({
+        state: {
+            title: 'demo',
+            leftLogos: ['a', 'b'],
+            rightLogos: ['c', 'd']
+        }
+    }),
+
+    n('br'),
+
+    Button({
+        state: {
+            text: 'demo'
+        },
+
+        onchange: (data) => {
+            log(JSON.stringify(data));
+        }
+    })
+], document.body);
 
 
 /***/ }),
@@ -2259,21 +2279,35 @@ let {
     n
 } = __webpack_require__(4);
 let lumineView = __webpack_require__(27);
+let {
+    styles
+} = __webpack_require__(30);
+
+let Button = __webpack_require__(28);
 
 module.exports = lumineView(({
     state,
-    style = {}
+    style = {},
+    theme
 }) => {
     let logoRight = (logoRightNode) => {
-        return n('button', {
-            style: style.logoRight
-        }, [logoRightNode]);
+        return Button({
+            style: style.logoRight,
+            state: {
+                text: logoRightNode
+            },
+            theme
+        });
     };
 
     let logoLeft = (logoLeftNode) => {
-        return n('button', {
-            style: style.logoLeft
-        }, [logoLeftNode]);
+        return Button({
+            style: style.logoLeft,
+            state: {
+                text: logoLeftNode
+            },
+            theme
+        });
     };
 
     return n('div', {
@@ -2288,14 +2322,16 @@ module.exports = lumineView(({
 
         state.leftLogos.map(logoLeft),
 
+        state.rightLogos.reduce((prev, logo) => {
+            prev.unshift(logoRight(logo));
+            return prev;
+        }, []),
+
         n('div', {
             style: style.title
         }, state.title),
 
-        state.rightLogos.reduce((prev, logo) => {
-            prev.unshift(logoRight(logo));
-            return prev;
-        }, [])
+        n('div style="clear:both"')
     ]);
 }, {
     defaultState: {
@@ -2303,35 +2339,30 @@ module.exports = lumineView(({
         leftLogos: [],
         rightLogos: []
     },
-    defaultStyle: {
-        title: {
-            textAlign: 'center',
-            color: 'white',
-            fontSize: 20,
-            lineHeight: 40
-        },
-        container: {
-            height: 40,
-            boxSizing: 'border-box',
-            backgroundColor: '#3b3a36',
-            margin: 0,
-            width: '100%',
-            overflow: 'hidden'
-        },
-        logoLeft: {
-            fontSize: 16,
-            padding: 0,
-            'float': 'left',
-            color: 'white',
-            cursor: 'pointer'
-        },
-        logoRight: {
-            fontSize: 16,
-            padding: 0,
-            'float': 'right',
-            color: 'white',
-            cursor: 'pointer'
-        }
+    defaultStyle: (theme) => {
+        return {
+            title: {
+                textAlign: 'center',
+                color: 'white',
+                fontSize: theme.basics.titleSize,
+                lineHeight: 40
+            },
+            container: styles(theme.oneLineBulk, theme.actions.cling, {
+                height: 40,
+                width: '100%',
+                overflow: 'hidden'
+            }),
+            logoLeft: {
+                'float': 'left',
+                height: 40,
+                cursor: 'pointer'
+            },
+            logoRight: {
+                'float': 'right',
+                height: 40,
+                cursor: 'pointer'
+            }
+        };
     }
 });
 
@@ -2347,6 +2378,8 @@ let {
     view
 } = __webpack_require__(4);
 
+let steadyTheme = __webpack_require__(29);
+
 /**
  * define the general interface for lumine view
  *
@@ -2355,6 +2388,7 @@ let {
  *    view data = {
  *       state,
  *       style,
+ *       theme,
  *       onchange
  *    }
  *
@@ -2365,36 +2399,46 @@ let {
 
 module.exports = (viewFun, {
     defaultState = {},
-    defaultStyle = {}
+    defaultStyle = {},
+    theme = steadyTheme
 } = {}) => {
-    return view(({
-        state = {},
-        style = {},
-        onchange
-    }, ctx) => {
+    let defaultStyleValue = getDefaultStyles(defaultStyle, theme);
+
+    return view((viewData, ctx) => {
         // TODO check view Data
 
-        // merge (deep merge)
-        style = deepMergeMap(style, defaultStyle);
-        state = deepMergeMap(state, defaultState);
+        if (viewData.theme && typeof defaultStyleValue === 'function') {
+            // update defaultStyleValue
+            defaultStyleValue = getDefaultStyles(defaultStyle, viewData.theme);
+        }
 
-        let {
-            ctxUpdate,
-            getData
-        } = ctx.update;
+        // merge (deep merge)
+        viewData.style = deepMergeMap(viewData.style, defaultStyleValue);
+
+        viewData.state = deepMergeMap(viewData.state, defaultState);
+
+        // TODO just notify, no view update.
 
         let updateWithNotify = (updatedScript, extra) => {
-            ctxUpdate(updatedScript);
-            onchange && onchange(getData(), updatedScript, extra);
+            ctx.update(updatedScript);
+            viewData.onchange && viewData.onchange(ctx.getData(), updatedScript, extra);
         };
 
         ctx.updateWithNotify = updateWithNotify;
 
         return viewFun({
-            style,
-            state
+            style: viewData.style,
+            state: viewData.state
         }, ctx);
     });
+};
+
+let getDefaultStyles = (defaultStyle, theme) => {
+    if (typeof defaultStyle === 'function') {
+        return getDefaultStyles(defaultStyle(theme), theme);
+    }
+
+    return defaultStyle;
 };
 
 let deepMergeMap = (tar, def) => {
@@ -2415,6 +2459,120 @@ let deepMergeMap = (tar, def) => {
 
 let isMapObject = (v) => {
     return v && typeof v === 'object' && !Array.isArray(v);
+};
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(4);
+let lumineView = __webpack_require__(27);
+let {
+    styles
+} = __webpack_require__(30);
+
+module.exports = lumineView(({
+    state,
+    style
+}, {
+    updateWithNotify
+}) => {
+    return n('button', {
+        style,
+        onclick: () => {
+            updateWithNotify([
+                ['state.active', 1]
+            ]);
+
+            updateWithNotify([
+                ['state.active', 0]
+            ]);
+        }
+    }, state.text);
+}, {
+    defaultState: {
+        text: '',
+        active: 0
+    },
+
+    defaultStyle: (theme) => styles(theme.oneLineBulk)
+});
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let basics = {
+    pageColor: '#e4e4e4',
+    hoverColor: '#e9ece5',
+    blockColor: '#3b3a36',
+    borderColor: '#b3c2bf',
+
+    fontColor: 'white',
+
+    titleSize: 20,
+    normalSize: 16
+};
+
+let bulk = {
+    minWidth: 40,
+    boxSizing: 'border-box',
+    backgroundColor: basics.blockColor,
+    color: basics.fontColor
+};
+
+let oneLineBulk = Object.assign({}, bulk, {
+    padding: '4 8 4 8',
+    fontSize: basics.normalSize,
+    textAlign: 'center',
+    lineHeight: 20,
+    textDecoration: 'none',
+    border: 'none',
+    color: basics.fontColor
+});
+
+let actions = {
+    cling: {
+        margin: 0,
+        padding: 0,
+        boxSizing: 'border-box'
+    }
+};
+
+module.exports = {
+    basics,
+
+    bulk,
+
+    oneLineBulk,
+
+    actions
+};
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let styles = (...styleObjects) => {
+    return Object.assign({}, ...styleObjects);
+};
+
+module.exports = {
+    styles
 };
 
 
