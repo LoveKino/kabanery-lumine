@@ -26,6 +26,6 @@
     "webpack": "^3.5.5"
   },
   "dependencies": {
-    "kabanery": "^0.2.4"
+    "kabanery": "^0.2.6"
   }
 }

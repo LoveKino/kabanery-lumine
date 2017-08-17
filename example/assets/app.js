@@ -60,51 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    mount, n
-} = __webpack_require__(4);
-
-let FunctionBar = __webpack_require__(26);
-let Button = __webpack_require__(28);
-
-let log = console.log; // eslint-disable-line
-
-mount([
-
-    FunctionBar({
-        state: {
-            title: 'demo',
-            leftLogos: ['a', 'b'],
-            rightLogos: ['c', 'd']
-        }
-    }),
-
-    n('br'),
-
-    Button({
-        state: {
-            text: 'demo'
-        },
-
-        onchange: (data) => {
-            log(JSON.stringify(data));
-        }
-    })
-], document.body);
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -330,7 +290,7 @@ module.exports = {
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -338,13 +298,13 @@ module.exports = {
 
 let {
     isObject, funType, or, isString, isFalsy, likeArray
-} = __webpack_require__(1);
+} = __webpack_require__(0);
 
 let iterate = __webpack_require__(8);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact
-} = __webpack_require__(11);
+} = __webpack_require__(15);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -440,6 +400,118 @@ module.exports = {
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(14);
+
+/**
+ * @readme-doc
+ *
+ * ## features
+ *
+ * - simple DOM DSL, construct dom tree quickly
+ *
+ * - data-driven view, include updating view by data
+ *
+ * - Just functions, easy to compose
+ *
+ * [readme-lang:zh]## 特征
+ *
+ * - 简单的DOM DSL，快速构建DOM结构
+ *
+ * - 数据驱动视图，包括通过数据更新视图
+ *
+ * - 以函数为核心，易于复合
+ *
+ */
+
+/**
+ * @readme-quick-run
+ *
+ * Using method n to construct dom node quickly.
+ *
+ * [readme-lang:zh]用方法n快速构造dom节点
+ *
+ * ## test tar=js r_c=kabanery env=browser
+ * let {n, mount} = kabanery;
+ *
+ * mount(n('div', {
+ *   id: 'qu',
+ *   style: {
+ *      backgroundColor: 'red'
+ *   }
+ * }, [
+ *      n('span class=go style="font-size:16px"', 'hello!')
+ * ]), document.body);
+ *
+ * console.log(document.getElementById('qu').outerHTML); // print result
+ */
+
+/**
+ * @readme-quick-run
+ *
+ * Basic way to construct a view.
+ *
+ * [readme-lang:zh]构造一个组件的简单方法
+ *
+ * ## test tar=js r_c=kabanery env=browser
+ * let {view, n, mount} = kabanery;
+ *
+ * let MyView = view((data) => {
+ *      let {type} = data;
+ *
+ *      return n('div', {
+ *         id: 'test1',
+ *         style: {
+ *            fontSize: 10
+ *         }
+ *      },[
+ *          type === 2 && n('span', 'second'),
+ *          type === 3 && n('div', 'third')
+ *      ]);
+ * });
+ *
+ * mount(MyView({type: 3}), document.body);
+ *
+ * console.log(document.getElementById('test1').outerHTML); // print result
+ */
+
+/**
+ * @readme-quick-run
+ *
+ * Using update api to update a view.
+ *
+ * [readme-lang:zh]运用update api去更新一个view
+ *
+ * ## test tar=js r_c=kabanery env=browser
+ * let {view, n, mount} = kabanery;
+ *
+ * let MyView = view((data, {update}) => {
+ *      return n('div', {
+ *         id: 'a',
+ *         style: {
+ *            fontSize: 10
+ *         },
+ *         onclick: () => {
+ *            update('show', !data.show);
+ *         }
+ *      }, [
+ *          data.show && n('div', 'show text')
+ *      ]);
+ * });
+ *
+ * mount(MyView({show: false}), document.body);
+ *
+ * document.getElementById('a').click(); // simulate user action
+ * console.log(document.getElementById('a').outerHTML); // print result
+ */
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -448,10 +520,10 @@ module.exports = {
 
 let {
     reduce
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 let {
     funType, isObject, or, isString, isFalsy
-} = __webpack_require__(1);
+} = __webpack_require__(0);
 
 let defineProperty = (obj, key, opts) => {
     if (Object.defineProperty) {
@@ -602,88 +674,18 @@ module.exports = {
 "use strict";
 
 
-module.exports = __webpack_require__(10);
+let styles = (...styleObjects) => {
+    return Object.assign({}, ...styleObjects);
+};
 
-/**
- * @readme-quick-run
- *
- * Using method n to construct dom node quickly.
- *
- * [readme-lang:zh]用方法n快速构造dom节点
- *
- * ## test tar=js r_c=kabanery env=browser
- * let {n, mount} = kabanery;
- *
- * mount(n('div', {
- *   id: 'qu',
- *   style: {
- *      backgroundColor: 'red'
- *   }
- * }, [
- *      n('span class=go style="font-size:16px"')
- * ]), document.body);
- *
- * console.log(document.getElementById('qu').outerHTML); // print result
- */
+let isMapObject = (v) => {
+    return v && typeof v === 'object' && !Array.isArray(v);
+};
 
-/**
- * @readme-quick-run
- *
- * Basic way to construct a view.
- *
- * [readme-lang:zh]构造一个组件的简单方法
- *
- * ## test tar=js r_c=kabanery env=browser
- * let {view, n, mount} = kabanery;
- *
- * let MyView = view((data) => {
- *      let {type} = data;
- *
- *      return n('div', {
- *         id: 'test1',
- *         style: {
- *            fontSize: 10
- *         }
- *      },[
- *          type === 2 && n('span', 'second'),
- *          type === 3 && n('div', 'third')
- *      ]);
- * });
- *
- * mount(MyView({type: 3}), document.body);
- *
- * console.log(document.getElementById('test1').outerHTML); // print result
- */
-
-/**
- * @readme-quick-run
- *
- * Using update api to update a view.
- *
- * [readme-lang:zh]运用update api去更新一个view
- *
- * ## test tar=js r_c=kabanery env=browser
- * let {view, n, mount} = kabanery;
- *
- * let MyView = view((data, {update}) => {
- *      return n('div', {
- *         id: 'a',
- *         style: {
- *            fontSize: 10
- *         },
- *         onclick: () => {
- *            update('show', !data.show);
- *         }
- *      }, [
- *          data.show && n('div', 'show text')
- *      ]);
- * });
- *
- * mount(MyView({show: false}), document.body);
- *
- * document.getElementById('a').click(); // simulate user action
- * console.log(document.getElementById('a').outerHTML); // print result
- */
+module.exports = {
+    styles,
+    isMapObject
+};
 
 
 /***/ }),
@@ -695,12 +697,14 @@ module.exports = __webpack_require__(10);
 
 let {
     map
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 let {
     isObject, isNode
-} = __webpack_require__(1);
+} = __webpack_require__(0);
 
-let parseArgs = __webpack_require__(12);
+let parseArgs = __webpack_require__(16);
+
+let parseStyle = __webpack_require__(9);
 
 const KABANERY_NODE = 'kabanery_node';
 
@@ -796,7 +800,8 @@ module.exports = {
     bindPlugs,
     isKabaneryNode,
     toHTML,
-    parseArgs
+    parseArgs,
+    parseStyle
 };
 
 
@@ -809,7 +814,7 @@ module.exports = {
 
 let {
     createElement, createSvgElement
-} = __webpack_require__(23);
+} = __webpack_require__(27);
 
 let {
     bindEvents
@@ -817,7 +822,7 @@ let {
 
 let {
     map
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
 let {
     isKabaneryNode
@@ -849,7 +854,7 @@ module.exports = reduceNode;
 "use strict";
 
 
-let EventMatrix = __webpack_require__(24);
+let EventMatrix = __webpack_require__(28);
 
 let {
     listenEventType,
@@ -882,7 +887,7 @@ module.exports = {
 
 let {
     likeArray, isObject, funType, isFunction, isUndefined, or, isNumber, isFalsy, mapType
-} = __webpack_require__(1);
+} = __webpack_require__(0);
 
 /**
  *
@@ -988,16 +993,82 @@ module.exports = iterate;
 
 
 let {
+    isString,
+    isObject
+} = __webpack_require__(0);
+
+module.exports = (attr = '', {
+    keyWrapper,
+    valueWrapper
+} = {}) => {
+    if (isString(attr)) {
+        return attr;
+    }
+
+    if (!isObject(attr)) {
+        throw new TypeError(`Expect object for style object, but got ${attr}`);
+    }
+    let styles = [];
+    for (let key in attr) {
+        let value = attr[key];
+        key = convertStyleKey(key);
+        value = convertStyleValue(value, key);
+        if (keyWrapper) {
+            key = keyWrapper(key, value);
+        }
+
+        if (valueWrapper) {
+            value = valueWrapper(value, key);
+        }
+
+        styles.push(`${key}: ${value};`);
+    }
+    return styles.join('');
+};
+
+let convertStyleKey = (key) => {
+    return key.replace(/[A-Z]/, (letter) => {
+        return `-${letter.toLowerCase()}`;
+    });
+};
+
+let convertStyleValue = (value, key) => {
+    if (typeof value === 'number' && key !== 'z-index') {
+        return value + 'px';
+    }
+    if (key === 'padding' || key === 'margin') {
+        let parts = value.split(' ');
+        for (let i = 0; i < parts.length; i++) {
+            let part = parts[i];
+            if (!isNaN(Number(part))) {
+                parts[i] = part + 'px';
+            }
+        }
+
+        value = parts.join(' ');
+    }
+    return value;
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
     attachDocument
 } = __webpack_require__(7);
 
 let {
     isNode
-} = __webpack_require__(1);
+} = __webpack_require__(0);
 
 let {
     flat, forEach
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
 let reduceNode = __webpack_require__(6);
 
@@ -1028,23 +1099,235 @@ let getDoc = (node) => {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 let {
-    n, svgn, bindPlugs, toHTML, parseArgs, isKabaneryNode, cn
+    view
+} = __webpack_require__(2);
+
+let steadyTheme = __webpack_require__(31);
+
+let {
+    isMapObject
+} = __webpack_require__(4);
+
+let ClassTable = __webpack_require__(32);
+
+/**
+ * define the general interface for lumine view
+ *
+ * 1. unify view data structure
+ *
+ *    view data = {
+ *       state,
+ *       style,
+ *       theme,
+ *       onchange
+ *    }
+ *
+ * 2. onchange interface
+ *
+ *    onchange: (changedViewState, updatedScript) -> Any
+ */
+
+module.exports = (viewFun, {
+    defaultState = {},
+    defaultStyle = {},
+    theme = steadyTheme,
+    classTable
+} = {}) => {
+    let defaultStyleValue = resolveDefaultStyles(defaultStyle, theme);
+    let classTableValue = resolveClassTable(classTable, theme);
+
+    let {
+        appendStyle,
+        getClassName,
+        updateClassTable
+    } = ClassTable(classTableValue);
+
+    return view((viewData, ctx) => {
+        appendStyle();
+        // TODO check view Data
+
+        if (viewData.theme && typeof defaultStyleValue === 'function') {
+            // update defaultStyleValue
+            defaultStyleValue = resolveDefaultStyles(defaultStyle, viewData.theme);
+
+            // update class table
+            classTableValue = resolveClassTable(classTable, viewData.theme);
+            updateClassTable(classTableValue);
+        }
+
+        // merge (deep merge)
+        viewData.style = deepMergeMap(viewData.style, defaultStyleValue);
+
+        viewData.state = deepMergeMap(viewData.state, defaultState);
+
+        // TODO just notify, no view update.
+
+        let updateWithNotify = (updatedScript, extra) => {
+            ctx.update(updatedScript);
+            viewData.onchange && viewData.onchange(ctx.getData(), updatedScript, extra);
+        };
+
+        ctx.updateWithNotify = updateWithNotify;
+        ctx.getClassName = getClassName;
+
+        return viewFun({
+            style: viewData.style,
+            state: viewData.state
+        }, ctx);
+    });
+};
+
+let resolveDefaultStyles = (defaultStyle, theme) => {
+    if (typeof defaultStyle === 'function') {
+        return resolveDefaultStyles(defaultStyle(theme), theme);
+    }
+
+    return defaultStyle;
+};
+
+let resolveClassTable = (classTable, theme) => {
+    if (typeof classTable === 'function') {
+        return resolveClassTable(classTable(theme), theme);
+    }
+
+    return classTable;
+};
+
+let deepMergeMap = (tar, def) => {
+    if (isMapObject(def)) {
+        tar = tar || {};
+        if (isMapObject(tar)) {
+            for (let name in def) {
+                if (tar[name] === undefined) {
+                    tar[name] = deepMergeMap(tar[name], def[name]);
+                }
+            }
+        }
+        return tar;
+    } else {
+        return def;
+    }
+};
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(2);
+let lumineView = __webpack_require__(11);
+let {
+    styles
+} = __webpack_require__(4);
+
+module.exports = lumineView(({
+    state,
+    style
+}, {
+    updateWithNotify,
+    getClassName
+}) => {
+    return n('button', {
+        'class': `${getClassName('btn')}`,
+        style,
+        onclick: () => {
+            updateWithNotify([
+                ['state.active', 1]
+            ]);
+
+            updateWithNotify([
+                ['state.active', 0]
+            ]);
+        }
+    }, state.text);
+}, {
+    defaultState: {
+        text: '',
+        active: 0
+    },
+
+    defaultStyle: (theme) => styles(theme.oneLineBulk),
+
+    classTable: (theme) => {
+        return {
+            'btn:hover': theme.actions.hover,
+            'btn:active': theme.actions.active,
+            'btn:focus': theme.actions.focus
+        };
+    }
+});
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    mount, n
+} = __webpack_require__(2);
+
+let FunctionBar = __webpack_require__(30);
+let Button = __webpack_require__(12);
+
+let log = console.log; // eslint-disable-line
+
+mount([
+
+    FunctionBar({
+        state: {
+            title: 'demo',
+            leftLogos: ['a', 'b'],
+            rightLogos: ['c', 'd']
+        }
+    }),
+
+    n('br'),
+
+    Button({
+        state: {
+            text: 'demo'
+        },
+
+        onchange: (data) => {
+            log(JSON.stringify(data));
+        }
+    })
+], document.body);
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n, svgn, bindPlugs, toHTML, parseArgs, isKabaneryNode, cn, parseStyle
 } = __webpack_require__(5);
 
-let plugs = __webpack_require__(14);
+let plugs = __webpack_require__(18);
 
-let view = __webpack_require__(17);
+let view = __webpack_require__(21);
 
-let mount = __webpack_require__(9);
+let mount = __webpack_require__(10);
 
-let N = __webpack_require__(25);
+let N = __webpack_require__(29);
 
 let reduceNode = __webpack_require__(6);
 
@@ -1064,12 +1347,13 @@ module.exports = {
     reduceNode,
 
     parseArgs,
+    parseStyle,
     dispatchEvent
 };
 
 
 /***/ }),
-/* 11 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1174,17 +1458,17 @@ module.exports = {
 
 
 /***/ }),
-/* 12 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let parseAttribute = __webpack_require__(13);
+let parseAttribute = __webpack_require__(17);
 
 let {
     isString, isObject, isNode, likeArray, isNumber, isBool
-} = __webpack_require__(1);
+} = __webpack_require__(0);
 
 let parseArgs = (args) => {
     let tagName,
@@ -1260,19 +1544,21 @@ module.exports = parseArgs;
 
 
 /***/ }),
-/* 13 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 let {
-    isString, isObject
-} = __webpack_require__(1);
+    isString
+} = __webpack_require__(0);
+
+let parseStyle = __webpack_require__(9);
 
 let {
     mergeMap
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
 const ITEM_REG = /([\w-]+)\s*=\s*(([\w-]+)|('.*?')|(".*?"))/;
 
@@ -1311,14 +1597,14 @@ let parseAttribute = (attributes, nextAttr) => {
     attributes = mergeMap(attributes, nextAttr);
 
     if (attributes.style) {
-        attributes.style = getStyleString(attributes.style);
+        attributes.style = parseStyle(attributes.style);
     }
 
     // TODO presudo
     /*
     if (attributes.presudo) {
         for (let name in attributes.presudo) {
-            attributes.presudo[name] = getStyleString(attributes.presudo[name]);
+            attributes.presudo[name] = parseStyle(attributes.presudo[name]);
         }
     }
    */
@@ -1326,60 +1612,18 @@ let parseAttribute = (attributes, nextAttr) => {
     return attributes;
 };
 
-let getStyleString = (attr = '') => {
-    if (isString(attr)) {
-        return attr;
-    }
-
-    if (!isObject(attr)) {
-        throw new TypeError(`Expect object for style object, but got ${attr}`);
-    }
-    let styles = [];
-    for (let key in attr) {
-        let value = attr[key];
-        key = convertStyleKey(key);
-        value = convertStyleValue(value, key);
-        styles.push(`${key}: ${value}`);
-    }
-    return styles.join(';');
-};
-
-let convertStyleKey = (key) => {
-    return key.replace(/[A-Z]/, (letter) => {
-        return `-${letter.toLowerCase()}`;
-    });
-};
-
-let convertStyleValue = (value, key) => {
-    if (typeof value === 'number' && key !== 'z-index') {
-        return value + 'px';
-    }
-    if (key === 'padding' || key === 'margin') {
-        let parts = value.split(' ');
-        for (let i = 0; i < parts.length; i++) {
-            let part = parts[i];
-            if (!isNaN(Number(part))) {
-                parts[i] = part + 'px';
-            }
-        }
-
-        value = parts.join(' ');
-    }
-    return value;
-};
-
 module.exports = parseAttribute;
 
 
 /***/ }),
-/* 14 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let twowaybinding = __webpack_require__(15);
-let eventError = __webpack_require__(16);
+let twowaybinding = __webpack_require__(19);
+let eventError = __webpack_require__(20);
 
 module.exports = {
     twowaybinding,
@@ -1388,7 +1632,7 @@ module.exports = {
 
 
 /***/ }),
-/* 15 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1415,7 +1659,7 @@ module.exports = (obj, path) => (tagName, attributes, childExp) => {
 
 
 /***/ }),
-/* 16 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1447,7 +1691,7 @@ let wrapEventHandler = (fun, catcher) => {
 
 
 /***/ }),
-/* 17 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1459,17 +1703,17 @@ let {
 
 let {
     isObject, isFunction, likeArray
-} = __webpack_require__(1);
+} = __webpack_require__(0);
 
 let {
     forEach
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
-let replace = __webpack_require__(18);
+let replace = __webpack_require__(22);
 
 let reduceNode = __webpack_require__(6);
 
-let mount = __webpack_require__(9);
+let mount = __webpack_require__(10);
 
 /**
  * render function: (data) => node
@@ -1658,7 +1902,7 @@ module.exports = View;
 
 
 /***/ }),
-/* 18 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1670,13 +1914,13 @@ let {
 
 let {
     isNode
-} = __webpack_require__(1);
+} = __webpack_require__(0);
 
 let {
     forEach
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
-let applyAttibutes = __webpack_require__(19);
+let applyAttibutes = __webpack_require__(23);
 
 let replaceDirectly = (node, newNode) => {
     let parent = node.parentNode;
@@ -1790,7 +2034,7 @@ module.exports = (node, newNode) => {
 
 
 /***/ }),
-/* 19 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1798,7 +2042,7 @@ module.exports = (node, newNode) => {
 
 let {
     getAttributeMap
-} = __webpack_require__(20);
+} = __webpack_require__(24);
 
 let {
     hasOwnProperty
@@ -1806,7 +2050,7 @@ let {
 
 let {
     forEach
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
 let applyAttibutes = (node, newNode) => {
     // attributes
@@ -1837,15 +2081,15 @@ module.exports = applyAttibutes;
 
 
 /***/ }),
-/* 20 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let shadowFrame = __webpack_require__(21);
+let shadowFrame = __webpack_require__(25);
 
-let startMomenter = __webpack_require__(22);
+let startMomenter = __webpack_require__(26);
 
 let getX = (elem) => {
     var x = 0;
@@ -1928,7 +2172,7 @@ module.exports = {
 
 
 /***/ }),
-/* 21 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1983,7 +2227,7 @@ module.exports = shadowFrame;
 
 
 /***/ }),
-/* 22 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2039,7 +2283,7 @@ module.exports = startMomenter;
 
 
 /***/ }),
-/* 23 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2047,7 +2291,7 @@ module.exports = startMomenter;
 
 let {
     isNode
-} = __webpack_require__(1);
+} = __webpack_require__(0);
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
@@ -2086,7 +2330,7 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2094,7 +2338,7 @@ module.exports = {
 
 let {
     contain
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
 module.exports = () => {
     let docs = [];
@@ -2213,7 +2457,7 @@ let getGlobalEventTypeId = (type) => `__event_type_id_${type}`;
 
 
 /***/ }),
-/* 25 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2225,11 +2469,11 @@ let {
 
 let {
     isArray, isFunction, isObject
-} = __webpack_require__(1);
+} = __webpack_require__(0);
 
 let {
     map
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
 module.exports = (...args) => {
     let tagName = args[0],
@@ -2269,7 +2513,7 @@ module.exports = (...args) => {
 
 
 /***/ }),
-/* 26 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2277,13 +2521,13 @@ module.exports = (...args) => {
 
 let {
     n
-} = __webpack_require__(4);
-let lumineView = __webpack_require__(27);
+} = __webpack_require__(2);
+let lumineView = __webpack_require__(11);
 let {
     styles
-} = __webpack_require__(30);
+} = __webpack_require__(4);
 
-let Button = __webpack_require__(28);
+let Button = __webpack_require__(12);
 
 module.exports = lumineView(({
     state,
@@ -2368,145 +2612,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    view
-} = __webpack_require__(4);
-
-let steadyTheme = __webpack_require__(29);
-
-/**
- * define the general interface for lumine view
- *
- * 1. unify view data structure
- *
- *    view data = {
- *       state,
- *       style,
- *       theme,
- *       onchange
- *    }
- *
- * 2. onchange interface
- *
- *    onchange: (changedViewState, updatedScript) -> Any
- */
-
-module.exports = (viewFun, {
-    defaultState = {},
-    defaultStyle = {},
-    theme = steadyTheme
-} = {}) => {
-    let defaultStyleValue = getDefaultStyles(defaultStyle, theme);
-
-    return view((viewData, ctx) => {
-        // TODO check view Data
-
-        if (viewData.theme && typeof defaultStyleValue === 'function') {
-            // update defaultStyleValue
-            defaultStyleValue = getDefaultStyles(defaultStyle, viewData.theme);
-        }
-
-        // merge (deep merge)
-        viewData.style = deepMergeMap(viewData.style, defaultStyleValue);
-
-        viewData.state = deepMergeMap(viewData.state, defaultState);
-
-        // TODO just notify, no view update.
-
-        let updateWithNotify = (updatedScript, extra) => {
-            ctx.update(updatedScript);
-            viewData.onchange && viewData.onchange(ctx.getData(), updatedScript, extra);
-        };
-
-        ctx.updateWithNotify = updateWithNotify;
-
-        return viewFun({
-            style: viewData.style,
-            state: viewData.state
-        }, ctx);
-    });
-};
-
-let getDefaultStyles = (defaultStyle, theme) => {
-    if (typeof defaultStyle === 'function') {
-        return getDefaultStyles(defaultStyle(theme), theme);
-    }
-
-    return defaultStyle;
-};
-
-let deepMergeMap = (tar, def) => {
-    if (isMapObject(def)) {
-        tar = tar || {};
-        if (isMapObject(tar)) {
-            for (let name in def) {
-                if (tar[name] === undefined) {
-                    tar[name] = deepMergeMap(tar[name], def[name]);
-                }
-            }
-        }
-        return tar;
-    } else {
-        return def;
-    }
-};
-
-let isMapObject = (v) => {
-    return v && typeof v === 'object' && !Array.isArray(v);
-};
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    n
-} = __webpack_require__(4);
-let lumineView = __webpack_require__(27);
-let {
-    styles
-} = __webpack_require__(30);
-
-module.exports = lumineView(({
-    state,
-    style
-}, {
-    updateWithNotify
-}) => {
-    return n('button', {
-        style,
-        onclick: () => {
-            updateWithNotify([
-                ['state.active', 1]
-            ]);
-
-            updateWithNotify([
-                ['state.active', 0]
-            ]);
-        }
-    }, state.text);
-}, {
-    defaultState: {
-        text: '',
-        active: 0
-    },
-
-    defaultStyle: (theme) => styles(theme.oneLineBulk)
-});
-
-
-/***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2546,6 +2652,18 @@ let actions = {
         margin: 0,
         padding: 0,
         boxSizing: 'border-box'
+    },
+
+    hover: {
+        backgroundColor: basics.hoverColor
+    },
+
+    active: {
+        backgroundColor: basics.hoverColor
+    },
+
+    focus: {
+        outline: 'none'
     }
 };
 
@@ -2561,18 +2679,80 @@ module.exports = {
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let styles = (...styleObjects) => {
-    return Object.assign({}, ...styleObjects);
-};
+let {
+    isMapObject
+} = __webpack_require__(4);
 
-module.exports = {
-    styles
+let {
+    mount,
+    n,
+    parseStyle
+} = __webpack_require__(2);
+
+const VIEW_CLASS_PREFIX = 'kabanery-lumine';
+
+let count = -1;
+
+module.exports = (classTable) => {
+    count++;
+
+    let viewClassId = `${VIEW_CLASS_PREFIX}-${count}`;
+
+    let getStyleRuleName = (name) => {
+        return `.${viewClassId}-${name}`;
+    };
+
+    let styleCssRules = null;
+
+    let setStyleCssRules = (classTable) => {
+        if (isMapObject(classTable)) {
+            styleCssRules = '';
+            for (let name in classTable) {
+                let styleRuleName = getStyleRuleName(name);
+                let styleRuleContent = parseStyle(classTable[name], {
+                    valueWrapper: (value) => `${value} !important`
+                });
+                styleCssRules += `\n${styleRuleName} {${styleRuleContent}}`;
+            }
+        }
+    };
+
+    setStyleCssRules(classTable);
+
+    let appendStyle = () => {
+        if (styleCssRules) {
+            mount(n('style', {
+                id: viewClassId
+            }, styleCssRules), document.head);
+            styleCssRules = null;
+        }
+    };
+
+    let getClassName = (name) => {
+        return `${viewClassId}-${name.split(':')[0]}`;
+    };
+
+    let updateClassTable = (newClassTable) => {
+        let node = document.getElementById(viewClassId);
+        if (node) {
+            node.parentNode.removeChild(node);
+        }
+
+        setStyleCssRules(newClassTable);
+        appendStyle();
+    };
+
+    return {
+        appendStyle,
+        getClassName,
+        updateClassTable
+    };
 };
 
 
