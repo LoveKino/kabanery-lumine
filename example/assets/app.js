@@ -1324,6 +1324,9 @@ let Button = __webpack_require__(12);
 let Input = __webpack_require__(34);
 let HorizontalTwo = __webpack_require__(35);
 let VerticalTwo = __webpack_require__(37);
+let TextArea = __webpack_require__(38);
+
+let steadyTheme = __webpack_require__(31);
 
 let log = console.log; // eslint-disable-line
 
@@ -1332,50 +1335,54 @@ let logSignal = (signal, data) => {
     log(JSON.stringify(data));
 };
 
-mount([
+let examples = [
 
-    FunctionBar({
-        state: {
-            title: 'demo',
-            leftLogos: [
-                n('div', '<'), 'a', 'b'
-            ],
-            rightLogos: ['c', 'd']
-        },
+    {
+        name: 'function bar',
+        render: () => FunctionBar({
+            state: {
+                title: 'demo',
+                leftLogos: [
+                    n('div', '<'), 'a', 'b'
+                ],
+                rightLogos: ['c', 'd']
+            },
 
-        onsignal: logSignal
-    }),
+            onsignal: logSignal
+        })
+    },
+    {
+        name: 'button',
+        render: () => Button({
+            state: {
+                text: 'demo'
+            },
 
-    n('br'),
+            onsignal: logSignal
+        })
+    },
 
-    Button({
-        state: {
-            text: 'demo'
-        },
+    {
+        name: 'input',
+        render: () => Input({
+            state: {
+                text: 'abc'
+            },
+            onsignal: logSignal
+        })
+    },
 
-        onsignal: logSignal
-    }),
-
-    n('br'),
-
-    Input({
-        state: {
-            text: 'abc'
-        },
-        onsignal: logSignal
-    }),
-
-    n('div', {
-        style: {
-            width: 200,
-            height: 200
-        }
-    }, [
-        HorizontalTwo({
+    {
+        name: 'HorizontalTwo',
+        render: () => n('div', {
+            style: {
+                width: 400,
+                height: 100
+            }
+        }, [HorizontalTwo({
             state: {
                 left: n('span', 'this is left child'),
-                right: n('span', 'this is right child'),
-                leftWidthPer: 0.4
+                right: n('span', 'this is right child')
             },
             style: {
                 container: {
@@ -1388,19 +1395,22 @@ mount([
                     backgroundColor: 'red'
                 }
             }
-        })
-    ]),
+        })])
+    },
 
-    n('div', {
-        style: {
-            width: 200,
-            height: 200
-        }
-    }, [
-        HorizontalTwo({
+    {
+        name: 'HorizontalTwo: compose to 3',
+        render: () => n('div', {
+            style: {
+                width: 400,
+                height: 100
+            }
+        }, [HorizontalTwo({
             state: {
+                mode: 'percentage',
                 left: HorizontalTwo({
                     state: {
+                        mode: 'percentage',
                         left: '1',
                         right: '2'
                     },
@@ -1425,20 +1435,20 @@ mount([
                     backgroundColor: 'red'
                 }
             }
-        })
-    ]),
+        })])
+    },
 
-    n('div', {
-        style: {
-            width: 200,
-            height: 200
-        }
-    }, [
-        VerticalTwo({
+    {
+        name: 'VerticalTwo',
+
+        render: () => n('div', {
+            style: {
+                width: 400
+            }
+        }, [VerticalTwo({
             state: {
                 top: n('span', 'this is top child'),
-                bottom: n('span', 'this is bottom child'),
-                topHeightPer: 0.4
+                bottom: n('span', 'this is bottom child')
             },
 
             style: {
@@ -1452,10 +1462,52 @@ mount([
                     backgroundColor: 'red'
                 }
             }
-        })
-    ]),
+        })])
+    }
+];
 
-], document.body);
+let Pager = n('div', {
+    style: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: steadyTheme.basics.pageColor
+    }
+}, examples.map(({
+    name,
+    render
+}) => {
+    return n('div', {
+        style: {
+            padding: 8
+        }
+    }, [
+        n('div style="font-weight:bold;"', {
+            style: {
+                width: '100%',
+                backgroundColor: steadyTheme.basics.borderColor
+            }
+        }, name),
+
+        n('div', {
+            style: {
+                padding: 8
+            }
+        }, [
+            n('div', 'code'),
+            TextArea({
+                state: {
+                    text: render.toString()
+                }
+            }),
+            n('br'),
+
+            n('div', 'UI'),
+            render()
+        ])
+    ]);
+}));
+
+mount(Pager, document.body);
 
 
 /***/ }),
@@ -2811,6 +2863,7 @@ let basics = {
 };
 
 let container = {
+    position: 'relative',
     boxSizing: 'border-box',
     margin: 0,
     padding: 0,
@@ -2865,6 +2918,17 @@ let inputBox = styles(contrastBulk, flat, {
     backgroundColor: basics.fontColor
 });
 
+let textAreaBox = styles(inputBox, {
+    width: 360,
+    height: 200,
+    outline: 'none',
+    resize: 'none',
+    overflow: 'auto',
+    border: `1px solid ${basics.borderColor}`,
+    borderRadius: 5,
+    fontSize: 16
+});
+
 let underLineBorder = {
     border: 0,
     borderRadius: 0,
@@ -2901,6 +2965,7 @@ module.exports = {
     bulk,
     oneLineBulk,
     inputBox,
+    textAreaBox,
     underLineBorder,
     underLineFocus,
     container,
@@ -3096,7 +3161,10 @@ let {
     styles
 } = __webpack_require__(4);
 
-const MODE_PERCENTAGE = 'percentage';
+const {
+    MODE_PERCENTAGE,
+    MODE_PILE
+} = __webpack_require__(39);
 
 /**
  * left + right
@@ -3107,7 +3175,11 @@ module.exports = lumineView(({
     theme,
     style
 }) => {
-    if (state.mode === MODE_PERCENTAGE) {
+    if (state.mode === MODE_PILE) {
+        style.leftContainer = styles(style.leftContainer, {
+            'float': 'left'
+        });
+    } else if (state.mode === MODE_PERCENTAGE) {
         // TODO validate state.left
         style.leftContainer = styles(style.leftContainer, {
             width: state.leftWidthPer * 100 + '%',
@@ -3133,7 +3205,7 @@ module.exports = lumineView(({
                     style: style.rightContainer
                 }, [state.right]),
 
-                state.mode === MODE_PERCENTAGE && n('div style="clear:both"')
+                (state.mode === MODE_PERCENTAGE || state.mode === MODE_PILE) && n('div style="clear:both"')
             ]
         },
         style: style.container,
@@ -3141,7 +3213,7 @@ module.exports = lumineView(({
     });
 }, {
     defaultState: {
-        mode: MODE_PERCENTAGE,
+        mode: MODE_PILE,
         leftWidthPer: 0.5
     },
 
@@ -3207,7 +3279,10 @@ let {
     styles
 } = __webpack_require__(4);
 
-const MODE_PERCENTAGE = 'percentage';
+const {
+    MODE_PILE,
+    MODE_PERCENTAGE
+} = __webpack_require__(39);
 
 /**
  * top + bottom
@@ -3248,7 +3323,7 @@ module.exports = lumineView(({
     });
 }, {
     defaultState: {
-        mode: MODE_PERCENTAGE,
+        mode: MODE_PILE,
         topHeightPer: 0.5
     },
 
@@ -3262,6 +3337,71 @@ module.exports = lumineView(({
         };
     }
 });
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(2);
+
+let lumineView = __webpack_require__(11);
+
+let {
+    Signal
+} = __webpack_require__(33);
+
+let {
+    styles
+} = __webpack_require__(4);
+
+module.exports = lumineView(({
+    state,
+    style
+}, {
+    notify,
+    getClassName
+}) => {
+    return n('textarea', {
+        'class': `${getClassName('textarea')}`,
+        style,
+        type: state.type,
+        placeholder: state.placeholder,
+        oninput: (e) => {
+            state.text = e.target.value;
+            notify(Signal('input'));
+        }
+    }, [state.text]);
+}, {
+    defaultState: {
+        text: '',
+        type: 'text',
+        placeholder: ''
+    },
+
+    defaultStyle: (theme) => styles(theme.textAreaBox),
+
+    classTable: (theme) => {
+        return {
+            'textarea:focus': styles(theme.actions.focus)
+        };
+    }
+});
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports) {
+
+module.exports = {
+    MODE_PILE: 'pile',
+    MODE_PERCENTAGE: 'percentage'
+};
 
 
 /***/ })

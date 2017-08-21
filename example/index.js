@@ -10,6 +10,9 @@ let Button = require('../lib/view/button/button');
 let Input = require('../lib/view/input/input');
 let HorizontalTwo = require('../lib/view/layout/horizontalTwo');
 let VerticalTwo = require('../lib/view/layout/verticalTwo');
+let TextArea = require('../lib/view/input/textarea');
+
+let steadyTheme = require('../lib/theme/steady');
 
 let log = console.log; // eslint-disable-line
 
@@ -18,50 +21,54 @@ let logSignal = (signal, data) => {
     log(JSON.stringify(data));
 };
 
-mount([
+let examples = [
 
-    FunctionBar({
-        state: {
-            title: 'demo',
-            leftLogos: [
-                n('div', '<'), 'a', 'b'
-            ],
-            rightLogos: ['c', 'd']
-        },
+    {
+        name: 'function bar',
+        render: () => FunctionBar({
+            state: {
+                title: 'demo',
+                leftLogos: [
+                    n('div', '<'), 'a', 'b'
+                ],
+                rightLogos: ['c', 'd']
+            },
 
-        onsignal: logSignal
-    }),
+            onsignal: logSignal
+        })
+    },
+    {
+        name: 'button',
+        render: () => Button({
+            state: {
+                text: 'demo'
+            },
 
-    n('br'),
+            onsignal: logSignal
+        })
+    },
 
-    Button({
-        state: {
-            text: 'demo'
-        },
+    {
+        name: 'input',
+        render: () => Input({
+            state: {
+                text: 'abc'
+            },
+            onsignal: logSignal
+        })
+    },
 
-        onsignal: logSignal
-    }),
-
-    n('br'),
-
-    Input({
-        state: {
-            text: 'abc'
-        },
-        onsignal: logSignal
-    }),
-
-    n('div', {
-        style: {
-            width: 200,
-            height: 200
-        }
-    }, [
-        HorizontalTwo({
+    {
+        name: 'HorizontalTwo',
+        render: () => n('div', {
+            style: {
+                width: 400,
+                height: 100
+            }
+        }, [HorizontalTwo({
             state: {
                 left: n('span', 'this is left child'),
-                right: n('span', 'this is right child'),
-                leftWidthPer: 0.4
+                right: n('span', 'this is right child')
             },
             style: {
                 container: {
@@ -74,19 +81,22 @@ mount([
                     backgroundColor: 'red'
                 }
             }
-        })
-    ]),
+        })])
+    },
 
-    n('div', {
-        style: {
-            width: 200,
-            height: 200
-        }
-    }, [
-        HorizontalTwo({
+    {
+        name: 'HorizontalTwo: compose to 3',
+        render: () => n('div', {
+            style: {
+                width: 400,
+                height: 100
+            }
+        }, [HorizontalTwo({
             state: {
+                mode: 'percentage',
                 left: HorizontalTwo({
                     state: {
+                        mode: 'percentage',
                         left: '1',
                         right: '2'
                     },
@@ -111,20 +121,20 @@ mount([
                     backgroundColor: 'red'
                 }
             }
-        })
-    ]),
+        })])
+    },
 
-    n('div', {
-        style: {
-            width: 200,
-            height: 200
-        }
-    }, [
-        VerticalTwo({
+    {
+        name: 'VerticalTwo',
+
+        render: () => n('div', {
+            style: {
+                width: 400
+            }
+        }, [VerticalTwo({
             state: {
                 top: n('span', 'this is top child'),
-                bottom: n('span', 'this is bottom child'),
-                topHeightPer: 0.4
+                bottom: n('span', 'this is bottom child')
             },
 
             style: {
@@ -138,7 +148,49 @@ mount([
                     backgroundColor: 'red'
                 }
             }
-        })
-    ]),
+        })])
+    }
+];
 
-], document.body);
+let Pager = n('div', {
+    style: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: steadyTheme.basics.pageColor
+    }
+}, examples.map(({
+    name,
+    render
+}) => {
+    return n('div', {
+        style: {
+            padding: 8
+        }
+    }, [
+        n('div style="font-weight:bold;"', {
+            style: {
+                width: '100%',
+                backgroundColor: steadyTheme.basics.borderColor
+            }
+        }, name),
+
+        n('div', {
+            style: {
+                padding: 8
+            }
+        }, [
+            n('div', 'code'),
+            TextArea({
+                state: {
+                    text: render.toString()
+                }
+            }),
+            n('br'),
+
+            n('div', 'UI'),
+            render()
+        ])
+    ]);
+}));
+
+mount(Pager, document.body);
