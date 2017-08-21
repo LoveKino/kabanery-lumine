@@ -682,9 +682,80 @@ let isMapObject = (v) => {
     return v && typeof v === 'object' && !Array.isArray(v);
 };
 
+let deepMergeMap = (tar, def) => {
+    if (isMapObject(def)) {
+        tar = tar || {};
+        if (isMapObject(tar)) {
+            for (let name in def) {
+                tar[name] = deepMergeMap(tar[name], def[name]);
+            }
+        }
+        return tar;
+    } else {
+        if (tar === undefined) return def;
+        return tar;
+    }
+};
+
+let resolveFnValue = (fn, ...args) => {
+    if (typeof fn === 'function') {
+        return resolveFnValue(fn(...args));
+    }
+
+    return fn;
+};
+
+let get = (obj, key = '') => {
+    key = key.trim();
+    let parts = !key ? [] : key.split('.');
+
+    let partLen = parts.length;
+    for (let i = 0; i < partLen; i++) {
+        let part = parts[i].trim();
+        if (part) {
+            obj = obj[part];
+        }
+    }
+
+    return obj;
+};
+
+let set = (obj, key = '', value) => {
+    key = key.trim();
+    let parts = !key ? [] : key.split('.');
+    if (!parts.length) return;
+    let parent = obj;
+
+    for (let i = 0; i < parts.length - 1; i++) {
+        let part = parts[i];
+        part = part.trim();
+        if (part) {
+            let next = parent[part];
+            if (!isObject(next)) {
+                next = {};
+                parent[part] = next;
+            }
+            parent = next;
+        }
+    }
+
+    parent[parts[parts.length - 1]] = value;
+    return obj;
+};
+
+let isObject = (v) => v && typeof v === 'object';
+
+let likeArray = (v) => v && typeof v === 'object' && typeof v.length === 'number';
+
 module.exports = {
     styles,
-    isMapObject
+    isMapObject,
+    deepMergeMap,
+    resolveFnValue,
+    get,
+    set,
+    isObject,
+    likeArray
 };
 
 
@@ -1112,7 +1183,8 @@ let {
 let steadyTheme = __webpack_require__(31);
 
 let {
-    isMapObject
+    deepMergeMap,
+    resolveFnValue
 } = __webpack_require__(4);
 
 let ClassTable = __webpack_require__(32);
@@ -1123,15 +1195,16 @@ let ClassTable = __webpack_require__(32);
  * 1. unify view data structure
  *
  *    view data = {
- *       state,
- *       style,
- *       theme,
- *       onchange
+ *       // public data
+ *       state,  // describle the view state data
+ *       style,  // style map
+ *       theme,  // theme
+ *       onsignal  // signal handler
  *    }
  *
- * 2. onchange interface
+ * 2. onsignal interface
  *
- *    onchange: (changedViewState, updatedScript) -> Any
+ *    onsignal: (signal, data, ctx) -> Any
  */
 
 module.exports = (viewFun, {
@@ -1140,8 +1213,8 @@ module.exports = (viewFun, {
     theme = steadyTheme,
     classTable
 } = {}) => {
-    let defaultStyleValue = resolveDefaultStyles(defaultStyle, theme);
-    let classTableValue = resolveClassTable(classTable, theme);
+    let defaultStyleValue = resolveFnValue(defaultStyle, theme);
+    let classTableValue = resolveFnValue(classTable, theme);
 
     let {
         appendStyle,
@@ -1153,12 +1226,14 @@ module.exports = (viewFun, {
         appendStyle();
         // TODO check view Data
 
-        if (viewData.theme && typeof defaultStyleValue === 'function') {
-            // update defaultStyleValue
-            defaultStyleValue = resolveDefaultStyles(defaultStyle, viewData.theme);
+        // update defaultStyleValue
+        if (viewData.theme && typeof defaultStyle === 'function') {
+            defaultStyleValue = resolveFnValue(defaultStyle, viewData.theme);
+        }
 
-            // update class table
-            classTableValue = resolveClassTable(classTable, viewData.theme);
+        // update class table
+        if (viewData.theme && typeof classTable === 'function') {
+            classTableValue = resolveFnValue(classTable, viewData.theme);
             updateClassTable(classTableValue);
         }
 
@@ -1167,53 +1242,19 @@ module.exports = (viewFun, {
 
         viewData.state = deepMergeMap(viewData.state, defaultState);
 
-        // TODO just notify, no view update.
-
-        let updateWithNotify = (updatedScript, extra) => {
-            ctx.update(updatedScript);
-            viewData.onchange && viewData.onchange(ctx.getData(), updatedScript, extra);
+        let notify = (signal) => {
+            viewData.onsignal && viewData.onsignal(signal, ctx.getData(), ctx);
         };
 
-        ctx.updateWithNotify = updateWithNotify;
+        ctx.notify = notify;
         ctx.getClassName = getClassName;
 
         return viewFun({
             style: viewData.style,
-            state: viewData.state
+            state: viewData.state,
+            theme: viewData.theme || steadyTheme
         }, ctx);
     });
-};
-
-let resolveDefaultStyles = (defaultStyle, theme) => {
-    if (typeof defaultStyle === 'function') {
-        return resolveDefaultStyles(defaultStyle(theme), theme);
-    }
-
-    return defaultStyle;
-};
-
-let resolveClassTable = (classTable, theme) => {
-    if (typeof classTable === 'function') {
-        return resolveClassTable(classTable(theme), theme);
-    }
-
-    return classTable;
-};
-
-let deepMergeMap = (tar, def) => {
-    if (isMapObject(def)) {
-        tar = tar || {};
-        if (isMapObject(tar)) {
-            for (let name in def) {
-                if (tar[name] === undefined) {
-                    tar[name] = deepMergeMap(tar[name], def[name]);
-                }
-            }
-        }
-        return tar;
-    } else {
-        return def;
-    }
 };
 
 
@@ -1229,6 +1270,9 @@ let {
 } = __webpack_require__(2);
 let lumineView = __webpack_require__(11);
 let {
+    Signal
+} = __webpack_require__(33);
+let {
     styles
 } = __webpack_require__(4);
 
@@ -1236,26 +1280,19 @@ module.exports = lumineView(({
     state,
     style
 }, {
-    updateWithNotify,
+    notify,
     getClassName
 }) => {
     return n('button', {
         'class': `${getClassName('btn')}`,
         style,
         onclick: () => {
-            updateWithNotify([
-                ['state.active', 1]
-            ]);
-
-            updateWithNotify([
-                ['state.active', 0]
-            ]);
+            notify(Signal('click'));
         }
     }, state.text);
 }, {
     defaultState: {
-        text: '',
-        active: 0
+        text: ''
     },
 
     defaultStyle: (theme) => styles(theme.oneLineBulk),
@@ -1263,7 +1300,7 @@ module.exports = lumineView(({
     classTable: (theme) => {
         return {
             'btn:hover': theme.actions.hover,
-            'btn:active': theme.actions.active,
+            'btn:active': theme.actions.signal,
             'btn:focus': theme.actions.focus
         };
     }
@@ -1278,22 +1315,34 @@ module.exports = lumineView(({
 
 
 let {
-    mount, n
+    mount,
+    n
 } = __webpack_require__(2);
 
 let FunctionBar = __webpack_require__(30);
 let Button = __webpack_require__(12);
+let Input = __webpack_require__(34);
+let HorizontalTwo = __webpack_require__(35);
 
 let log = console.log; // eslint-disable-line
+
+let logSignal = (signal, data) => {
+    log(JSON.stringify(signal));
+    log(JSON.stringify(data));
+};
 
 mount([
 
     FunctionBar({
         state: {
             title: 'demo',
-            leftLogos: ['a', 'b'],
+            leftLogos: [
+                n('div', '<'), 'a', 'b'
+            ],
             rightLogos: ['c', 'd']
-        }
+        },
+
+        onsignal: logSignal
     }),
 
     n('br'),
@@ -1303,10 +1352,43 @@ mount([
             text: 'demo'
         },
 
-        onchange: (data) => {
-            log(JSON.stringify(data));
+        onsignal: logSignal
+    }),
+
+    n('br'),
+
+    Input({
+        state: {
+            text: 'abc'
+        },
+        onsignal: logSignal
+    }),
+
+    n('div', {
+        style: {
+            width: 200,
+            height: 200
         }
-    })
+    }, [
+        HorizontalTwo({
+            state: {
+                left: n('span', 'this is left child'),
+                right: n('span', 'this is right child'),
+                leftWidthPer: 0.4
+            },
+            style: {
+                container: {
+                    backgroundColor: 'grey'
+                },
+                leftContainer: {
+                    backgroundColor: 'blue'
+                },
+                rightContainer: {
+                    backgroundColor: 'red'
+                }
+            }
+        })
+    ])
 ], document.body);
 
 
@@ -1702,7 +1784,9 @@ let {
 } = __webpack_require__(3);
 
 let {
-    isObject, isFunction, likeArray
+    isObject,
+    isFunction,
+    likeArray
 } = __webpack_require__(0);
 
 let {
@@ -1730,7 +1814,8 @@ let View = (view, construct, {
     let viewer = (obj, initor) => {
         // create context
         let ctx = createCtx({
-            view, afterRender
+            view,
+            afterRender
         });
 
         return createView(ctx, obj, initor, construct);
@@ -1739,7 +1824,8 @@ let View = (view, construct, {
     let viewerOps = (viewer) => {
         viewer.create = (handler) => {
             let ctx = createCtx({
-                view, afterRender
+                view,
+                afterRender
             });
 
             handler && handler(ctx);
@@ -1793,20 +1879,24 @@ let createView = (ctx, obj, initor, construct) => {
 };
 
 let createCtx = ({
-    view, afterRender
+    view,
+    afterRender
 }) => {
     let node = null,
         data = null,
         render = null;
 
     let update = (...args) => {
-        if (!args.length) return replaceView();
+        updateData(...args);
+        return replaceView();
+    };
+
+    let updateData = (...args) => {
         if (args.length === 1 && likeArray(args[0])) {
             let arg = args[0];
             forEach(arg, (item) => {
                 set(data, item[0], item[1]);
             });
-            return replaceView();
         } else {
             let [path, value] = args;
 
@@ -1816,7 +1906,6 @@ let createCtx = ({
             }
 
             set(data, path, value);
-            return replaceView();
         }
     };
 
@@ -1870,6 +1959,7 @@ let createCtx = ({
 
     let ctx = {
         update,
+        updateData,
         getNode,
         getData,
         transferCtx,
@@ -2528,46 +2618,56 @@ let {
 } = __webpack_require__(4);
 
 let Button = __webpack_require__(12);
+let {
+    Signal,
+    onSignalType
+} = __webpack_require__(33);
 
 module.exports = lumineView(({
     state,
-    style = {},
+    style,
     theme
+}, {
+    notify
 }) => {
-    let logoRight = (logoRightNode) => {
+    let onLogoSignal = (sourceType, index) => {
+        if (index !== undefined) {
+            notify(Signal('click', {
+                sourceType,
+                index
+            }));
+        }
+    };
+
+    let logoRight = (logoRightNode, index) => {
         return Button({
             style: style.logoRight,
             state: {
                 text: logoRightNode
             },
-            theme
+            theme,
+            onsignal: onSignalType('click', () => onLogoSignal('rightLogo', index))
         });
     };
 
-    let logoLeft = (logoLeftNode) => {
+    let logoLeft = (logoLeftNode, index) => {
         return Button({
             style: style.logoLeft,
             state: {
                 text: logoLeftNode
             },
-            theme
+            theme,
+            onsignal: onSignalType('click', () => onLogoSignal('leftLogos', index))
         });
     };
 
     return n('div', {
         style: style.container
     }, [
-        state.back ? logoLeft(n('div', {
-            href: `single://${state.back}`,
-            style: {
-                padding: 10
-            }
-        }, '<')) : null,
-
         state.leftLogos.map(logoLeft),
 
-        state.rightLogos.reduce((prev, logo) => {
-            prev.unshift(logoRight(logo));
+        state.rightLogos.reduce((prev, logo, index) => {
+            prev.unshift(logoRight(logo, index));
             return prev;
         }, []),
 
@@ -2581,8 +2681,14 @@ module.exports = lumineView(({
     defaultState: {
         title: '',
         leftLogos: [],
-        rightLogos: []
+        rightLogos: [],
+        signal: {
+            type: 0,
+            sourceType: null,
+            index: null
+        }
     },
+
     defaultStyle: (theme) => {
         return {
             title: {
@@ -2618,27 +2724,58 @@ module.exports = lumineView(({
 "use strict";
 
 
+let {
+    styles
+} = __webpack_require__(4);
+
 let basics = {
     pageColor: '#e4e4e4',
     hoverColor: '#e9ece5',
     blockColor: '#3b3a36',
     borderColor: '#b3c2bf',
-
     fontColor: 'white',
 
     titleSize: 20,
-    normalSize: 16
+    normalSize: 16,
+
+    narrowPadding: '4 8 4 8',
+
+    contrastBlockColor: 'white',
+    contrastFontColor: 'black'
 };
 
-let bulk = {
-    minWidth: 40,
+let container = {
     boxSizing: 'border-box',
+    margin: 0,
+    padding: 0,
+    border: 0,
+    borderRadius: 0,
+    overflow: 'auto'
+};
+
+let fullParentHeight = {
+    height: '100%'
+};
+
+let fullParentWidth = {
+    width: '100%'
+};
+
+let fullParent = styles(container, fullParentWidth, fullParentHeight);
+
+let bulk = styles(container, {
+    minWidth: 40,
     backgroundColor: basics.blockColor,
     color: basics.fontColor
-};
+});
 
-let oneLineBulk = Object.assign({}, bulk, {
-    padding: '4 8 4 8',
+let contrastBulk = styles(bulk, {
+    backgroundColor: basics.contrastBlockColor,
+    color: basics.contrastFontColor
+});
+
+let oneLineBulk = styles(bulk, {
+    padding: basics.narrowPadding,
     fontSize: basics.normalSize,
     textAlign: 'center',
     lineHeight: 20,
@@ -2646,6 +2783,31 @@ let oneLineBulk = Object.assign({}, bulk, {
     border: 'none',
     color: basics.fontColor
 });
+
+let flat = {
+    appearance: 'none',
+    '-webkit-appearance': 'none',
+    '-moz-appearance': 'none',
+    boxShadow: 'none',
+    borderRadius: 'none',
+    border: 0
+};
+
+let inputBox = styles(contrastBulk, flat, {
+    width: 260,
+    padding: basics.narrowPadding,
+    backgroundColor: basics.fontColor
+});
+
+let underLineBorder = {
+    border: 0,
+    borderRadius: 0,
+    'border-bottom': `1px solid ${basics.borderColor}`
+};
+
+let underLineFocus = {
+    'border-bottom': `2px solid ${basics.blockColor}`
+};
 
 let actions = {
     cling: {
@@ -2671,8 +2833,14 @@ module.exports = {
     basics,
 
     bulk,
-
     oneLineBulk,
+    inputBox,
+    underLineBorder,
+    underLineFocus,
+    container,
+    fullParent,
+    fullParentWidth,
+    fullParentHeight,
 
     actions
 };
@@ -2754,6 +2922,204 @@ module.exports = (classTable) => {
         updateClassTable
     };
 };
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let Signal = (type, data) => {
+    return {
+        type,
+        data
+    };
+};
+
+let isSignalType = (s, type) => {
+    return s.type === type;
+};
+
+let onSignalType = (expectType, fn) => (signal, ...rest) => {
+    if (isSignalType(signal, expectType)) {
+        return fn(signal, ...rest);
+    }
+};
+
+module.exports = {
+    Signal,
+    onSignalType,
+    isSignalType
+};
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(2);
+
+let lumineView = __webpack_require__(11);
+
+let {
+    Signal
+} = __webpack_require__(33);
+
+let {
+    styles
+} = __webpack_require__(4);
+
+module.exports = lumineView(({
+    state,
+    style
+}, {
+    notify,
+    getClassName
+}) => {
+    return n('input', {
+        'class': `${getClassName('input')}`,
+        style,
+        type: state.type,
+        placeholder: state.placeholder,
+        oninput: (e) => {
+            state.text = e.target.value;
+            notify(Signal('input'));
+        },
+        value: state.text
+    });
+}, {
+    defaultState: {
+        text: '',
+        type: 'text',
+        placeholder: ''
+    },
+
+    defaultStyle: (theme) => styles(theme.inputBox, theme.underLineBorder),
+
+    classTable: (theme) => {
+        return {
+            'input:focus': styles(theme.actions.focus, theme.underLineFocus)
+        };
+    }
+});
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let lumineView = __webpack_require__(11);
+
+let {
+    n
+} = __webpack_require__(2);
+
+let Full = __webpack_require__(36);
+
+let {
+    styles
+} = __webpack_require__(4);
+
+const MODE_PERCENTAGE = 'percentage';
+
+/**
+ * left + right
+ */
+
+module.exports = lumineView(({
+    state,
+    theme,
+    style
+}) => {
+    if (state.mode === MODE_PERCENTAGE) {
+        // TODO validate state.left
+        style.leftContainer = styles(style.leftContainer, {
+            width: state.leftWidthPer * 100 + '%',
+            'float': 'left'
+        });
+
+        style.rightContainer = styles(style.rightContainer, {
+            width: (1 - state.leftWidthPer) * 100 + '%',
+            'float': 'right'
+        });
+    }
+
+    return Full({
+        state: {
+            content: [
+                // left
+                n('div', {
+                    style: style.leftContainer
+                }, [state.left]),
+
+                // right
+                n('div', {
+                    style: style.rightContainer
+                }, [state.right]),
+
+                state.mode === MODE_PERCENTAGE && n('div style="clear:both"')
+            ]
+        },
+        style: style.container,
+        theme
+    });
+}, {
+    defaultState: {
+        mode: MODE_PERCENTAGE,
+        leftWidthPer: 0.5
+    },
+
+    defaultStyle: (theme) => {
+        return {
+            container: {},
+
+            leftContainer: styles(theme.container, theme.fullParentHeight),
+
+            rightContainer: styles(theme.container, theme.fullParentHeight)
+        };
+    }
+});
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(2);
+let lumineView = __webpack_require__(11);
+let {
+    styles
+} = __webpack_require__(4);
+
+module.exports = lumineView(({
+    state,
+    style
+}) => {
+    return n('div', {
+        style
+    }, state.content);
+}, {
+    defaultState: {
+        content: []
+    },
+
+    defaultStyle: (theme) => styles(theme.fullParent)
+});
 
 
 /***/ })
