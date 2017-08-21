@@ -1323,6 +1323,7 @@ let FunctionBar = __webpack_require__(30);
 let Button = __webpack_require__(12);
 let Input = __webpack_require__(34);
 let HorizontalTwo = __webpack_require__(35);
+let VerticalTwo = __webpack_require__(37);
 
 let log = console.log; // eslint-disable-line
 
@@ -1388,7 +1389,72 @@ mount([
                 }
             }
         })
-    ])
+    ]),
+
+    n('div', {
+        style: {
+            width: 200,
+            height: 200
+        }
+    }, [
+        HorizontalTwo({
+            state: {
+                left: HorizontalTwo({
+                    state: {
+                        left: '1',
+                        right: '2'
+                    },
+
+                    style: {
+                        leftContainer: {
+                            backgroundColor: 'yellow'
+                        }
+                    }
+                }),
+                right: '3',
+                leftWidthPer: 0.66
+            },
+            style: {
+                container: {
+                    backgroundColor: 'grey'
+                },
+                leftContainer: {
+                    backgroundColor: 'blue'
+                },
+                rightContainer: {
+                    backgroundColor: 'red'
+                }
+            }
+        })
+    ]),
+
+    n('div', {
+        style: {
+            width: 200,
+            height: 200
+        }
+    }, [
+        VerticalTwo({
+            state: {
+                top: n('span', 'this is top child'),
+                bottom: n('span', 'this is bottom child'),
+                topHeightPer: 0.4
+            },
+
+            style: {
+                container: {
+                    backgroundColor: 'grey'
+                },
+                topContainer: {
+                    backgroundColor: 'blue'
+                },
+                bottomContainer: {
+                    backgroundColor: 'red'
+                }
+            }
+        })
+    ]),
+
 ], document.body);
 
 
@@ -3119,6 +3185,82 @@ module.exports = lumineView(({
     },
 
     defaultStyle: (theme) => styles(theme.fullParent)
+});
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let lumineView = __webpack_require__(11);
+
+let {
+    n
+} = __webpack_require__(2);
+
+let Full = __webpack_require__(36);
+
+let {
+    styles
+} = __webpack_require__(4);
+
+const MODE_PERCENTAGE = 'percentage';
+
+/**
+ * top + bottom
+ */
+
+module.exports = lumineView(({
+    state,
+    theme,
+    style
+}) => {
+    if (state.mode === MODE_PERCENTAGE) {
+        // TODO validate state.topHeightPer
+        style.topContainer = styles(style.topContainer, {
+            height: state.topHeightPer * 100 + '%'
+        });
+
+        style.bottomContainer = styles(style.bottomContainer, {
+            height: (1 - state.topHeightPer) * 100 + '%'
+        });
+    }
+
+    return Full({
+        state: {
+            content: [
+                // top
+                n('div', {
+                    style: style.topContainer
+                }, [state.top]),
+
+                // bottom
+                n('div', {
+                    style: style.bottomContainer
+                }, [state.bottom])
+            ]
+        },
+        style: style.container,
+        theme
+    });
+}, {
+    defaultState: {
+        mode: MODE_PERCENTAGE,
+        topHeightPer: 0.5
+    },
+
+    defaultStyle: (theme) => {
+        return {
+            container: {},
+
+            topContainer: styles(theme.container, theme.fullParentWidth),
+
+            bottomContainer: styles(theme.container, theme.fullParentWidth)
+        };
+    }
 });
 
 
