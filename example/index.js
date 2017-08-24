@@ -1,16 +1,17 @@
 'use strict';
 
 let {
-    mount,
-    n
+    mount
 } = require('kabanery');
+
+let n = require('../lib/util/n');
 
 let FunctionBar = require('../lib/view/header/functionBar');
 let Button = require('../lib/view/button/button');
 let Input = require('../lib/view/input/input');
-let HorizontalTwo = require('../lib/view/layout/horizontalTwo');
-let VerticalTwo = require('../lib/view/layout/verticalTwo');
 let TextArea = require('../lib/view/input/textarea');
+let Hn = require('../lib/view/layout/hn');
+let Vn = require('../lib/view/layout/vn');
 
 let steadyTheme = require('../lib/theme/steady');
 
@@ -25,130 +26,130 @@ let examples = [
 
     {
         name: 'function bar',
-        render: () => FunctionBar({
-            state: {
-                title: 'demo',
-                leftLogos: [
-                    n('div', '<'), 'a', 'b'
-                ],
-                rightLogos: ['c', 'd']
-            },
+        render: () => n(FunctionBar, {
+            title: 'demo',
+            leftLogos: [
+                n('div', '<'), 'a', 'b'
+            ],
+            rightLogos: ['c', 'd'],
 
             onsignal: logSignal
         })
     },
     {
         name: 'button',
-        render: () => Button({
-            state: {
-                text: 'demo'
-            },
-
+        render: () => n(Button, {
             onsignal: logSignal
-        })
+        }, ['demo'])
     },
 
     {
         name: 'input',
-        render: () => Input({
-            state: {
-                text: 'abc'
-            },
+        render: () => n(Input, {
+            value: 'abc',
             onsignal: logSignal
         })
     },
 
     {
-        name: 'HorizontalTwo',
-        render: () => n('div', {
-            style: {
-                width: 400,
-                height: 100
-            }
-        }, [HorizontalTwo({
-            state: {
-                left: n('span', 'this is left child'),
-                right: n('span', 'this is right child')
-            },
-            style: {
-                container: {
-                    backgroundColor: 'grey'
-                },
-                leftContainer: {
-                    backgroundColor: 'blue'
-                },
-                rightContainer: {
-                    backgroundColor: 'red'
-                }
-            }
-        })])
-    },
-
-    {
-        name: 'HorizontalTwo: compose to 3',
-        render: () => n('div', {
-            style: {
-                width: 400,
-                height: 100
-            }
-        }, [HorizontalTwo({
-            state: {
-                mode: 'percentage',
-                left: HorizontalTwo({
-                    state: {
-                        mode: 'percentage',
-                        left: '1',
-                        right: '2'
-                    },
-
-                    style: {
-                        leftContainer: {
-                            backgroundColor: 'yellow'
-                        }
-                    }
-                }),
-                right: '3',
-                leftWidthPer: 0.66
-            },
-            style: {
-                container: {
-                    backgroundColor: 'grey'
-                },
-                leftContainer: {
-                    backgroundColor: 'blue'
-                },
-                rightContainer: {
-                    backgroundColor: 'red'
-                }
-            }
-        })])
-    },
-
-    {
-        name: 'VerticalTwo',
-
+        name: 'hn',
         render: () => n('div', {
             style: {
                 width: 400
             }
-        }, [VerticalTwo({
-            state: {
-                top: n('span', 'this is top child'),
-                bottom: n('span', 'this is bottom child')
-            },
-
+        }, [n(Hn, {
             style: {
-                container: {
-                    backgroundColor: 'grey'
-                },
-                topContainer: {
+                childs: [{
                     backgroundColor: 'blue'
-                },
-                bottomContainer: {
+                }, {
                     backgroundColor: 'red'
-                }
+                }, {
+                    backgroundColor: 'yellow'
+                }]
             }
-        })])
+        }, [
+            n('span', 'this is 1'),
+            n('span', 'this is 2..'),
+            n('span', 'this is 3....')
+        ])])
+    },
+
+    {
+        name: 'hn2: percentage',
+        render: () => n('div', {
+            style: {
+                width: 400
+            }
+        }, [n(Hn, {
+            mode: 'percentage',
+            pers: [4, 8, 3],
+            style: {
+                childs: [{
+                    backgroundColor: 'blue'
+                }, {
+                    backgroundColor: 'red'
+                }, {
+                    backgroundColor: 'yellow'
+                }]
+            }
+        }, [
+            n('span', 'this is 1'),
+            n('span', 'this is 2..'),
+            n('span', 'this is 3....')
+        ])])
+    },
+
+    {
+        name: 'vn',
+        render: () => n('div', {
+            style: {
+                width: 400
+            }
+        }, [
+            n(Vn, {
+                style: {
+                    childs: [{
+                        backgroundColor: 'blue'
+                    }, {
+                        backgroundColor: 'red'
+                    }, {
+                        backgroundColor: 'yellow'
+                    }]
+                }
+            }, [
+                n('span', 'this is 1'),
+                n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])
+        ])
+    },
+
+    {
+        name: 'vn2: MODE_PERCENTAGE',
+        render: () => n('div', {
+            style: {
+                width: 400,
+                height: 200
+            }
+        }, [
+            n(Vn, {
+                mode: 'percentage',
+                pers: [3, 6, 9],
+                style: {
+                    childs: [{
+                        backgroundColor: 'blue'
+                    }, {
+                        backgroundColor: 'red'
+                    }, {
+                        backgroundColor: 'yellow'
+                    }]
+                }
+            }, [
+                n('span', 'this is 1'),
+                n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])
+        ])
     }
 ];
 
@@ -180,10 +181,8 @@ let Pager = n('div', {
             }
         }, [
             n('div', 'code'),
-            TextArea({
-                state: {
-                    text: render.toString()
-                }
+            n(TextArea, {
+                value: render.toString()
             }),
             n('br'),
 

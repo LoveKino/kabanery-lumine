@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -296,117 +296,7 @@ module.exports = {
 "use strict";
 
 
-let {
-    isObject, funType, or, isString, isFalsy, likeArray
-} = __webpack_require__(0);
-
-let iterate = __webpack_require__(8);
-
-let {
-    map, reduce, find, findIndex, forEach, filter, any, exist, compact
-} = __webpack_require__(15);
-
-let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
-
-let difference = (list1, list2, fopts) => {
-    return reduce(list1, (prev, item) => {
-        if (!contain(list2, item, fopts) &&
-            !contain(prev, item, fopts)) {
-            prev.push(item);
-        }
-        return prev;
-    }, []);
-};
-
-let union = (list1, list2, fopts) => deRepeat(list2, fopts, deRepeat(list1, fopts));
-
-let mergeMap = (map1 = {}, map2 = {}) => reduce(map2, setValueKey, reduce(map1, setValueKey, {}));
-
-let setValueKey = (obj, value, key) => {
-    obj[key] = value;
-    return obj;
-};
-
-let interset = (list1, list2, fopts) => {
-    return reduce(list1, (prev, cur) => {
-        if (contain(list2, cur, fopts)) {
-            prev.push(cur);
-        }
-        return prev;
-    }, []);
-};
-
-let deRepeat = (list, fopts, init = []) => {
-    return reduce(list, (prev, cur) => {
-        if (!contain(prev, cur, fopts)) {
-            prev.push(cur);
-        }
-        return prev;
-    }, init);
-};
-
-/**
- * a.b.c
- */
-let get = funType((sandbox, name = '') => {
-    name = name.trim();
-    let parts = !name ? [] : name.split('.');
-    return reduce(parts, getValue, sandbox, invertLogic);
-}, [
-    isObject,
-    or(isString, isFalsy)
-]);
-
-let getValue = (obj, key) => obj[key];
-
-let invertLogic = v => !v;
-
-let delay = (time) => new Promise((resolve) => {
-    setTimeout(resolve, time);
-});
-
-let flat = (list) => {
-    if (likeArray(list) && !isString(list)) {
-        return reduce(list, (prev, item) => {
-            prev = prev.concat(flat(item));
-            return prev;
-        }, []);
-    } else {
-        return [list];
-    }
-};
-
-module.exports = {
-    flat,
-    contain,
-    difference,
-    union,
-    interset,
-    map,
-    reduce,
-    iterate,
-    find,
-    findIndex,
-    deRepeat,
-    forEach,
-    filter,
-    any,
-    exist,
-    get,
-    delay,
-    mergeMap,
-    compact
-};
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(14);
+module.exports = __webpack_require__(19);
 
 /**
  * @readme-doc
@@ -512,7 +402,300 @@ module.exports = __webpack_require__(14);
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    isObject, funType, or, isString, isFalsy, likeArray
+} = __webpack_require__(0);
+
+let iterate = __webpack_require__(10);
+
+let {
+    map, reduce, find, findIndex, forEach, filter, any, exist, compact
+} = __webpack_require__(20);
+
+let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
+
+let difference = (list1, list2, fopts) => {
+    return reduce(list1, (prev, item) => {
+        if (!contain(list2, item, fopts) &&
+            !contain(prev, item, fopts)) {
+            prev.push(item);
+        }
+        return prev;
+    }, []);
+};
+
+let union = (list1, list2, fopts) => deRepeat(list2, fopts, deRepeat(list1, fopts));
+
+let mergeMap = (map1 = {}, map2 = {}) => reduce(map2, setValueKey, reduce(map1, setValueKey, {}));
+
+let setValueKey = (obj, value, key) => {
+    obj[key] = value;
+    return obj;
+};
+
+let interset = (list1, list2, fopts) => {
+    return reduce(list1, (prev, cur) => {
+        if (contain(list2, cur, fopts)) {
+            prev.push(cur);
+        }
+        return prev;
+    }, []);
+};
+
+let deRepeat = (list, fopts, init = []) => {
+    return reduce(list, (prev, cur) => {
+        if (!contain(prev, cur, fopts)) {
+            prev.push(cur);
+        }
+        return prev;
+    }, init);
+};
+
+/**
+ * a.b.c
+ */
+let get = funType((sandbox, name = '') => {
+    name = name.trim();
+    let parts = !name ? [] : name.split('.');
+    return reduce(parts, getValue, sandbox, invertLogic);
+}, [
+    isObject,
+    or(isString, isFalsy)
+]);
+
+let getValue = (obj, key) => obj[key];
+
+let invertLogic = v => !v;
+
+let delay = (time) => new Promise((resolve) => {
+    setTimeout(resolve, time);
+});
+
+let flat = (list) => {
+    if (likeArray(list) && !isString(list)) {
+        return reduce(list, (prev, item) => {
+            prev = prev.concat(flat(item));
+            return prev;
+        }, []);
+    } else {
+        return [list];
+    }
+};
+
+module.exports = {
+    flat,
+    contain,
+    difference,
+    union,
+    interset,
+    map,
+    reduce,
+    iterate,
+    find,
+    findIndex,
+    deRepeat,
+    forEach,
+    filter,
+    any,
+    exist,
+    get,
+    delay,
+    mergeMap,
+    compact
+};
+
+
+/***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let styles = (...styleObjects) => {
+    return Object.assign({}, ...styleObjects);
+};
+
+let isMapObject = (v) => {
+    return v && typeof v === 'object' && !Array.isArray(v);
+};
+
+let deepMergeMap = (tar, def) => {
+    if (isMapObject(def)) {
+        tar = tar || {};
+        if (isMapObject(tar)) {
+            for (let name in def) {
+                tar[name] = deepMergeMap(tar[name], def[name]);
+            }
+        }
+        return tar;
+    } else {
+        if (tar === undefined) return def;
+        return tar;
+    }
+};
+
+let resolveFnValue = (fn, ...args) => {
+    if (typeof fn === 'function') {
+        return resolveFnValue(fn(...args));
+    }
+
+    return fn;
+};
+
+let get = (obj, key = '') => {
+    key = key.trim();
+    let parts = !key ? [] : key.split('.');
+
+    let partLen = parts.length;
+    for (let i = 0; i < partLen; i++) {
+        let part = parts[i].trim();
+        if (part) {
+            obj = obj[part];
+        }
+    }
+
+    return obj;
+};
+
+let set = (obj, key = '', value) => {
+    key = key.trim();
+    let parts = !key ? [] : key.split('.');
+    if (!parts.length) return;
+    let parent = obj;
+
+    for (let i = 0; i < parts.length - 1; i++) {
+        let part = parts[i];
+        part = part.trim();
+        if (part) {
+            let next = parent[part];
+            if (!isObject(next)) {
+                next = {};
+                parent[part] = next;
+            }
+            parent = next;
+        }
+    }
+
+    parent[parts[parts.length - 1]] = value;
+    return obj;
+};
+
+let isObject = (v) => v && typeof v === 'object';
+
+let likeArray = (v) => v && typeof v === 'object' && typeof v.length === 'number';
+
+module.exports = {
+    styles,
+    isMapObject,
+    deepMergeMap,
+    resolveFnValue,
+    get,
+    set,
+    isObject,
+    likeArray
+};
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    view
+} = __webpack_require__(1);
+
+let steadyTheme = __webpack_require__(14);
+
+let {
+    deepMergeMap,
+    resolveFnValue
+} = __webpack_require__(3);
+
+let ClassTable = __webpack_require__(36);
+
+/**
+ * define the general interface for lumine view
+ *
+ * 1. unify view data structure
+ *
+ *    view data = {
+ *       // public data
+ *       props,
+ *       children // child views
+ *    }
+ *
+ *    props.onsigal
+ *    props.theme
+ *
+ * 2. onsignal interface
+ *
+ *    onsignal: (signal, data, ctx) -> Any
+ */
+
+module.exports = (viewFun, {
+    defaultProps = {},
+    defaultChildren = [],
+    theme = steadyTheme,
+    classTable
+} = {}) => {
+    let defaultStyle = defaultProps.style || {};
+
+    let defaultStyleValue = resolveFnValue(defaultStyle, theme);
+    let classTableValue = resolveFnValue(classTable, theme);
+
+    let {
+        appendStyle,
+        getClassName,
+        updateClassTable
+    } = ClassTable(classTableValue);
+
+    return view((viewData, ctx) => {
+        viewData.props = viewData.props || {};
+        viewData.children = viewData.children || defaultChildren;
+        viewData.props.theme = viewData.props.theme || theme;
+
+        appendStyle();
+        // TODO check view Data
+
+        // update defaultStyleValue
+        if (viewData.props.theme && typeof defaultStyle === 'function') {
+            defaultStyleValue = resolveFnValue(defaultStyle, viewData.props.theme);
+        }
+
+        // update class table
+        if (viewData.theme && typeof classTable === 'function') {
+            classTableValue = resolveFnValue(classTable, viewData.props.theme);
+            updateClassTable(classTableValue);
+        }
+
+        // merge (deep merge)
+        viewData.props.style = deepMergeMap(viewData.props.style, defaultStyleValue);
+        viewData.props = deepMergeMap(viewData.props, defaultProps);
+
+        let notify = (signal) => {
+            viewData.props.onsignal && viewData.props.onsignal(signal, ctx.getData(), ctx);
+        };
+
+        ctx.notify = notify;
+        ctx.getClassName = getClassName;
+
+        return viewFun(viewData, ctx);
+    });
+};
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -520,7 +703,7 @@ module.exports = __webpack_require__(14);
 
 let {
     reduce
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 let {
     funType, isObject, or, isString, isFalsy
 } = __webpack_require__(0);
@@ -668,99 +851,38 @@ module.exports = {
 
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let styles = (...styleObjects) => {
-    return Object.assign({}, ...styleObjects);
+let Signal = (type, data) => {
+    return {
+        type,
+        data
+    };
 };
 
-let isMapObject = (v) => {
-    return v && typeof v === 'object' && !Array.isArray(v);
+let isSignalType = (s, type) => {
+    return s.type === type;
 };
 
-let deepMergeMap = (tar, def) => {
-    if (isMapObject(def)) {
-        tar = tar || {};
-        if (isMapObject(tar)) {
-            for (let name in def) {
-                tar[name] = deepMergeMap(tar[name], def[name]);
-            }
-        }
-        return tar;
-    } else {
-        if (tar === undefined) return def;
-        return tar;
+let onSignalType = (expectType, fn) => (signal, ...rest) => {
+    if (isSignalType(signal, expectType)) {
+        return fn(signal, ...rest);
     }
 };
-
-let resolveFnValue = (fn, ...args) => {
-    if (typeof fn === 'function') {
-        return resolveFnValue(fn(...args));
-    }
-
-    return fn;
-};
-
-let get = (obj, key = '') => {
-    key = key.trim();
-    let parts = !key ? [] : key.split('.');
-
-    let partLen = parts.length;
-    for (let i = 0; i < partLen; i++) {
-        let part = parts[i].trim();
-        if (part) {
-            obj = obj[part];
-        }
-    }
-
-    return obj;
-};
-
-let set = (obj, key = '', value) => {
-    key = key.trim();
-    let parts = !key ? [] : key.split('.');
-    if (!parts.length) return;
-    let parent = obj;
-
-    for (let i = 0; i < parts.length - 1; i++) {
-        let part = parts[i];
-        part = part.trim();
-        if (part) {
-            let next = parent[part];
-            if (!isObject(next)) {
-                next = {};
-                parent[part] = next;
-            }
-            parent = next;
-        }
-    }
-
-    parent[parts[parts.length - 1]] = value;
-    return obj;
-};
-
-let isObject = (v) => v && typeof v === 'object';
-
-let likeArray = (v) => v && typeof v === 'object' && typeof v.length === 'number';
 
 module.exports = {
-    styles,
-    isMapObject,
-    deepMergeMap,
-    resolveFnValue,
-    get,
-    set,
-    isObject,
-    likeArray
+    Signal,
+    onSignalType,
+    isSignalType
 };
 
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -768,14 +890,14 @@ module.exports = {
 
 let {
     map
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 let {
     isObject, isNode
 } = __webpack_require__(0);
 
-let parseArgs = __webpack_require__(16);
+let parseArgs = __webpack_require__(21);
 
-let parseStyle = __webpack_require__(9);
+let parseStyle = __webpack_require__(11);
 
 const KABANERY_NODE = 'kabanery_node';
 
@@ -877,7 +999,7 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -885,19 +1007,19 @@ module.exports = {
 
 let {
     createElement, createSvgElement
-} = __webpack_require__(27);
+} = __webpack_require__(32);
 
 let {
     bindEvents
-} = __webpack_require__(7);
+} = __webpack_require__(9);
 
 let {
     map
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 let {
     isKabaneryNode
-} = __webpack_require__(5);
+} = __webpack_require__(7);
 
 let reduceNode = (node) => {
     if (isKabaneryNode(node)) {
@@ -919,13 +1041,13 @@ module.exports = reduceNode;
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let EventMatrix = __webpack_require__(28);
+let EventMatrix = __webpack_require__(33);
 
 let {
     listenEventType,
@@ -950,7 +1072,7 @@ module.exports = {
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1057,7 +1179,7 @@ module.exports = iterate;
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1123,7 +1245,7 @@ let convertStyleValue = (value, key) => {
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1131,7 +1253,7 @@ let convertStyleValue = (value, key) => {
 
 let {
     attachDocument
-} = __webpack_require__(7);
+} = __webpack_require__(9);
 
 let {
     isNode
@@ -1139,9 +1261,9 @@ let {
 
 let {
     flat, forEach
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
-let reduceNode = __webpack_require__(6);
+let reduceNode = __webpack_require__(8);
 
 /**
  * @param parentNode
@@ -1170,96 +1292,182 @@ let getDoc = (node) => {
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 let {
-    view
-} = __webpack_require__(2);
+    n,
+    parseArgs
+} = __webpack_require__(1);
 
-let steadyTheme = __webpack_require__(31);
+module.exports = (...args) => {
+    let tagName = args[0];
 
-let {
-    deepMergeMap,
-    resolveFnValue
-} = __webpack_require__(4);
+    if (typeof tagName === 'string') {
+        return n(...args);
+    } else {
+        let {
+            attributes,
+            childs
+        } = parseArgs(args, {
+            doParseStyle: false
+        });
 
-let ClassTable = __webpack_require__(32);
-
-/**
- * define the general interface for lumine view
- *
- * 1. unify view data structure
- *
- *    view data = {
- *       // public data
- *       state,  // describle the view state data
- *       style,  // style map
- *       theme,  // theme
- *       onsignal  // signal handler
- *    }
- *
- * 2. onsignal interface
- *
- *    onsignal: (signal, data, ctx) -> Any
- */
-
-module.exports = (viewFun, {
-    defaultState = {},
-    defaultStyle = {},
-    theme = steadyTheme,
-    classTable
-} = {}) => {
-    let defaultStyleValue = resolveFnValue(defaultStyle, theme);
-    let classTableValue = resolveFnValue(classTable, theme);
-
-    let {
-        appendStyle,
-        getClassName,
-        updateClassTable
-    } = ClassTable(classTableValue);
-
-    return view((viewData, ctx) => {
-        appendStyle();
-        // TODO check view Data
-
-        // update defaultStyleValue
-        if (viewData.theme && typeof defaultStyle === 'function') {
-            defaultStyleValue = resolveFnValue(defaultStyle, viewData.theme);
-        }
-
-        // update class table
-        if (viewData.theme && typeof classTable === 'function') {
-            classTableValue = resolveFnValue(classTable, viewData.theme);
-            updateClassTable(classTableValue);
-        }
-
-        // merge (deep merge)
-        viewData.style = deepMergeMap(viewData.style, defaultStyleValue);
-
-        viewData.state = deepMergeMap(viewData.state, defaultState);
-
-        let notify = (signal) => {
-            viewData.onsignal && viewData.onsignal(signal, ctx.getData(), ctx);
-        };
-
-        ctx.notify = notify;
-        ctx.getClassName = getClassName;
-
-        return viewFun({
-            style: viewData.style,
-            state: viewData.state,
-            theme: viewData.theme || steadyTheme
-        }, ctx);
-    });
+        return tagName({
+            props: attributes,
+            children: childs
+        });
+    }
 };
 
 
 /***/ }),
-/* 12 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    styles
+} = __webpack_require__(3);
+
+let basics = {
+    pageColor: '#e4e4e4',
+    hoverColor: '#e9ece5',
+    blockColor: '#3b3a36',
+    borderColor: '#b3c2bf',
+    fontColor: 'white',
+
+    titleSize: 20,
+    normalSize: 16,
+
+    narrowPadding: '4 8 4 8',
+
+    contrastBlockColor: 'white',
+    contrastFontColor: 'black'
+};
+
+let container = {
+    position: 'relative',
+    boxSizing: 'border-box',
+    margin: 0,
+    padding: 0,
+    border: 0,
+    borderRadius: 0,
+    overflow: 'auto'
+};
+
+let fullParentHeight = {
+    height: '100%'
+};
+
+let fullParentWidth = {
+    width: '100%'
+};
+
+let fullParent = styles(container, fullParentWidth, fullParentHeight);
+
+let bulk = styles(container, {
+    minWidth: 40,
+    backgroundColor: basics.blockColor,
+    color: basics.fontColor
+});
+
+let contrastBulk = styles(bulk, {
+    backgroundColor: basics.contrastBlockColor,
+    color: basics.contrastFontColor
+});
+
+let oneLineBulk = styles(bulk, {
+    padding: basics.narrowPadding,
+    fontSize: basics.normalSize,
+    textAlign: 'center',
+    lineHeight: 20,
+    textDecoration: 'none',
+    border: 'none',
+    color: basics.fontColor
+});
+
+let flat = {
+    appearance: 'none',
+    '-webkit-appearance': 'none',
+    '-moz-appearance': 'none',
+    boxShadow: 'none',
+    borderRadius: 'none',
+    border: 0
+};
+
+let inputBox = styles(contrastBulk, flat, {
+    width: 260,
+    padding: basics.narrowPadding,
+    backgroundColor: basics.fontColor
+});
+
+let textAreaBox = styles(inputBox, {
+    width: 360,
+    height: 200,
+    outline: 'none',
+    resize: 'none',
+    overflow: 'auto',
+    border: `1px solid ${basics.borderColor}`,
+    borderRadius: 5,
+    fontSize: 16
+});
+
+let underLineBorder = {
+    border: 0,
+    borderRadius: 0,
+    'border-bottom': `1px solid ${basics.borderColor}`
+};
+
+let underLineFocus = {
+    'border-bottom': `2px solid ${basics.blockColor}`
+};
+
+let actions = {
+    cling: {
+        margin: 0,
+        padding: 0,
+        boxSizing: 'border-box'
+    },
+
+    hover: {
+        backgroundColor: basics.hoverColor
+    },
+
+    active: {
+        backgroundColor: basics.hoverColor
+    },
+
+    focus: {
+        outline: 'none'
+    }
+};
+
+module.exports = {
+    basics,
+
+    bulk,
+    oneLineBulk,
+    inputBox,
+    textAreaBox,
+    underLineBorder,
+    underLineFocus,
+    container,
+    fullParent,
+    fullParentWidth,
+    fullParentHeight,
+
+    actions
+};
+
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1267,35 +1475,34 @@ module.exports = (viewFun, {
 
 let {
     n
-} = __webpack_require__(2);
-let lumineView = __webpack_require__(11);
+} = __webpack_require__(1);
+let lumineView = __webpack_require__(4);
 let {
     Signal
-} = __webpack_require__(33);
+} = __webpack_require__(6);
 let {
     styles
-} = __webpack_require__(4);
+} = __webpack_require__(3);
 
 module.exports = lumineView(({
-    state,
-    style
+    props,
+    children
 }, {
     notify,
     getClassName
 }) => {
+    // TODO validate
     return n('button', {
         'class': `${getClassName('btn')}`,
-        style,
+        style: props.style,
         onclick: () => {
             notify(Signal('click'));
         }
-    }, state.text);
+    }, children[0]);
 }, {
-    defaultState: {
-        text: ''
+    defaultProps: {
+        style: (theme) => styles(theme.oneLineBulk)
     },
-
-    defaultStyle: (theme) => styles(theme.oneLineBulk),
 
     classTable: (theme) => {
         return {
@@ -1308,25 +1515,67 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 13 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 let {
-    mount,
     n
-} = __webpack_require__(2);
+} = __webpack_require__(1);
+let lumineView = __webpack_require__(4);
+let {
+    styles
+} = __webpack_require__(3);
 
-let FunctionBar = __webpack_require__(30);
-let Button = __webpack_require__(12);
-let Input = __webpack_require__(34);
-let HorizontalTwo = __webpack_require__(35);
-let VerticalTwo = __webpack_require__(37);
-let TextArea = __webpack_require__(38);
+module.exports = lumineView(({
+    props,
+    children
+}) => {
+    return n('div', {
+        style: props.style
+    }, children);
+}, {
+    defaultProps: {
+        style: (theme) => styles(theme.fullParent)
+    },
 
-let steadyTheme = __webpack_require__(31);
+    defaultChildren: ['']
+});
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+module.exports = {
+    MODE_PILE: 'pile',
+    MODE_PERCENTAGE: 'percentage'
+};
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    mount
+} = __webpack_require__(1);
+
+let n = __webpack_require__(13);
+
+let FunctionBar = __webpack_require__(35);
+let Button = __webpack_require__(15);
+let Input = __webpack_require__(37);
+let TextArea = __webpack_require__(40);
+let Hn = __webpack_require__(41);
+let Vn = __webpack_require__(42);
+
+let steadyTheme = __webpack_require__(14);
 
 let log = console.log; // eslint-disable-line
 
@@ -1339,130 +1588,130 @@ let examples = [
 
     {
         name: 'function bar',
-        render: () => FunctionBar({
-            state: {
-                title: 'demo',
-                leftLogos: [
-                    n('div', '<'), 'a', 'b'
-                ],
-                rightLogos: ['c', 'd']
-            },
+        render: () => n(FunctionBar, {
+            title: 'demo',
+            leftLogos: [
+                n('div', '<'), 'a', 'b'
+            ],
+            rightLogos: ['c', 'd'],
 
             onsignal: logSignal
         })
     },
     {
         name: 'button',
-        render: () => Button({
-            state: {
-                text: 'demo'
-            },
-
+        render: () => n(Button, {
             onsignal: logSignal
-        })
+        }, ['demo'])
     },
 
     {
         name: 'input',
-        render: () => Input({
-            state: {
-                text: 'abc'
-            },
+        render: () => n(Input, {
+            value: 'abc',
             onsignal: logSignal
         })
     },
 
     {
-        name: 'HorizontalTwo',
-        render: () => n('div', {
-            style: {
-                width: 400,
-                height: 100
-            }
-        }, [HorizontalTwo({
-            state: {
-                left: n('span', 'this is left child'),
-                right: n('span', 'this is right child')
-            },
-            style: {
-                container: {
-                    backgroundColor: 'grey'
-                },
-                leftContainer: {
-                    backgroundColor: 'blue'
-                },
-                rightContainer: {
-                    backgroundColor: 'red'
-                }
-            }
-        })])
-    },
-
-    {
-        name: 'HorizontalTwo: compose to 3',
-        render: () => n('div', {
-            style: {
-                width: 400,
-                height: 100
-            }
-        }, [HorizontalTwo({
-            state: {
-                mode: 'percentage',
-                left: HorizontalTwo({
-                    state: {
-                        mode: 'percentage',
-                        left: '1',
-                        right: '2'
-                    },
-
-                    style: {
-                        leftContainer: {
-                            backgroundColor: 'yellow'
-                        }
-                    }
-                }),
-                right: '3',
-                leftWidthPer: 0.66
-            },
-            style: {
-                container: {
-                    backgroundColor: 'grey'
-                },
-                leftContainer: {
-                    backgroundColor: 'blue'
-                },
-                rightContainer: {
-                    backgroundColor: 'red'
-                }
-            }
-        })])
-    },
-
-    {
-        name: 'VerticalTwo',
-
+        name: 'hn',
         render: () => n('div', {
             style: {
                 width: 400
             }
-        }, [VerticalTwo({
-            state: {
-                top: n('span', 'this is top child'),
-                bottom: n('span', 'this is bottom child')
-            },
-
+        }, [n(Hn, {
             style: {
-                container: {
-                    backgroundColor: 'grey'
-                },
-                topContainer: {
+                childs: [{
                     backgroundColor: 'blue'
-                },
-                bottomContainer: {
+                }, {
                     backgroundColor: 'red'
-                }
+                }, {
+                    backgroundColor: 'yellow'
+                }]
             }
-        })])
+        }, [
+            n('span', 'this is 1'),
+            n('span', 'this is 2..'),
+            n('span', 'this is 3....')
+        ])])
+    },
+
+    {
+        name: 'hn2: percentage',
+        render: () => n('div', {
+            style: {
+                width: 400
+            }
+        }, [n(Hn, {
+            mode: 'percentage',
+            pers: [4, 8, 3],
+            style: {
+                childs: [{
+                    backgroundColor: 'blue'
+                }, {
+                    backgroundColor: 'red'
+                }, {
+                    backgroundColor: 'yellow'
+                }]
+            }
+        }, [
+            n('span', 'this is 1'),
+            n('span', 'this is 2..'),
+            n('span', 'this is 3....')
+        ])])
+    },
+
+    {
+        name: 'vn',
+        render: () => n('div', {
+            style: {
+                width: 400
+            }
+        }, [
+            n(Vn, {
+                style: {
+                    childs: [{
+                        backgroundColor: 'blue'
+                    }, {
+                        backgroundColor: 'red'
+                    }, {
+                        backgroundColor: 'yellow'
+                    }]
+                }
+            }, [
+                n('span', 'this is 1'),
+                n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])
+        ])
+    },
+
+    {
+        name: 'vn2: MODE_PERCENTAGE',
+        render: () => n('div', {
+            style: {
+                width: 400,
+                height: 200
+            }
+        }, [
+            n(Vn, {
+                mode: 'percentage',
+                pers: [3, 6, 9],
+                style: {
+                    childs: [{
+                        backgroundColor: 'blue'
+                    }, {
+                        backgroundColor: 'red'
+                    }, {
+                        backgroundColor: 'yellow'
+                    }]
+                }
+            }, [
+                n('span', 'this is 1'),
+                n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])
+        ])
     }
 ];
 
@@ -1494,10 +1743,8 @@ let Pager = n('div', {
             }
         }, [
             n('div', 'code'),
-            TextArea({
-                state: {
-                    text: render.toString()
-                }
+            n(TextArea, {
+                value: render.toString()
             }),
             n('br'),
 
@@ -1511,7 +1758,7 @@ mount(Pager, document.body);
 
 
 /***/ }),
-/* 14 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1519,19 +1766,19 @@ mount(Pager, document.body);
 
 let {
     n, svgn, bindPlugs, toHTML, parseArgs, isKabaneryNode, cn, parseStyle
-} = __webpack_require__(5);
+} = __webpack_require__(7);
 
-let plugs = __webpack_require__(18);
+let plugs = __webpack_require__(23);
 
-let view = __webpack_require__(21);
+let view = __webpack_require__(26);
 
-let mount = __webpack_require__(10);
+let mount = __webpack_require__(12);
 
-let N = __webpack_require__(29);
+let N = __webpack_require__(34);
 
-let reduceNode = __webpack_require__(6);
+let reduceNode = __webpack_require__(8);
 
-let {dispatchEvent} = __webpack_require__(7);
+let {dispatchEvent} = __webpack_require__(9);
 
 module.exports = {
     n,
@@ -1553,13 +1800,13 @@ module.exports = {
 
 
 /***/ }),
-/* 15 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let iterate = __webpack_require__(8);
+let iterate = __webpack_require__(10);
 
 let defauls = {
     eq: (v1, v2) => v1 === v2
@@ -1658,19 +1905,26 @@ module.exports = {
 
 
 /***/ }),
-/* 16 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let parseAttribute = __webpack_require__(17);
+let parseAttribute = __webpack_require__(22);
 
 let {
-    isString, isObject, isNode, likeArray, isNumber, isBool
+    isString,
+    isObject,
+    isNode,
+    likeArray,
+    isNumber,
+    isBool
 } = __webpack_require__(0);
 
-let parseArgs = (args) => {
+let parseArgs = (args, {
+    doParseStyle = true
+} = {}) => {
     let tagName,
         attributes = {},
         childExp = [];
@@ -1685,8 +1939,6 @@ let parseArgs = (args) => {
     } else {
         tagName = first;
     }
-
-    tagName = tagName.toLowerCase().trim();
 
     let next = args.shift();
 
@@ -1703,7 +1955,9 @@ let parseArgs = (args) => {
         childExp = args.shift() || [];
     }
 
-    attributes = parseAttribute(attributes, nextAttr);
+    attributes = parseAttribute(attributes, nextAttr, {
+        doParseStyle
+    });
 
     let childs = parseChildExp(childExp);
 
@@ -1715,9 +1969,13 @@ let parseArgs = (args) => {
 };
 
 let splitTagNameAttribute = (str = '') => {
+    if (typeof str !== 'string') return [str];
+
     let tagName = str.split(' ')[0];
     let attr = str.substring(tagName.length);
     attr = attr && attr.trim();
+
+    tagName = tagName.toLowerCase().trim();
     if (attr) {
         return [tagName, attr];
     } else {
@@ -1744,7 +2002,7 @@ module.exports = parseArgs;
 
 
 /***/ }),
-/* 17 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1754,17 +2012,19 @@ let {
     isString
 } = __webpack_require__(0);
 
-let parseStyle = __webpack_require__(9);
+let parseStyle = __webpack_require__(11);
 
 let {
     mergeMap
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 const ITEM_REG = /([\w-]+)\s*=\s*(([\w-]+)|('.*?')|(".*?"))/;
 
 // TODO better key=value grammer
 // TODO refactor with grammerL: class grammer, id grammer, refer some popular grammer
-let parseAttribute = (attributes, nextAttr) => {
+let parseAttribute = (attributes, nextAttr, {
+    doParseStyle
+}) => {
     // key=value key=value
     // value='abc' value=true value=123 value="def"
     if (isString(attributes)) {
@@ -1796,7 +2056,7 @@ let parseAttribute = (attributes, nextAttr) => {
     // merge
     attributes = mergeMap(attributes, nextAttr);
 
-    if (attributes.style) {
+    if (attributes.style && doParseStyle) {
         attributes.style = parseStyle(attributes.style);
     }
 
@@ -1816,14 +2076,14 @@ module.exports = parseAttribute;
 
 
 /***/ }),
-/* 18 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let twowaybinding = __webpack_require__(19);
-let eventError = __webpack_require__(20);
+let twowaybinding = __webpack_require__(24);
+let eventError = __webpack_require__(25);
 
 module.exports = {
     twowaybinding,
@@ -1832,7 +2092,7 @@ module.exports = {
 
 
 /***/ }),
-/* 19 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1840,7 +2100,7 @@ module.exports = {
 
 let {
     get, set
-} = __webpack_require__(3);
+} = __webpack_require__(5);
 
 module.exports = (obj, path) => (tagName, attributes, childExp) => {
     let value = get(obj, path, '');
@@ -1859,7 +2119,7 @@ module.exports = (obj, path) => (tagName, attributes, childExp) => {
 
 
 /***/ }),
-/* 20 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1891,7 +2151,7 @@ let wrapEventHandler = (fun, catcher) => {
 
 
 /***/ }),
-/* 21 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1899,7 +2159,7 @@ let wrapEventHandler = (fun, catcher) => {
 
 let {
     set
-} = __webpack_require__(3);
+} = __webpack_require__(5);
 
 let {
     isObject,
@@ -1909,13 +2169,13 @@ let {
 
 let {
     forEach
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
-let replace = __webpack_require__(22);
+let replace = __webpack_require__(27);
 
-let reduceNode = __webpack_require__(6);
+let reduceNode = __webpack_require__(8);
 
-let mount = __webpack_require__(10);
+let mount = __webpack_require__(12);
 
 /**
  * render function: (data) => node
@@ -2110,7 +2370,7 @@ module.exports = View;
 
 
 /***/ }),
-/* 22 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2118,7 +2378,7 @@ module.exports = View;
 
 let {
     toArray
-} = __webpack_require__(3);
+} = __webpack_require__(5);
 
 let {
     isNode
@@ -2126,9 +2386,9 @@ let {
 
 let {
     forEach
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
-let applyAttibutes = __webpack_require__(23);
+let applyAttibutes = __webpack_require__(28);
 
 let replaceDirectly = (node, newNode) => {
     let parent = node.parentNode;
@@ -2242,7 +2502,7 @@ module.exports = (node, newNode) => {
 
 
 /***/ }),
-/* 23 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2250,15 +2510,15 @@ module.exports = (node, newNode) => {
 
 let {
     getAttributeMap
-} = __webpack_require__(24);
+} = __webpack_require__(29);
 
 let {
     hasOwnProperty
-} = __webpack_require__(3);
+} = __webpack_require__(5);
 
 let {
     forEach
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 let applyAttibutes = (node, newNode) => {
     // attributes
@@ -2289,15 +2549,15 @@ module.exports = applyAttibutes;
 
 
 /***/ }),
-/* 24 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let shadowFrame = __webpack_require__(25);
+let shadowFrame = __webpack_require__(30);
 
-let startMomenter = __webpack_require__(26);
+let startMomenter = __webpack_require__(31);
 
 let getX = (elem) => {
     var x = 0;
@@ -2380,7 +2640,7 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2435,7 +2695,7 @@ module.exports = shadowFrame;
 
 
 /***/ }),
-/* 26 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2491,7 +2751,7 @@ module.exports = startMomenter;
 
 
 /***/ }),
-/* 27 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2538,7 +2798,7 @@ module.exports = {
 
 
 /***/ }),
-/* 28 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2546,7 +2806,7 @@ module.exports = {
 
 let {
     contain
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 module.exports = () => {
     let docs = [];
@@ -2665,7 +2925,7 @@ let getGlobalEventTypeId = (type) => `__event_type_id_${type}`;
 
 
 /***/ }),
-/* 29 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2673,7 +2933,7 @@ let getGlobalEventTypeId = (type) => `__event_type_id_${type}`;
 
 let {
     n
-} = __webpack_require__(5);
+} = __webpack_require__(7);
 
 let {
     isArray, isFunction, isObject
@@ -2681,7 +2941,7 @@ let {
 
 let {
     map
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 module.exports = (...args) => {
     let tagName = args[0],
@@ -2721,30 +2981,26 @@ module.exports = (...args) => {
 
 
 /***/ }),
-/* 30 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let {
-    n
-} = __webpack_require__(2);
-let lumineView = __webpack_require__(11);
+let lumineView = __webpack_require__(4);
 let {
     styles
-} = __webpack_require__(4);
+} = __webpack_require__(3);
 
-let Button = __webpack_require__(12);
+let Button = __webpack_require__(15);
 let {
     Signal,
     onSignalType
-} = __webpack_require__(33);
+} = __webpack_require__(6);
+let n = __webpack_require__(13);
 
 module.exports = lumineView(({
-    state,
-    style,
-    theme
+    props
 }, {
     notify
 }) => {
@@ -2758,45 +3014,39 @@ module.exports = lumineView(({
     };
 
     let logoRight = (logoRightNode, index) => {
-        return Button({
-            style: style.logoRight,
-            state: {
-                text: logoRightNode
-            },
-            theme,
+        return n(Button, {
+            theme: props.theme,
+            style: props.style.logoRight,
             onsignal: onSignalType('click', () => onLogoSignal('rightLogo', index))
-        });
+        }, [logoRightNode]);
     };
 
     let logoLeft = (logoLeftNode, index) => {
-        return Button({
-            style: style.logoLeft,
-            state: {
-                text: logoLeftNode
-            },
-            theme,
+        return n(Button, {
+            theme: props.theme,
+            style: props.style.logoLeft,
             onsignal: onSignalType('click', () => onLogoSignal('leftLogos', index))
-        });
+        }, [logoLeftNode]);
     };
 
     return n('div', {
-        style: style.container
+        style: props.style.container
     }, [
-        state.leftLogos.map(logoLeft),
+        props.leftLogos.map(logoLeft),
 
-        state.rightLogos.reduce((prev, logo, index) => {
+        props.rightLogos.reduce((prev, logo, index) => {
             prev.unshift(logoRight(logo, index));
             return prev;
         }, []),
 
         n('div', {
-            style: style.title
-        }, state.title),
+            style: props.style.title
+        }, props.title),
 
         n('div style="clear:both"')
     ]);
 }, {
-    defaultState: {
+    defaultProps: {
         title: '',
         leftLogos: [],
         rightLogos: [],
@@ -2804,181 +3054,39 @@ module.exports = lumineView(({
             type: 0,
             sourceType: null,
             index: null
+        },
+
+        style: (theme) => {
+            return {
+                title: {
+                    textAlign: 'center',
+                    color: 'white',
+                    fontSize: theme.basics.titleSize,
+                    lineHeight: 40
+                },
+                container: styles(theme.oneLineBulk, theme.actions.cling, {
+                    height: 40,
+                    width: '100%',
+                    overflow: 'hidden'
+                }),
+                logoLeft: {
+                    'float': 'left',
+                    height: 40,
+                    cursor: 'pointer'
+                },
+                logoRight: {
+                    'float': 'right',
+                    height: 40,
+                    cursor: 'pointer'
+                }
+            };
         }
-    },
-
-    defaultStyle: (theme) => {
-        return {
-            title: {
-                textAlign: 'center',
-                color: 'white',
-                fontSize: theme.basics.titleSize,
-                lineHeight: 40
-            },
-            container: styles(theme.oneLineBulk, theme.actions.cling, {
-                height: 40,
-                width: '100%',
-                overflow: 'hidden'
-            }),
-            logoLeft: {
-                'float': 'left',
-                height: 40,
-                cursor: 'pointer'
-            },
-            logoRight: {
-                'float': 'right',
-                height: 40,
-                cursor: 'pointer'
-            }
-        };
     }
 });
 
 
 /***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    styles
-} = __webpack_require__(4);
-
-let basics = {
-    pageColor: '#e4e4e4',
-    hoverColor: '#e9ece5',
-    blockColor: '#3b3a36',
-    borderColor: '#b3c2bf',
-    fontColor: 'white',
-
-    titleSize: 20,
-    normalSize: 16,
-
-    narrowPadding: '4 8 4 8',
-
-    contrastBlockColor: 'white',
-    contrastFontColor: 'black'
-};
-
-let container = {
-    position: 'relative',
-    boxSizing: 'border-box',
-    margin: 0,
-    padding: 0,
-    border: 0,
-    borderRadius: 0,
-    overflow: 'auto'
-};
-
-let fullParentHeight = {
-    height: '100%'
-};
-
-let fullParentWidth = {
-    width: '100%'
-};
-
-let fullParent = styles(container, fullParentWidth, fullParentHeight);
-
-let bulk = styles(container, {
-    minWidth: 40,
-    backgroundColor: basics.blockColor,
-    color: basics.fontColor
-});
-
-let contrastBulk = styles(bulk, {
-    backgroundColor: basics.contrastBlockColor,
-    color: basics.contrastFontColor
-});
-
-let oneLineBulk = styles(bulk, {
-    padding: basics.narrowPadding,
-    fontSize: basics.normalSize,
-    textAlign: 'center',
-    lineHeight: 20,
-    textDecoration: 'none',
-    border: 'none',
-    color: basics.fontColor
-});
-
-let flat = {
-    appearance: 'none',
-    '-webkit-appearance': 'none',
-    '-moz-appearance': 'none',
-    boxShadow: 'none',
-    borderRadius: 'none',
-    border: 0
-};
-
-let inputBox = styles(contrastBulk, flat, {
-    width: 260,
-    padding: basics.narrowPadding,
-    backgroundColor: basics.fontColor
-});
-
-let textAreaBox = styles(inputBox, {
-    width: 360,
-    height: 200,
-    outline: 'none',
-    resize: 'none',
-    overflow: 'auto',
-    border: `1px solid ${basics.borderColor}`,
-    borderRadius: 5,
-    fontSize: 16
-});
-
-let underLineBorder = {
-    border: 0,
-    borderRadius: 0,
-    'border-bottom': `1px solid ${basics.borderColor}`
-};
-
-let underLineFocus = {
-    'border-bottom': `2px solid ${basics.blockColor}`
-};
-
-let actions = {
-    cling: {
-        margin: 0,
-        padding: 0,
-        boxSizing: 'border-box'
-    },
-
-    hover: {
-        backgroundColor: basics.hoverColor
-    },
-
-    active: {
-        backgroundColor: basics.hoverColor
-    },
-
-    focus: {
-        outline: 'none'
-    }
-};
-
-module.exports = {
-    basics,
-
-    bulk,
-    oneLineBulk,
-    inputBox,
-    textAreaBox,
-    underLineBorder,
-    underLineFocus,
-    container,
-    fullParent,
-    fullParentWidth,
-    fullParentHeight,
-
-    actions
-};
-
-
-/***/ }),
-/* 32 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2986,13 +3094,13 @@ module.exports = {
 
 let {
     isMapObject
-} = __webpack_require__(4);
+} = __webpack_require__(3);
 
 let {
     mount,
     n,
     parseStyle
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
 const VIEW_CLASS_PREFIX = 'kabanery-lumine';
 
@@ -3056,38 +3164,7 @@ module.exports = (classTable) => {
 
 
 /***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let Signal = (type, data) => {
-    return {
-        type,
-        data
-    };
-};
-
-let isSignalType = (s, type) => {
-    return s.type === type;
-};
-
-let onSignalType = (expectType, fn) => (signal, ...rest) => {
-    if (isSignalType(signal, expectType)) {
-        return fn(signal, ...rest);
-    }
-};
-
-module.exports = {
-    Signal,
-    onSignalType,
-    isSignalType
-};
-
-
-/***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3095,44 +3172,42 @@ module.exports = {
 
 let {
     n
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
-let lumineView = __webpack_require__(11);
+let lumineView = __webpack_require__(4);
 
 let {
     Signal
-} = __webpack_require__(33);
+} = __webpack_require__(6);
 
 let {
     styles
-} = __webpack_require__(4);
+} = __webpack_require__(3);
 
 module.exports = lumineView(({
-    state,
-    style
+    props
 }, {
     notify,
     getClassName
 }) => {
     return n('input', {
         'class': `${getClassName('input')}`,
-        style,
-        type: state.type,
-        placeholder: state.placeholder,
+        style: props.style,
+        type: props.type,
+        placeholder: props.placeholder,
         oninput: (e) => {
-            state.text = e.target.value;
+            props.value = e.target.value;
             notify(Signal('input'));
         },
-        value: state.text
+        value: props.value
     });
 }, {
-    defaultState: {
-        text: '',
-        type: 'text',
-        placeholder: ''
+    defaultProps: {
+        value: '',
+        type: 'value',
+        placeholder: '',
+        style: (theme) => styles(theme.inputBox, theme.underLineBorder)
     },
-
-    defaultStyle: (theme) => styles(theme.inputBox, theme.underLineBorder),
 
     classTable: (theme) => {
         return {
@@ -3143,265 +3218,207 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 35 */
+/* 38 */,
+/* 39 */,
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(11);
-
 let {
     n
-} = __webpack_require__(2);
+} = __webpack_require__(1);
 
-let Full = __webpack_require__(36);
+let lumineView = __webpack_require__(4);
+
+let {
+    Signal
+} = __webpack_require__(6);
 
 let {
     styles
-} = __webpack_require__(4);
+} = __webpack_require__(3);
+
+module.exports = lumineView(({
+    props
+}, {
+    notify,
+    getClassName
+}) => {
+    return n('textarea', {
+        'class': `${getClassName('valuearea')}`,
+        style: props.style,
+        type: props.type,
+        placeholder: props.placeholder,
+        oninput: (e) => {
+            props.value = e.target.value;
+            notify(Signal('input'));
+        }
+    }, [props.value]);
+}, {
+    defaultProps: {
+        value: '',
+        type: 'value',
+        placeholder: '',
+        style: (theme) => styles(theme.textAreaBox)
+    },
+
+    classTable: (theme) => {
+        return {
+            'valuearea:focus': styles(theme.actions.focus)
+        };
+    }
+});
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let lumineView = __webpack_require__(4);
+
+let n = __webpack_require__(13);
+
+let Full = __webpack_require__(16);
+
+let {
+    styles
+} = __webpack_require__(3);
 
 const {
     MODE_PERCENTAGE,
     MODE_PILE
-} = __webpack_require__(39);
+} = __webpack_require__(17);
 
 /**
  * left + right
  */
 
 module.exports = lumineView(({
-    state,
-    theme,
-    style
+    props,
+    children
 }) => {
-    if (state.mode === MODE_PILE) {
-        style.leftContainer = styles(style.leftContainer, {
+    let {
+        theme,
+        style,
+        mode,
+        pers
+    } = props;
+    // TODO validate
+    if (mode === MODE_PILE) {
+        style.childs = children.map((_, index) => styles(theme.container, theme.fullParentHeight, {
             'float': 'left'
-        });
-    } else if (state.mode === MODE_PERCENTAGE) {
-        // TODO validate state.left
-        style.leftContainer = styles(style.leftContainer, {
-            width: state.leftWidthPer * 100 + '%',
-            'float': 'left'
-        });
+        }, style.childs[index] || {}));
+    } else if (mode === MODE_PERCENTAGE) {
+        let sum = children.reduce((prev, _, index) => {
+            let cur = pers[index];
+            cur = cur === undefined ? 1 : cur;
+            return prev + cur;
+        }, 0);
 
-        style.rightContainer = styles(style.rightContainer, {
-            width: (1 - state.leftWidthPer) * 100 + '%',
-            'float': 'right'
-        });
+        style.childs = children.map((_, index) => styles(theme.container, theme.fullParentHeight, {
+            'float': 'left',
+            width: sum === 0 ? 0 : ((pers[index] === undefined ? 1 : pers[index]) / sum) * 100 + '%'
+        }, style.childs[index] || {}));
     }
 
-    return Full({
-        state: {
-            content: [
-                // left
-                n('div', {
-                    style: style.leftContainer
-                }, [state.left]),
-
-                // right
-                n('div', {
-                    style: style.rightContainer
-                }, [state.right]),
-
-                (state.mode === MODE_PERCENTAGE || state.mode === MODE_PILE) && n('div style="clear:both"')
-            ]
-        },
+    return n(Full, {
         style: style.container,
         theme
-    });
+    }, [
+        children.map((child, index) => n('div', {
+            style: style.childs[index]
+        }, child)),
+
+        (mode === MODE_PERCENTAGE || mode === MODE_PILE) && n('div style="clear:both"')
+    ]);
 }, {
-    defaultState: {
+    defaultProps: {
         mode: MODE_PILE,
-        leftWidthPer: 0.5
-    },
-
-    defaultStyle: (theme) => {
-        return {
+        pers: [],
+        style: {
             container: {},
-
-            leftContainer: styles(theme.container, theme.fullParentHeight),
-
-            rightContainer: styles(theme.container, theme.fullParentHeight)
-        };
+            childs: []
+        }
     }
 });
 
 
 /***/ }),
-/* 36 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let {
-    n
-} = __webpack_require__(2);
-let lumineView = __webpack_require__(11);
-let {
-    styles
-} = __webpack_require__(4);
+let lumineView = __webpack_require__(4);
 
-module.exports = lumineView(({
-    state,
-    style
-}) => {
-    return n('div', {
-        style
-    }, state.content);
-}, {
-    defaultState: {
-        content: []
-    },
+let n = __webpack_require__(13);
 
-    defaultStyle: (theme) => styles(theme.fullParent)
-});
-
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let lumineView = __webpack_require__(11);
-
-let {
-    n
-} = __webpack_require__(2);
-
-let Full = __webpack_require__(36);
+let Full = __webpack_require__(16);
 
 let {
     styles
-} = __webpack_require__(4);
+} = __webpack_require__(3);
 
 const {
     MODE_PILE,
     MODE_PERCENTAGE
-} = __webpack_require__(39);
+} = __webpack_require__(17);
 
 /**
  * top + bottom
  */
 
 module.exports = lumineView(({
-    state,
-    theme,
-    style
+    props,
+    children
 }) => {
-    if (state.mode === MODE_PERCENTAGE) {
-        // TODO validate state.topHeightPer
-        style.topContainer = styles(style.topContainer, {
-            height: state.topHeightPer * 100 + '%'
-        });
+    let {
+        theme,
+        style,
+        mode,
+        pers
+    } = props;
 
-        style.bottomContainer = styles(style.bottomContainer, {
-            height: (1 - state.topHeightPer) * 100 + '%'
-        });
+    // TODO validate
+
+    if (mode === MODE_PERCENTAGE) {
+        let sum = children.reduce((prev, _, index) => {
+            let cur = pers[index];
+            cur = cur === undefined ? 1 : cur;
+            return prev + cur;
+        }, 0);
+
+        style.childs = children.map((_, index) => styles(theme.container, theme.fullParentWidth, {
+            height: sum === 0 ? 0 : ((pers[index] === undefined ? 1 : pers[index]) / sum) * 100 + '%'
+        }, style.childs[index] || {}));
+    } else if (mode === MODE_PILE) {
+        style.childs = children.map((_, index) => styles(theme.container, theme.fullParentWidth, style.childs[index] || {}));
     }
 
-    return Full({
-        state: {
-            content: [
-                // top
-                n('div', {
-                    style: style.topContainer
-                }, [state.top]),
-
-                // bottom
-                n('div', {
-                    style: style.bottomContainer
-                }, [state.bottom])
-            ]
-        },
+    return n(Full, {
         style: style.container,
         theme
-    });
+    }, [
+        children.map((child, i) => n('div', {
+            style: style.childs[i]
+        }, [child]))
+    ]);
 }, {
-    defaultState: {
+    defaultProps: {
         mode: MODE_PILE,
-        topHeightPer: 0.5
-    },
-
-    defaultStyle: (theme) => {
-        return {
+        pers: [],
+        style: {
             container: {},
-
-            topContainer: styles(theme.container, theme.fullParentWidth),
-
-            bottomContainer: styles(theme.container, theme.fullParentWidth)
-        };
-    }
-});
-
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    n
-} = __webpack_require__(2);
-
-let lumineView = __webpack_require__(11);
-
-let {
-    Signal
-} = __webpack_require__(33);
-
-let {
-    styles
-} = __webpack_require__(4);
-
-module.exports = lumineView(({
-    state,
-    style
-}, {
-    notify,
-    getClassName
-}) => {
-    return n('textarea', {
-        'class': `${getClassName('textarea')}`,
-        style,
-        type: state.type,
-        placeholder: state.placeholder,
-        oninput: (e) => {
-            state.text = e.target.value;
-            notify(Signal('input'));
+            childs: {}
         }
-    }, [state.text]);
-}, {
-    defaultState: {
-        text: '',
-        type: 'text',
-        placeholder: ''
-    },
-
-    defaultStyle: (theme) => styles(theme.textAreaBox),
-
-    classTable: (theme) => {
-        return {
-            'textarea:focus': styles(theme.actions.focus)
-        };
     }
 });
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports) {
-
-module.exports = {
-    MODE_PILE: 'pile',
-    MODE_PERCENTAGE: 'percentage'
-};
 
 
 /***/ })

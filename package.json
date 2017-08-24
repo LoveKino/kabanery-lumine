@@ -1,6 +1,6 @@
 {
   "name": "kabanery-lumine",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Common UIs",
   "main": "index.js",
   "scripts": {
@@ -26,6 +26,6 @@
     "webpack": "^3.5.5"
   },
   "dependencies": {
-    "kabanery": "^0.2.7"
+    "kabanery": "^0.2.11"
   }
 }
