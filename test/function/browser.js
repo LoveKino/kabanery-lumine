@@ -15,7 +15,8 @@ let runFileInBrowser = async(file) => {
 };
 
 let testFiles = {
-    'base': path.join(__dirname, '../browser/case/base.js')
+    'base': path.join(__dirname, '../browser/case/base.js'),
+    'syncBindWithKeyMap:base': path.join(__dirname, '../browser/case/syncBindWithKeyMap/base.js')
 };
 
 describe('browser', () => {

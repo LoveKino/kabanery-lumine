@@ -1,10 +1,10 @@
 {
   "name": "kabanery-lumine",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Common UIs",
   "main": "index.js",
   "scripts": {
-    "test": "mocha \"test/function/**/*.js\""
+    "test": "mocha \"test/function/**/*.js\" -t 300000"
   },
   "repository": {
     "type": "git",
