@@ -13,6 +13,9 @@ let TextArea = require('../lib/view/input/textarea');
 let Hn = require('../lib/view/layout/hn');
 let Vn = require('../lib/view/layout/vn');
 let Notice = require('../lib/view/notice/notice');
+let TextLoading = require('../lib/view/loading/textLoading');
+let PageMask = require('../lib/view/mask/pageMask');
+let PageLoading = require('../lib/view/loading/pageLoading');
 
 let steadyTheme = require('../lib/theme/steady');
 
@@ -159,7 +162,25 @@ let examples = [
         render: () => n(Notice, {
             text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................'
         })
-    }
+    },
+
+    {
+        name: 'textLoading',
+        render: () => n(TextLoading)
+    },
+
+    /*
+    {
+        name: 'pageMask',
+        render: () => n(PageMask)
+    },
+
+    {
+        name: 'PageLoading',
+        render: () => n(PageLoading)
+    },
+
+    */
 ];
 
 let Pager = n('div', {

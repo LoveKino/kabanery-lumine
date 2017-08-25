@@ -661,7 +661,7 @@ module.exports = (viewFun, {
 
     return view((viewData, ctx) => {
         viewData.props = viewData.props || {};
-        viewData.children = viewData.children || defaultChildren;
+        viewData.children = viewData.children.length ? viewData.children : defaultChildren;
         viewData.props.theme = viewData.props.theme || theme;
 
         appendStyle();
@@ -1351,6 +1351,7 @@ let basics = {
     hoverColor: '#e9ece5',
     blockColor: '#3b3a36',
     borderColor: '#b3c2bf',
+    veilColor: 'rgba(60,60,60,0.6)',
     fontColor: 'white',
     noticeColor: 'rgb(23, 21, 21)',
 
@@ -1380,6 +1381,12 @@ let fullParentHeight = {
 let fullParentWidth = {
     width: '100%'
 };
+
+let fullWindow = styles(container, {
+    position: 'fixed',
+    left: 0,
+    top: 0,
+}, fullParentWidth, fullParentHeight);
 
 let fullParent = styles(container, fullParentWidth, fullParentHeight);
 
@@ -1470,6 +1477,8 @@ module.exports = {
     underLineBorder,
     underLineFocus,
     container,
+
+    fullWindow,
     fullParent,
     fullParentWidth,
     fullParentHeight,
@@ -1591,6 +1600,9 @@ let TextArea = __webpack_require__(38);
 let Hn = __webpack_require__(39);
 let Vn = __webpack_require__(40);
 let Notice = __webpack_require__(41);
+let TextLoading = __webpack_require__(42);
+let PageMask = __webpack_require__(43);
+let PageLoading = __webpack_require__(45);
 
 let steadyTheme = __webpack_require__(14);
 
@@ -1737,7 +1749,25 @@ let examples = [
         render: () => n(Notice, {
             text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................'
         })
-    }
+    },
+
+    {
+        name: 'textLoading',
+        render: () => n(TextLoading)
+    },
+
+    /*
+    {
+        name: 'pageMask',
+        render: () => n(PageMask)
+    },
+
+    {
+        name: 'PageLoading',
+        render: () => n(PageLoading)
+    },
+
+    */
 ];
 
 let Pager = n('div', {
@@ -3137,25 +3167,14 @@ module.exports = (classTable) => {
     let viewClassId = `${VIEW_CLASS_PREFIX}-${count}`;
 
     let getStyleRuleName = (name) => {
-        return `.${viewClassId}-${name}`;
-    };
-
-    let styleCssRules = null;
-
-    let setStyleCssRules = (classTable) => {
-        if (isMapObject(classTable)) {
-            styleCssRules = '';
-            for (let name in classTable) {
-                let styleRuleName = getStyleRuleName(name);
-                let styleRuleContent = parseStyle(classTable[name], {
-                    valueWrapper: (value) => `${value} !important`
-                });
-                styleCssRules += `\n${styleRuleName} {${styleRuleContent}}`;
-            }
+        if (name[0] === '@') {
+            let prev = name.split(' ')[0];
+            let next = name.substring(prev.length).trim();
+            return `${prev} ${viewClassId}-${next}`;
+        } else {
+            return `.${viewClassId}-${name}`;
         }
     };
-
-    setStyleCssRules(classTable);
 
     let appendStyle = () => {
         if (styleCssRules) {
@@ -3167,6 +3186,12 @@ module.exports = (classTable) => {
     };
 
     let getClassName = (name) => {
+        if (name[0] === '@') {
+            let prev = name.split(' ')[0];
+            let next = name.substring(prev.length).trim();
+            name = next;
+        }
+
         return `${viewClassId}-${name.split(':')[0]}`;
     };
 
@@ -3179,6 +3204,30 @@ module.exports = (classTable) => {
         setStyleCssRules(newClassTable);
         appendStyle();
     };
+
+    let styleCssRules = null;
+
+    let setStyleCssRules = (classTable) => {
+        if (isMapObject(classTable)) {
+            styleCssRules = '';
+            for (let name in classTable) {
+                name = name.trim();
+                let styleRuleName = getStyleRuleName(name);
+                let classCnt = classTable[name];
+                if (typeof classCnt === 'function') {
+                    classCnt = classCnt({
+                        getClassName
+                    });
+                }
+                let styleRuleContent = parseStyle(classCnt, {
+                    valueWrapper: (value) => `${value} !important`
+                });
+                styleCssRules += `\n${styleRuleName} {${styleRuleContent}}`;
+            }
+        }
+    };
+
+    setStyleCssRules(classTable);
 
     return {
         appendStyle,
@@ -3482,6 +3531,7 @@ module.exports = lumineView(({
     }
     return n('div', {
         style: {
+            zIndex: 10000,
             position: 'fixed',
             width: '100%',
             height: 0,
@@ -3508,6 +3558,178 @@ module.exports = lumineView(({
             position: 'relative',
         })
     }
+});
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let n = __webpack_require__(5);
+
+let lumineView = __webpack_require__(4);
+
+module.exports = lumineView(({
+    props
+}, {
+    getClassName
+}) => {
+    return props.show ? n('div', {
+        'class': getClassName('load-suffix'),
+        style: props.style
+    }, props.textPrefix) : n('div');
+}, {
+    defaultProps: {
+        textPrefix: 'loading',
+        show: true,
+        style: {
+            display: 'inline-block'
+        }
+    },
+
+    classTable: {
+        '@keyframes loading': `
+    0% {
+        content: ""
+    }
+    33% {
+        content: "."
+    }
+    67% {
+        content: ".."
+    }
+    100% {
+        content: "..."
+    }`,
+        'load-suffix::after': ({
+            getClassName
+        }) => {
+            return {
+                content: JSON.stringify('.'),
+                animation: `${getClassName('loading')} 3s infinite ease-in-out`
+            };
+        }
+    }
+});
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let FullWindow = __webpack_require__(44);
+let lumineView = __webpack_require__(4);
+let n = __webpack_require__(5);
+
+module.exports = lumineView(({
+    props,
+    children
+}) => {
+    return n(FullWindow, props, children);
+}, {
+    defaultProps: {
+        style: (theme) => {
+            return {
+                backgroundColor: theme.basics.veilColor,
+                color: theme.basics.fontColor
+            };
+        }
+    }
+});
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(3);
+let lumineView = __webpack_require__(4);
+let {
+    styles
+} = __webpack_require__(1);
+
+module.exports = lumineView(({
+    props,
+    children
+}) => {
+    return n('div', {
+        style: props.style
+    }, children);
+}, {
+    defaultProps: {
+        style: (theme) => styles(theme.fullWindow)
+    },
+
+    defaultChildren: []
+});
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let n = __webpack_require__(5);
+let lumineView = __webpack_require__(4);
+
+let TextLoading = __webpack_require__(42);
+let PageMask = __webpack_require__(43);
+let Empty = __webpack_require__(46);
+
+module.exports = lumineView(({
+    props,
+    children
+}) => {
+    return props.show ? n(PageMask, {
+        style: props.style
+    }, children) : Empty();
+}, {
+    defaultProps: {
+        show: true,
+        style: {
+            textAlign: 'center'
+        }
+    },
+    defaultChildren: [n(TextLoading, {
+        style: {
+            position: 'relative',
+            top: '50%',
+            marginTop: -10
+        }
+    })]
+});
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let n = __webpack_require__(5);
+let lumineView = __webpack_require__(4);
+
+module.exports = lumineView(() => {
+    return n('div', {
+        style: {
+            width: 0,
+            height: 0
+        }
+    });
 });
 
 
