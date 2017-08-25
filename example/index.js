@@ -12,6 +12,7 @@ let Input = require('../lib/view/input/input');
 let TextArea = require('../lib/view/input/textarea');
 let Hn = require('../lib/view/layout/hn');
 let Vn = require('../lib/view/layout/vn');
+let Notice = require('../lib/view/notice/notice');
 
 let steadyTheme = require('../lib/theme/steady');
 
@@ -150,6 +151,14 @@ let examples = [
                 n('span', 'this is 3....')
             ])
         ])
+    },
+
+    {
+        name: 'notice',
+
+        render: () => n(Notice, {
+            text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................'
+        })
     }
 ];
 
