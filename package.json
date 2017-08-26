@@ -1,6 +1,6 @@
 {
   "name": "kabanery-lumine",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Common UIs",
   "main": "index.js",
   "scripts": {
