@@ -60,11 +60,114 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 18);
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    view
+} = __webpack_require__(4);
+
+let steadyTheme = __webpack_require__(14);
+
+let {
+    deepMergeMap,
+    resolveFnValue
+} = __webpack_require__(2);
+
+let ClassTable = __webpack_require__(38);
+
+let {
+    Signal
+} = __webpack_require__(6);
+
+/**
+ * define the general interface for lumine view
+ *
+ * 1. unify view data structure
+ *
+ *    view data = {
+ *       // public data
+ *       props,
+ *       children // child views
+ *    }
+ *
+ *    props.onsigal
+ *    props.theme
+ *
+ * 2. onsignal interface
+ *
+ *    onsignal: (signal, data, ctx) -> Any
+ */
+
+module.exports = (viewFun, {
+    defaultProps = {},
+    defaultChildren = [],
+    theme = steadyTheme,
+    classTable
+} = {}) => {
+    let defaultStyle = defaultProps.style || {};
+
+    let defaultStyleValue = resolveFnValue(defaultStyle, theme);
+    let classTableValue = resolveFnValue(classTable, theme);
+
+    let {
+        appendStyle,
+        getClassName,
+        updateClassTable
+    } = ClassTable(classTableValue);
+
+    return view((viewData, ctx) => {
+        viewData.props = viewData.props || {};
+        viewData.children = (viewData.children && viewData.children.length) ? viewData.children : defaultChildren;
+        viewData.props.theme = viewData.props.theme || theme;
+
+        appendStyle();
+        // TODO check view Data
+
+        // update defaultStyleValue
+        if (viewData.props.theme && typeof defaultStyle === 'function') {
+            defaultStyleValue = resolveFnValue(defaultStyle, viewData.props.theme);
+        }
+
+        // update class table
+        if (viewData.theme && typeof classTable === 'function') {
+            classTableValue = resolveFnValue(classTable, viewData.props.theme);
+            updateClassTable(classTableValue);
+        }
+
+        // merge (deep merge)
+        viewData.props.style = deepMergeMap(viewData.props.style, defaultStyleValue);
+        viewData.props = deepMergeMap(viewData.props, defaultProps);
+
+        let notify = (signal) => {
+            viewData.props.onsignal && viewData.props.onsignal(signal, ctx.getData(), ctx);
+        };
+
+        let updateWithNotify = (signal, ...updateScript) => {
+            signal = signal || Signal('update-view-data');
+            ctx.update(...updateScript);
+            // notify
+            notify(signal);
+        };
+
+        ctx.notify = notify;
+        ctx.updateWithNotify = updateWithNotify;
+        ctx.getClassName = getClassName;
+
+        return viewFun(viewData, ctx);
+    });
+};
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -290,7 +393,7 @@ module.exports = {
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -304,12 +407,16 @@ let isMapObject = (v) => {
     return v && typeof v === 'object' && !Array.isArray(v);
 };
 
-let deepMergeMap = (tar, def) => {
+let deepMergeMap = (tar, def, path = '', options = {}) => {
+    let blackList = options.blackList || [];
+    if (blackList.findIndex((item) => item === path) !== -1) {
+        return tar;
+    }
     if (isMapObject(def)) {
         tar = tar || {};
         if (isMapObject(tar)) {
             for (let name in def) {
-                tar[name] = deepMergeMap(tar[name], def[name]);
+                tar[name] = deepMergeMap(tar[name], def[name], path === '' ? name : path + '.' + name, options);
             }
         }
         return tar;
@@ -382,7 +489,7 @@ module.exports = {
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -390,13 +497,13 @@ module.exports = {
 
 let {
     isObject, funType, or, isString, isFalsy, likeArray
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 let iterate = __webpack_require__(11);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact
-} = __webpack_require__(20);
+} = __webpack_require__(22);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -492,13 +599,13 @@ module.exports = {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(19);
+module.exports = __webpack_require__(21);
 
 /**
  * @readme-doc
@@ -604,97 +711,6 @@ module.exports = __webpack_require__(19);
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    view
-} = __webpack_require__(3);
-
-let steadyTheme = __webpack_require__(14);
-
-let {
-    deepMergeMap,
-    resolveFnValue
-} = __webpack_require__(1);
-
-let ClassTable = __webpack_require__(36);
-
-/**
- * define the general interface for lumine view
- *
- * 1. unify view data structure
- *
- *    view data = {
- *       // public data
- *       props,
- *       children // child views
- *    }
- *
- *    props.onsigal
- *    props.theme
- *
- * 2. onsignal interface
- *
- *    onsignal: (signal, data, ctx) -> Any
- */
-
-module.exports = (viewFun, {
-    defaultProps = {},
-    defaultChildren = [],
-    theme = steadyTheme,
-    classTable
-} = {}) => {
-    let defaultStyle = defaultProps.style || {};
-
-    let defaultStyleValue = resolveFnValue(defaultStyle, theme);
-    let classTableValue = resolveFnValue(classTable, theme);
-
-    let {
-        appendStyle,
-        getClassName,
-        updateClassTable
-    } = ClassTable(classTableValue);
-
-    return view((viewData, ctx) => {
-        viewData.props = viewData.props || {};
-        viewData.children = viewData.children.length ? viewData.children : defaultChildren;
-        viewData.props.theme = viewData.props.theme || theme;
-
-        appendStyle();
-        // TODO check view Data
-
-        // update defaultStyleValue
-        if (viewData.props.theme && typeof defaultStyle === 'function') {
-            defaultStyleValue = resolveFnValue(defaultStyle, viewData.props.theme);
-        }
-
-        // update class table
-        if (viewData.theme && typeof classTable === 'function') {
-            classTableValue = resolveFnValue(classTable, viewData.props.theme);
-            updateClassTable(classTableValue);
-        }
-
-        // merge (deep merge)
-        viewData.props.style = deepMergeMap(viewData.props.style, defaultStyleValue);
-        viewData.props = deepMergeMap(viewData.props, defaultProps);
-
-        let notify = (signal) => {
-            viewData.props.onsignal && viewData.props.onsignal(signal, ctx.getData(), ctx);
-        };
-
-        ctx.notify = notify;
-        ctx.getClassName = getClassName;
-
-        return viewFun(viewData, ctx);
-    });
-};
-
-
-/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -704,7 +720,7 @@ module.exports = (viewFun, {
 let {
     n,
     parseArgs
-} = __webpack_require__(3);
+} = __webpack_require__(4);
 
 module.exports = (...args) => {
     let tagName = args[0];
@@ -734,12 +750,54 @@ module.exports = (...args) => {
 "use strict";
 
 
+let Signal = (type, data) => {
+    return {
+        type,
+        data
+    };
+};
+
+let isSignalType = (s, type) => {
+    return s.type === type;
+};
+
+let onSignalType = (expectType, fn) => (signal, ...rest) => {
+    if (isSignalType(signal, expectType)) {
+        return fn(signal, ...rest);
+    }
+};
+
+let deliver = (ctx, type, extra) => (sourceSignal, sourceData, sourceCtx) => {
+    ctx.notify(Signal(type, {
+        sourceType: 'delivered',
+        sourceSignal,
+        sourceData,
+        sourceCtx,
+        extra
+    }));
+};
+
+module.exports = {
+    Signal,
+    onSignalType,
+    isSignalType,
+    deliver
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 let {
     reduce
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 let {
     funType, isObject, or, isString, isFalsy
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 let defineProperty = (obj, key, opts) => {
     if (Object.defineProperty) {
@@ -884,48 +942,6 @@ module.exports = {
 
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let Signal = (type, data) => {
-    return {
-        type,
-        data
-    };
-};
-
-let isSignalType = (s, type) => {
-    return s.type === type;
-};
-
-let onSignalType = (expectType, fn) => (signal, ...rest) => {
-    if (isSignalType(signal, expectType)) {
-        return fn(signal, ...rest);
-    }
-};
-
-let deliver = (ctx, type, extra) => (sourceSignal, sourceData, sourceCtx) => {
-    ctx.notify(Signal(type, {
-        sourceType: 'delivered',
-        sourceSignal,
-        sourceData,
-        sourceCtx,
-        extra
-    }));
-};
-
-module.exports = {
-    Signal,
-    onSignalType,
-    isSignalType,
-    deliver
-};
-
-
-/***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -934,12 +950,12 @@ module.exports = {
 
 let {
     map
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 let {
     isObject, isNode
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
-let parseArgs = __webpack_require__(21);
+let parseArgs = __webpack_require__(23);
 
 let parseStyle = __webpack_require__(12);
 
@@ -1051,7 +1067,7 @@ module.exports = {
 
 let {
     createElement, createSvgElement
-} = __webpack_require__(32);
+} = __webpack_require__(34);
 
 let {
     bindEvents
@@ -1059,7 +1075,7 @@ let {
 
 let {
     map
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 let {
     isKabaneryNode
@@ -1091,7 +1107,7 @@ module.exports = reduceNode;
 "use strict";
 
 
-let EventMatrix = __webpack_require__(33);
+let EventMatrix = __webpack_require__(35);
 
 let {
     listenEventType,
@@ -1124,7 +1140,7 @@ module.exports = {
 
 let {
     likeArray, isObject, funType, isFunction, isUndefined, or, isNumber, isFalsy, mapType
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 /**
  *
@@ -1232,7 +1248,7 @@ module.exports = iterate;
 let {
     isString,
     isObject
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 module.exports = (attr = '', {
     keyWrapper,
@@ -1301,11 +1317,11 @@ let {
 
 let {
     isNode
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 let {
     flat, forEach
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 let reduceNode = __webpack_require__(9);
 
@@ -1344,7 +1360,7 @@ let getDoc = (node) => {
 
 let {
     styles
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 let basics = {
     pageColor: '#e4e4e4',
@@ -1496,14 +1512,14 @@ module.exports = {
 
 let {
     n
-} = __webpack_require__(3);
-let lumineView = __webpack_require__(4);
+} = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
 let {
     Signal
-} = __webpack_require__(7);
+} = __webpack_require__(6);
 let {
     styles
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 module.exports = lumineView(({
     props,
@@ -1548,11 +1564,11 @@ module.exports = lumineView(({
 
 let {
     n
-} = __webpack_require__(3);
-let lumineView = __webpack_require__(4);
+} = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
 let {
     styles
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 module.exports = lumineView(({
     props,
@@ -1587,21 +1603,106 @@ module.exports = {
 "use strict";
 
 
+let n = __webpack_require__(5);
+
+let lumineView = __webpack_require__(0);
+
+// TODO easy disappear for loading view
+module.exports = lumineView(({
+    props
+}, {
+    getClassName
+}) => {
+    return props.show ? n('div', {
+        'class': getClassName('load-suffix'),
+        style: props.style
+    }, props.textPrefix) : n('div');
+}, {
+    defaultProps: {
+        textPrefix: 'loading',
+        show: true,
+        style: {
+            display: 'inline-block'
+        }
+    },
+
+    classTable: {
+        '@keyframes loading': `
+    0% {
+        content: ""
+    }
+    33% {
+        content: "."
+    }
+    67% {
+        content: ".."
+    }
+    100% {
+        content: "..."
+    }`,
+        'load-suffix::after': ({
+            getClassName
+        }) => {
+            return {
+                content: JSON.stringify('.'),
+                animation: `${getClassName('loading')} 3s infinite ease-in-out`
+            };
+        }
+    }
+});
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let FullWindow = __webpack_require__(44);
+let lumineView = __webpack_require__(0);
+let n = __webpack_require__(5);
+
+module.exports = lumineView(({
+    props,
+    children
+}) => {
+    return n(FullWindow, props, children);
+}, {
+    defaultProps: {
+        style: (theme) => {
+            return {
+                backgroundColor: theme.basics.veilColor,
+                color: theme.basics.fontColor,
+                zIndex: 1000
+            };
+        }
+    }
+});
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 let {
     mount
-} = __webpack_require__(3);
+} = __webpack_require__(4);
 
 let n = __webpack_require__(5);
 
-let FunctionBar = __webpack_require__(35);
+let FunctionBar = __webpack_require__(37);
 let Button = __webpack_require__(15);
-let Input = __webpack_require__(37);
-let TextArea = __webpack_require__(38);
-let Hn = __webpack_require__(39);
-let Vn = __webpack_require__(40);
-let Notice = __webpack_require__(41);
-let TextLoading = __webpack_require__(42);
-let PageMask = __webpack_require__(43);
+let Input = __webpack_require__(39);
+let TextArea = __webpack_require__(40);
+let Hn = __webpack_require__(41);
+let Vn = __webpack_require__(42);
+let Notice = __webpack_require__(43);
+let TextLoading = __webpack_require__(18);
+let PageMask = __webpack_require__(19);
 let PageLoading = __webpack_require__(45);
 
 let steadyTheme = __webpack_require__(14);
@@ -1813,7 +1914,7 @@ mount(Pager, document.body);
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1823,13 +1924,13 @@ let {
     n, svgn, bindPlugs, toHTML, parseArgs, isKabaneryNode, cn, parseStyle
 } = __webpack_require__(8);
 
-let plugs = __webpack_require__(23);
+let plugs = __webpack_require__(25);
 
-let view = __webpack_require__(26);
+let view = __webpack_require__(28);
 
 let mount = __webpack_require__(13);
 
-let N = __webpack_require__(34);
+let N = __webpack_require__(36);
 
 let reduceNode = __webpack_require__(9);
 
@@ -1855,7 +1956,7 @@ module.exports = {
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1960,13 +2061,13 @@ module.exports = {
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let parseAttribute = __webpack_require__(22);
+let parseAttribute = __webpack_require__(24);
 
 let {
     isString,
@@ -1975,7 +2076,7 @@ let {
     likeArray,
     isNumber,
     isBool
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 let parseArgs = (args, {
     doParseStyle = true
@@ -2057,7 +2158,7 @@ module.exports = parseArgs;
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2065,13 +2166,13 @@ module.exports = parseArgs;
 
 let {
     isString
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 let parseStyle = __webpack_require__(12);
 
 let {
     mergeMap
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 const ITEM_REG = /([\w-]+)\s*=\s*(([\w-]+)|('.*?')|(".*?"))/;
 
@@ -2131,14 +2232,14 @@ module.exports = parseAttribute;
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let twowaybinding = __webpack_require__(24);
-let eventError = __webpack_require__(25);
+let twowaybinding = __webpack_require__(26);
+let eventError = __webpack_require__(27);
 
 module.exports = {
     twowaybinding,
@@ -2147,7 +2248,7 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2155,7 +2256,7 @@ module.exports = {
 
 let {
     get, set
-} = __webpack_require__(6);
+} = __webpack_require__(7);
 
 module.exports = (obj, path) => (tagName, attributes, childExp) => {
     let value = get(obj, path, '');
@@ -2174,7 +2275,7 @@ module.exports = (obj, path) => (tagName, attributes, childExp) => {
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2206,7 +2307,7 @@ let wrapEventHandler = (fun, catcher) => {
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2214,19 +2315,19 @@ let wrapEventHandler = (fun, catcher) => {
 
 let {
     set
-} = __webpack_require__(6);
+} = __webpack_require__(7);
 
 let {
     isObject,
     isFunction,
     likeArray
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 let {
     forEach
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
-let replace = __webpack_require__(27);
+let replace = __webpack_require__(29);
 
 let reduceNode = __webpack_require__(9);
 
@@ -2425,7 +2526,7 @@ module.exports = View;
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2433,17 +2534,17 @@ module.exports = View;
 
 let {
     toArray
-} = __webpack_require__(6);
+} = __webpack_require__(7);
 
 let {
     isNode
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 let {
     forEach
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
-let applyAttibutes = __webpack_require__(28);
+let applyAttibutes = __webpack_require__(30);
 
 let replaceDirectly = (node, newNode) => {
     let parent = node.parentNode;
@@ -2557,7 +2658,7 @@ module.exports = (node, newNode) => {
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2565,15 +2666,15 @@ module.exports = (node, newNode) => {
 
 let {
     getAttributeMap
-} = __webpack_require__(29);
+} = __webpack_require__(31);
 
 let {
     hasOwnProperty
-} = __webpack_require__(6);
+} = __webpack_require__(7);
 
 let {
     forEach
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 let applyAttibutes = (node, newNode) => {
     // attributes
@@ -2604,15 +2705,15 @@ module.exports = applyAttibutes;
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let shadowFrame = __webpack_require__(30);
+let shadowFrame = __webpack_require__(32);
 
-let startMomenter = __webpack_require__(31);
+let startMomenter = __webpack_require__(33);
 
 let getX = (elem) => {
     var x = 0;
@@ -2695,7 +2796,7 @@ module.exports = {
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2750,7 +2851,7 @@ module.exports = shadowFrame;
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2806,7 +2907,7 @@ module.exports = startMomenter;
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2814,7 +2915,7 @@ module.exports = startMomenter;
 
 let {
     isNode
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
@@ -2853,7 +2954,7 @@ module.exports = {
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2861,7 +2962,7 @@ module.exports = {
 
 let {
     contain
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 module.exports = () => {
     let docs = [];
@@ -2980,7 +3081,7 @@ let getGlobalEventTypeId = (type) => `__event_type_id_${type}`;
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2992,11 +3093,11 @@ let {
 
 let {
     isArray, isFunction, isObject
-} = __webpack_require__(0);
+} = __webpack_require__(1);
 
 let {
     map
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 module.exports = (...args) => {
     let tagName = args[0],
@@ -3036,22 +3137,22 @@ module.exports = (...args) => {
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
 let {
     styles
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 let Button = __webpack_require__(15);
 let {
     Signal,
     onSignalType
-} = __webpack_require__(7);
+} = __webpack_require__(6);
 let n = __webpack_require__(5);
 
 module.exports = lumineView(({
@@ -3141,7 +3242,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3149,13 +3250,13 @@ module.exports = lumineView(({
 
 let {
     isMapObject
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 let {
     mount,
     n,
     parseStyle
-} = __webpack_require__(3);
+} = __webpack_require__(4);
 
 const VIEW_CLASS_PREFIX = 'kabanery-lumine';
 
@@ -3238,7 +3339,7 @@ module.exports = (classTable) => {
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3246,17 +3347,17 @@ module.exports = (classTable) => {
 
 let {
     n
-} = __webpack_require__(3);
+} = __webpack_require__(4);
 
-let lumineView = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
 
 let {
     Signal
-} = __webpack_require__(7);
+} = __webpack_require__(6);
 
 let {
     styles
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 module.exports = lumineView(({
     props
@@ -3296,7 +3397,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3304,17 +3405,17 @@ module.exports = lumineView(({
 
 let {
     n
-} = __webpack_require__(3);
+} = __webpack_require__(4);
 
-let lumineView = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
 
 let {
     Signal
-} = __webpack_require__(7);
+} = __webpack_require__(6);
 
 let {
     styles
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 module.exports = lumineView(({
     props
@@ -3349,13 +3450,13 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
 
 let n = __webpack_require__(5);
 
@@ -3363,7 +3464,7 @@ let Full = __webpack_require__(16);
 
 let {
     styles
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 const {
     MODE_PERCENTAGE,
@@ -3432,13 +3533,13 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
 
 let n = __webpack_require__(5);
 
@@ -3446,7 +3547,7 @@ let Full = __webpack_require__(16);
 
 let {
     styles
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 const {
     MODE_PILE,
@@ -3505,28 +3606,30 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 let n = __webpack_require__(5);
-
-let lumineView = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
+let {
+    Signal
+} = __webpack_require__(6);
 
 let {
     styles
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 module.exports = lumineView(({
     props
 }, {
-    update
+    updateWithNotify
 }) => {
     if (props.show && props.duration !== 'forever') {
         setTimeout(() => {
-            update('props.show', false);
+            updateWithNotify(Signal('notice-hide'), 'props.show', false);
         }, props.duration);
     }
     return n('div', {
@@ -3562,89 +3665,6 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let n = __webpack_require__(5);
-
-let lumineView = __webpack_require__(4);
-
-module.exports = lumineView(({
-    props
-}, {
-    getClassName
-}) => {
-    return props.show ? n('div', {
-        'class': getClassName('load-suffix'),
-        style: props.style
-    }, props.textPrefix) : n('div');
-}, {
-    defaultProps: {
-        textPrefix: 'loading',
-        show: true,
-        style: {
-            display: 'inline-block'
-        }
-    },
-
-    classTable: {
-        '@keyframes loading': `
-    0% {
-        content: ""
-    }
-    33% {
-        content: "."
-    }
-    67% {
-        content: ".."
-    }
-    100% {
-        content: "..."
-    }`,
-        'load-suffix::after': ({
-            getClassName
-        }) => {
-            return {
-                content: JSON.stringify('.'),
-                animation: `${getClassName('loading')} 3s infinite ease-in-out`
-            };
-        }
-    }
-});
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let FullWindow = __webpack_require__(44);
-let lumineView = __webpack_require__(4);
-let n = __webpack_require__(5);
-
-module.exports = lumineView(({
-    props,
-    children
-}) => {
-    return n(FullWindow, props, children);
-}, {
-    defaultProps: {
-        style: (theme) => {
-            return {
-                backgroundColor: theme.basics.veilColor,
-                color: theme.basics.fontColor
-            };
-        }
-    }
-});
-
-
-/***/ }),
 /* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3653,11 +3673,11 @@ module.exports = lumineView(({
 
 let {
     n
-} = __webpack_require__(3);
-let lumineView = __webpack_require__(4);
+} = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
 let {
     styles
-} = __webpack_require__(1);
+} = __webpack_require__(2);
 
 module.exports = lumineView(({
     props,
@@ -3683,10 +3703,10 @@ module.exports = lumineView(({
 
 
 let n = __webpack_require__(5);
-let lumineView = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
 
-let TextLoading = __webpack_require__(42);
-let PageMask = __webpack_require__(43);
+let TextLoading = __webpack_require__(18);
+let PageMask = __webpack_require__(19);
 let Empty = __webpack_require__(46);
 
 module.exports = lumineView(({
@@ -3721,7 +3741,7 @@ module.exports = lumineView(({
 
 
 let n = __webpack_require__(5);
-let lumineView = __webpack_require__(4);
+let lumineView = __webpack_require__(0);
 
 module.exports = lumineView(() => {
     return n('div', {
