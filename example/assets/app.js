@@ -1133,6 +1133,7 @@ let {
 
 let {
     listenEventType,
+    clearEvents,
     attachDocument,
     dispatchEvent
 } = EventMatrix();
@@ -1149,7 +1150,8 @@ let bindEvents = (node, eventMap) => {
 module.exports = {
     bindEvents,
     attachDocument,
-    dispatchEvent
+    dispatchEvent,
+    clearEvents
 };
 
 
@@ -1943,7 +1945,14 @@ mount(Pager, document.body);
 
 
 let {
-    n, svgn, bindPlugs, toHTML, parseArgs, isKabaneryNode, cn, parseStyle
+    n,
+    svgn,
+    bindPlugs,
+    toHTML,
+    parseArgs,
+    isKabaneryNode,
+    cn,
+    parseStyle
 } = __webpack_require__(8);
 
 let plugs = __webpack_require__(26);
@@ -1956,7 +1965,10 @@ let N = __webpack_require__(41);
 
 let reduceNode = __webpack_require__(10);
 
-let {dispatchEvent} = __webpack_require__(11);
+let {
+    dispatchEvent,
+    clearEvents
+} = __webpack_require__(11);
 
 module.exports = {
     n,
@@ -1973,7 +1985,8 @@ module.exports = {
 
     parseArgs,
     parseStyle,
-    dispatchEvent
+    dispatchEvent,
+    clearEvents
 };
 
 
@@ -3177,6 +3190,26 @@ module.exports = () => {
         doc.addEventListener(type, handler);
     };
 
+    let clearEvents = () => {
+        for (let type in eventTypeMap) {
+            removeListenerType(type);
+        }
+    };
+
+    let removeListenerType = (type) => {
+        let handler = handlerMap[type];
+        if (handler) {
+            for (let i = 0; i < docs.length; i++) {
+                let doc = docs[i];
+                doc.removeEventListener(type, handler);
+            }
+            delete handlerMap[type];
+            delete eventTypeMap[type];
+        }
+    };
+
+    let getDocs = () => docs.slice(0);
+
     /**
      * e = {
      *  target,
@@ -3223,6 +3256,9 @@ module.exports = () => {
 
     return {
         listenEventType,
+        clearEvents,
+        removeListenerType,
+        getDocs,
         attachDocument,
         dispatchEvent
     };
