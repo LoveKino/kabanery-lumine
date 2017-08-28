@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 20);
+/******/ 	return __webpack_require__(__webpack_require__.s = 21);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -74,14 +74,14 @@ let {
     view
 } = __webpack_require__(4);
 
-let steadyTheme = __webpack_require__(14);
+let steadyTheme = __webpack_require__(15);
 
 let {
     deepMergeMap,
     resolveFnValue
 } = __webpack_require__(2);
 
-let ClassTable = __webpack_require__(38);
+let ClassTable = __webpack_require__(43);
 
 let {
     Signal
@@ -499,11 +499,11 @@ let {
     isObject, funType, or, isString, isFalsy, likeArray
 } = __webpack_require__(1);
 
-let iterate = __webpack_require__(11);
+let iterate = __webpack_require__(12);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact
-} = __webpack_require__(22);
+} = __webpack_require__(23);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -605,7 +605,7 @@ module.exports = {
 "use strict";
 
 
-module.exports = __webpack_require__(21);
+module.exports = __webpack_require__(22);
 
 /**
  * @readme-doc
@@ -955,9 +955,9 @@ let {
     isObject, isNode
 } = __webpack_require__(1);
 
-let parseArgs = __webpack_require__(23);
+let parseArgs = __webpack_require__(24);
 
-let parseStyle = __webpack_require__(12);
+let parseStyle = __webpack_require__(13);
 
 const KABANERY_NODE = 'kabanery_node';
 
@@ -1065,13 +1065,31 @@ module.exports = {
 "use strict";
 
 
+let uuidv4 = __webpack_require__(31);
+
+let seed = uuidv4();
+
+module.exports = {
+    eventMapHook: `__eventMap_${seed}`,
+    globalEventTypePrefix: `__event_type_id_${seed}_`,
+    stopPropagationFlag: '__stopPropagation'
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 let {
     createElement, createSvgElement
-} = __webpack_require__(34);
+} = __webpack_require__(39);
 
 let {
     bindEvents
-} = __webpack_require__(10);
+} = __webpack_require__(11);
 
 let {
     map
@@ -1101,13 +1119,17 @@ module.exports = reduceNode;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let EventMatrix = __webpack_require__(35);
+let EventMatrix = __webpack_require__(40);
+
+let {
+    eventMapHook
+} = __webpack_require__(9);
 
 let {
     listenEventType,
@@ -1117,7 +1139,7 @@ let {
 
 let bindEvents = (node, eventMap) => {
     // hook event at node
-    node.__eventMap = eventMap;
+    node[eventMapHook] = eventMap;
 
     for (let type in eventMap) {
         listenEventType(type);
@@ -1132,7 +1154,7 @@ module.exports = {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1239,7 +1261,7 @@ module.exports = iterate;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1305,7 +1327,7 @@ let convertStyleValue = (value, key) => {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1313,7 +1335,7 @@ let convertStyleValue = (value, key) => {
 
 let {
     attachDocument
-} = __webpack_require__(10);
+} = __webpack_require__(11);
 
 let {
     isNode
@@ -1323,7 +1345,7 @@ let {
     flat, forEach
 } = __webpack_require__(3);
 
-let reduceNode = __webpack_require__(9);
+let reduceNode = __webpack_require__(10);
 
 /**
  * @param parentNode
@@ -1352,7 +1374,7 @@ let getDoc = (node) => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1504,7 +1526,7 @@ module.exports = {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1556,7 +1578,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1587,7 +1609,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -1597,7 +1619,7 @@ module.exports = {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1653,13 +1675,13 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let FullWindow = __webpack_require__(44);
+let FullWindow = __webpack_require__(49);
 let lumineView = __webpack_require__(0);
 let n = __webpack_require__(5);
 
@@ -1682,7 +1704,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1694,18 +1716,18 @@ let {
 
 let n = __webpack_require__(5);
 
-let FunctionBar = __webpack_require__(37);
-let Button = __webpack_require__(15);
-let Input = __webpack_require__(39);
-let TextArea = __webpack_require__(40);
-let Hn = __webpack_require__(41);
-let Vn = __webpack_require__(42);
-let Notice = __webpack_require__(43);
-let TextLoading = __webpack_require__(18);
-let PageMask = __webpack_require__(19);
-let PageLoading = __webpack_require__(45);
+let FunctionBar = __webpack_require__(42);
+let Button = __webpack_require__(16);
+let Input = __webpack_require__(44);
+let TextArea = __webpack_require__(45);
+let Hn = __webpack_require__(46);
+let Vn = __webpack_require__(47);
+let Notice = __webpack_require__(48);
+let TextLoading = __webpack_require__(19);
+let PageMask = __webpack_require__(20);
+let PageLoading = __webpack_require__(50);
 
-let steadyTheme = __webpack_require__(14);
+let steadyTheme = __webpack_require__(15);
 
 let log = console.log; // eslint-disable-line
 
@@ -1914,7 +1936,7 @@ mount(Pager, document.body);
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1924,17 +1946,17 @@ let {
     n, svgn, bindPlugs, toHTML, parseArgs, isKabaneryNode, cn, parseStyle
 } = __webpack_require__(8);
 
-let plugs = __webpack_require__(25);
+let plugs = __webpack_require__(26);
 
-let view = __webpack_require__(28);
+let view = __webpack_require__(29);
 
-let mount = __webpack_require__(13);
+let mount = __webpack_require__(14);
 
-let N = __webpack_require__(36);
+let N = __webpack_require__(41);
 
-let reduceNode = __webpack_require__(9);
+let reduceNode = __webpack_require__(10);
 
-let {dispatchEvent} = __webpack_require__(10);
+let {dispatchEvent} = __webpack_require__(11);
 
 module.exports = {
     n,
@@ -1956,13 +1978,13 @@ module.exports = {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let iterate = __webpack_require__(11);
+let iterate = __webpack_require__(12);
 
 let defauls = {
     eq: (v1, v2) => v1 === v2
@@ -2061,13 +2083,13 @@ module.exports = {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let parseAttribute = __webpack_require__(24);
+let parseAttribute = __webpack_require__(25);
 
 let {
     isString,
@@ -2158,7 +2180,7 @@ module.exports = parseArgs;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2168,7 +2190,7 @@ let {
     isString
 } = __webpack_require__(1);
 
-let parseStyle = __webpack_require__(12);
+let parseStyle = __webpack_require__(13);
 
 let {
     mergeMap
@@ -2232,14 +2254,14 @@ module.exports = parseAttribute;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let twowaybinding = __webpack_require__(26);
-let eventError = __webpack_require__(27);
+let twowaybinding = __webpack_require__(27);
+let eventError = __webpack_require__(28);
 
 module.exports = {
     twowaybinding,
@@ -2248,7 +2270,7 @@ module.exports = {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2275,7 +2297,7 @@ module.exports = (obj, path) => (tagName, attributes, childExp) => {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2307,7 +2329,7 @@ let wrapEventHandler = (fun, catcher) => {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2327,11 +2349,11 @@ let {
     forEach
 } = __webpack_require__(3);
 
-let replace = __webpack_require__(29);
+let replace = __webpack_require__(30);
 
-let reduceNode = __webpack_require__(9);
+let reduceNode = __webpack_require__(10);
 
-let mount = __webpack_require__(13);
+let mount = __webpack_require__(14);
 
 /**
  * render function: (data) => node
@@ -2526,7 +2548,7 @@ module.exports = View;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2544,7 +2566,11 @@ let {
     forEach
 } = __webpack_require__(3);
 
-let applyAttibutes = __webpack_require__(30);
+let {
+    eventMapHook
+} = __webpack_require__(9);
+
+let applyAttibutes = __webpack_require__(35);
 
 let replaceDirectly = (node, newNode) => {
     let parent = node.parentNode;
@@ -2603,8 +2629,8 @@ let editNode = (node, newNode) => {
     }
 
     // transfer event map
-    if (newNode.__eventMap) {
-        node.__eventMap = newNode.__eventMap;
+    if (newNode[eventMapHook]) {
+        node[eventMapHook] = newNode[eventMapHook];
     }
 
     let orinChildNodes = toArray(node.childNodes);
@@ -2658,7 +2684,138 @@ module.exports = (node, newNode) => {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var rng = __webpack_require__(32);
+var bytesToUuid = __webpack_require__(34);
+
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof(options) == 'string') {
+    buf = options == 'binary' ? new Array(16) : null;
+    options = null;
+  }
+  options = options || {};
+
+  var rnds = options.random || (options.rng || rng)();
+
+  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+
+  // Copy bytes to buffer, if provided
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || bytesToUuid(rnds);
+}
+
+module.exports = v4;
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {// Unique ID creation requires a high quality random # generator.  In the
+// browser this is a little complicated due to unknown quality of Math.random()
+// and inconsistent support for the `crypto` API.  We do the best we can via
+// feature-detection
+var rng;
+
+var crypto = global.crypto || global.msCrypto; // for IE 11
+if (crypto && crypto.getRandomValues) {
+  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
+  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+  rng = function whatwgRNG() {
+    crypto.getRandomValues(rnds8);
+    return rnds8;
+  };
+}
+
+if (!rng) {
+  // Math.random()-based (RNG)
+  //
+  // If all else fails, use Math.random().  It's fast, but is of unspecified
+  // quality.
+  var rnds = new Array(16);
+  rng = function() {
+    for (var i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+
+    return rnds;
+  };
+}
+
+module.exports = rng;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports) {
+
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+for (var i = 0; i < 256; ++i) {
+  byteToHex[i] = (i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex;
+  return bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]];
+}
+
+module.exports = bytesToUuid;
+
+
+/***/ }),
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2666,7 +2823,7 @@ module.exports = (node, newNode) => {
 
 let {
     getAttributeMap
-} = __webpack_require__(31);
+} = __webpack_require__(36);
 
 let {
     hasOwnProperty
@@ -2705,15 +2862,15 @@ module.exports = applyAttibutes;
 
 
 /***/ }),
-/* 31 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let shadowFrame = __webpack_require__(32);
+let shadowFrame = __webpack_require__(37);
 
-let startMomenter = __webpack_require__(33);
+let startMomenter = __webpack_require__(38);
 
 let getX = (elem) => {
     var x = 0;
@@ -2796,7 +2953,7 @@ module.exports = {
 
 
 /***/ }),
-/* 32 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2851,7 +3008,7 @@ module.exports = shadowFrame;
 
 
 /***/ }),
-/* 33 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2907,7 +3064,7 @@ module.exports = startMomenter;
 
 
 /***/ }),
-/* 34 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2954,7 +3111,7 @@ module.exports = {
 
 
 /***/ }),
-/* 35 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2963,6 +3120,12 @@ module.exports = {
 let {
     contain
 } = __webpack_require__(3);
+
+let {
+    eventMapHook,
+    globalEventTypePrefix,
+    stopPropagationFlag
+} = __webpack_require__(9);
 
 module.exports = () => {
     let docs = [];
@@ -2982,7 +3145,7 @@ module.exports = () => {
     let attachDocument = (doc = document) => {
         if (!contain(docs, doc)) {
             for (let type in eventTypeMap) {
-                // prevent multiple version of kabanery to binding multiple times
+                // prevent multiple version of kabanery to binding multiple times for the same type
                 let id = getGlobalEventTypeId(type);
                 if (!doc[id]) {
                     addEventListenerToDoc(doc, type);
@@ -3027,7 +3190,7 @@ module.exports = () => {
         // hack the stopPropagration function
         let oldProp = e.stopPropagation;
         e.stopPropagation = function(...args) {
-            e.__stopPropagation = true;
+            e[stopPropagationFlag] = true;
             return oldProp && oldProp.apply(this, args);
         };
 
@@ -3049,7 +3212,7 @@ module.exports = () => {
     };
 
     let getHandler = (type, target) => {
-        let eventMap = target && target.__eventMap;
+        let eventMap = target && target[eventMapHook];
         return eventMap && eventMap[type];
     };
 
@@ -3077,11 +3240,11 @@ let getNodePath = (target) => {
     return paths;
 };
 
-let getGlobalEventTypeId = (type) => `__event_type_id_${type}`;
+let getGlobalEventTypeId = (type) => `${globalEventTypePrefix}${type}`;
 
 
 /***/ }),
-/* 36 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3137,7 +3300,7 @@ module.exports = (...args) => {
 
 
 /***/ }),
-/* 37 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3148,7 +3311,7 @@ let {
     styles
 } = __webpack_require__(2);
 
-let Button = __webpack_require__(15);
+let Button = __webpack_require__(16);
 let {
     Signal,
     onSignalType
@@ -3242,7 +3405,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 38 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3339,7 +3502,7 @@ module.exports = (classTable) => {
 
 
 /***/ }),
-/* 39 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3397,7 +3560,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 40 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3450,7 +3613,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 41 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3460,7 +3623,7 @@ let lumineView = __webpack_require__(0);
 
 let n = __webpack_require__(5);
 
-let Full = __webpack_require__(16);
+let Full = __webpack_require__(17);
 
 let {
     styles
@@ -3469,7 +3632,7 @@ let {
 const {
     MODE_PERCENTAGE,
     MODE_PILE
-} = __webpack_require__(17);
+} = __webpack_require__(18);
 
 /**
  *
@@ -3533,7 +3696,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 42 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3543,7 +3706,7 @@ let lumineView = __webpack_require__(0);
 
 let n = __webpack_require__(5);
 
-let Full = __webpack_require__(16);
+let Full = __webpack_require__(17);
 
 let {
     styles
@@ -3552,7 +3715,7 @@ let {
 const {
     MODE_PILE,
     MODE_PERCENTAGE
-} = __webpack_require__(17);
+} = __webpack_require__(18);
 
 /**
  * top + bottom
@@ -3606,7 +3769,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 43 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3665,7 +3828,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 44 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3696,7 +3859,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 45 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3705,9 +3868,9 @@ module.exports = lumineView(({
 let n = __webpack_require__(5);
 let lumineView = __webpack_require__(0);
 
-let TextLoading = __webpack_require__(18);
-let PageMask = __webpack_require__(19);
-let Empty = __webpack_require__(46);
+let TextLoading = __webpack_require__(19);
+let PageMask = __webpack_require__(20);
+let Empty = __webpack_require__(51);
 
 module.exports = lumineView(({
     props,
@@ -3734,7 +3897,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 46 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
