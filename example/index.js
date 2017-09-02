@@ -14,10 +14,18 @@ let Hn = require('../lib/view/layout/hn');
 let Vn = require('../lib/view/layout/vn');
 let Notice = require('../lib/view/notice/notice');
 let TextLoading = require('../lib/view/loading/textLoading');
+let TestSignalUpdateStateRunnerView = require('./testViews/TestSignalUpdateStateRunnerView');
 //let PageMask = require('../lib/view/mask/pageMask');
 //let PageLoading = require('../lib/view/loading/pageLoading');
-
+let {
+    signalUpdateStateRunner
+} = require('../lib/flow/updateFlow');
 let steadyTheme = require('../lib/theme/steady');
+let {
+    onSignalType
+} = require('../lib/util/signal');
+
+let ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
 
 let log = console.log; // eslint-disable-line
 
@@ -168,6 +176,14 @@ let examples = [
     {
         name: 'textLoading',
         render: () => n(TextLoading)
+    },
+
+    {
+        name: 'TestSignalUpdateStateRunnerView',
+        render: () => n(TestSignalUpdateStateRunnerView, {
+            text: 'init',
+            onsignal: onSignalType('doTestSUS', ChangeText)
+        })
     },
 
     /*
