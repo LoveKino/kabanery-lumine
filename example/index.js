@@ -14,8 +14,8 @@ let Hn = require('../lib/view/layout/hn');
 let Vn = require('../lib/view/layout/vn');
 let Notice = require('../lib/view/notice/notice');
 let TextLoading = require('../lib/view/loading/textLoading');
-let PageMask = require('../lib/view/mask/pageMask');
-let PageLoading = require('../lib/view/loading/pageLoading');
+//let PageMask = require('../lib/view/mask/pageMask');
+//let PageLoading = require('../lib/view/loading/pageLoading');
 
 let steadyTheme = require('../lib/theme/steady');
 
@@ -160,7 +160,8 @@ let examples = [
         name: 'notice',
 
         render: () => n(Notice, {
-            text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................'
+            text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................',
+            onsignal: logSignal
         })
     },
 
