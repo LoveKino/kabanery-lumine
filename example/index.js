@@ -16,6 +16,8 @@ let Notice = require('../lib/view/notice/notice');
 let TextLoading = require('../lib/view/loading/textLoading');
 let TestSignalUpdateStateRunnerView = require('./testViews/TestSignalUpdateStateRunnerView');
 let TestSignalActionFlow = require('./testViews/TestSignalActionFlow');
+let Modal = require('../lib/view/modal/modal');
+let InputDialog = require('../lib/view/modal/inputDialog');
 //let PageMask = require('../lib/view/mask/pageMask');
 //let PageLoading = require('../lib/view/loading/pageLoading');
 let {
@@ -206,6 +208,24 @@ let examples = [
             })
         })
     },
+
+    {
+        name: 'Modal',
+        render: () => n(Modal, {
+            autoHide: true
+        }, [n('div', 123)])
+    },
+
+    {
+        name: 'InputDialog',
+        render: () => n(InputDialog, {
+            title: 'test',
+            text: 'start',
+            autoHide: true,
+            placeholder: 'place something',
+            onsignal: logSignal
+        })
+    }
 
     /*
     {

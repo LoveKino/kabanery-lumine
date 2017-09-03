@@ -1827,6 +1827,7 @@ let basics = {
     normalSize: 16,
 
     narrowPadding: '4 8 4 8',
+    narrowMargin: '4 8 4 8',
 
     contrastBlockColor: 'white',
     contrastFontColor: 'black'
@@ -1879,6 +1880,10 @@ let oneLineBulk = styles(bulk, {
     color: basics.fontColor
 });
 
+let modalBulk = styles(oneLineBulk, contrastBulk, {
+    display: 'inline-block'
+});
+
 let flat = {
     appearance: 'none',
     '-webkit-appearance': 'none',
@@ -1912,7 +1917,7 @@ let underLineBorder = {
 };
 
 let underLineFocus = {
-    'border-bottom': `2px solid ${basics.blockColor}`
+    'border-bottom': `1px solid ${basics.blockColor}`
 };
 
 let actions = {
@@ -1940,6 +1945,7 @@ module.exports = {
 
     bulk,
     oneLineBulk,
+    modalBulk,
     inputBox,
     textAreaBox,
     underLineBorder,
@@ -2855,6 +2861,8 @@ let Notice = __webpack_require__(89);
 let TextLoading = __webpack_require__(91);
 let TestSignalUpdateStateRunnerView = __webpack_require__(92);
 let TestSignalActionFlow = __webpack_require__(93);
+let Modal = __webpack_require__(95);
+let InputDialog = __webpack_require__(98);
 //let PageMask = require('../lib/view/mask/pageMask');
 //let PageLoading = require('../lib/view/loading/pageLoading');
 let {
@@ -3045,6 +3053,24 @@ let examples = [
             })
         })
     },
+
+    {
+        name: 'Modal',
+        render: () => n(Modal, {
+            autoHide: true
+        }, [n('div', 123)])
+    },
+
+    {
+        name: 'InputDialog',
+        render: () => n(InputDialog, {
+            title: 'test',
+            text: 'start',
+            autoHide: true,
+            placeholder: 'place something',
+            onsignal: logSignal
+        })
+    }
 
     /*
     {
@@ -8255,10 +8281,14 @@ let signalActionFlow = (signalActionMap, pageEnv, variableMap = {}, {
 
     return (signal, viewState, ctx) => {
         let actions = signalActionMap[signal.type] || [];
-        return Promise.all(actions.map((action) => {
-            return action.content(signal, viewState, ctx, pageEnv);
-        }));
+        return runSignalActions(signal, actions, viewState, ctx, pageEnv);
     };
+};
+
+let runSignalActions = (signal, actions, viewState, ctx, pageEnv) => {
+    return Promise.all(actions.map((action) => {
+        return action.content(signal, viewState, ctx, pageEnv);
+    }));
 };
 
 // TODO validate signalActionMap
@@ -8339,9 +8369,9 @@ let parseSignalAction = (signalAction, variableMap, {
 
             signalAction.content = (signal, data, ctx, pageEnv) => {
                 return signalRequest(signal, data, ctx, pageEnv).then((response) => {
-                    return responseUpdate(response, data, ctx);
+                    return responseUpdate && responseUpdate(response, data, ctx);
                 }).catch((err) => {
-                    errorUpdate(err, data, ctx);
+                    errorUpdate && errorUpdate(err, data, ctx);
                     throw err;
                 });
             };
@@ -8362,7 +8392,327 @@ let getVariableStub = (variableStub, action) => {
 };
 
 module.exports = {
-    signalActionFlow
+    signalActionFlow,
+    runSignalActions
+};
+
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let lumineView = __webpack_require__(2);
+let n = __webpack_require__(6);
+let Mask = __webpack_require__(96);
+let {
+    styles
+} = __webpack_require__(3);
+let {
+    onSignalType
+} = __webpack_require__(4);
+
+module.exports = lumineView(({
+    props,
+    children
+}, {
+    updateWithNotify
+}) => {
+    return props.show ? n(Mask, {
+        style: props.style.maskStyle,
+        theme: props.theme,
+        onsignal: onSignalType('fullwindow-click', () => {
+            if (props.autoHide) {
+                updateWithNotify(null, 'props.show', false);
+            }
+        })
+    }, [
+        n('div', {
+            style: {
+                display: 'table-cell',
+                verticalAlign: 'middle'
+            }
+        }, [ // middle
+            n('div', {
+                style: props.style.modalContainer,
+                onclick: (e) => {
+                    e.stopPropagation();
+                }
+            }, children)
+        ])
+    ]) : n('div');
+}, {
+    defaultProps: {
+        show: true,
+        autoHide: false,
+        style: (theme) => {
+            return {
+                maskStyle: {
+                    textAlign: 'center',
+                    display: 'table'
+                },
+                modalContainer: styles(theme.modalBulk, {
+                    padding: theme.basics.narrowPadding
+                })
+            };
+        }
+    }
+});
+
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let FullWindow = __webpack_require__(97);
+let lumineView = __webpack_require__(2);
+let n = __webpack_require__(6);
+
+module.exports = lumineView(({
+    props,
+    children
+}) => {
+    return n(FullWindow, props, children);
+}, {
+    defaultProps: {
+        style: (theme) => {
+            return {
+                backgroundColor: theme.basics.veilColor,
+                color: theme.basics.fontColor,
+                zIndex: 1000
+            };
+        }
+    }
+});
+
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(5);
+let lumineView = __webpack_require__(2);
+let {
+    styles
+} = __webpack_require__(3);
+let {
+    Signal
+} = __webpack_require__(4);
+
+module.exports = lumineView(({
+    props,
+    children
+}, {
+    notify
+}) => {
+    return n('div', {
+        style: props.style,
+        onclick: () => {
+            notify(Signal('fullwindow-click'));
+        }
+    }, children);
+}, {
+    defaultProps: {
+        style: (theme) => styles(theme.fullWindow)
+    },
+
+    defaultChildren: []
+});
+
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let lumineView = __webpack_require__(2);
+let n = __webpack_require__(6);
+let {
+    onSignalType,
+    deliver
+} = __webpack_require__(4);
+let Modal = __webpack_require__(95);
+let Input = __webpack_require__(85);
+let Button = __webpack_require__(10);
+let {
+    syncBindWithKeyMap
+} = __webpack_require__(99);
+let {
+    styles
+} = __webpack_require__(3);
+
+module.exports = lumineView(({
+    props
+}, ctx) => {
+    return n(Modal, syncBindWithKeyMap(ctx, {
+        'show': 'show',
+        'autoHide': 'autoHide',
+        'style.modalStyle': 'style'
+    }, {
+        bindedProps: {
+            theme: props.theme
+        }
+    }), [
+        props.title && n('h4', {
+            style: props.style.titleStyle
+        }, props.title),
+        n(Input, syncBindWithKeyMap(ctx, {
+            'text': 'value'
+        }, {
+            bindedProps: {
+                placeholder: props.placeholder,
+                theme: props.theme
+            }
+        })),
+
+        n('br'),
+
+        n(Button, {
+            style: props.style.cancelBtnStyle,
+            onsignal: onSignalType('click', deliver(ctx, 'cancel-dialog')),
+        }, [props.cancelBtnText]),
+
+        n(Button, {
+            style: props.style.okBtnStyle,
+            onsignal: onSignalType('click', deliver(ctx, 'ok-dialog')),
+        }, [props.okBtnText])
+    ]);
+}, {
+    defaultProps: {
+        show: true,
+        autoHide: false,
+        title: '',
+        text: '',
+        cancelBtnText: 'cancel',
+        okBtnText: 'ok',
+        style: (theme) => {
+            return {
+                modalStyle: {},
+                titleStyle: styles(theme.container, {
+                    padding: theme.basics.narrowPadding
+                }),
+                cancelBtnStyle: {
+                    width: 100,
+                    margin: theme.basics.narrowMargin
+                },
+                okBtnStyle: {
+                    width: 100,
+                    margin: theme.basics.narrowMargin
+                }
+            };
+        }
+    }
+});
+
+
+/***/ }),
+/* 99 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    get,
+    set
+} = __webpack_require__(3);
+
+let {
+    Signal
+} = __webpack_require__(4);
+
+const CHILD_SOURCE_TYPE = 'child';
+
+const identity = v => v;
+
+/**
+ * binding view with another view's props through a key map
+ *
+ * keyMap = {
+ *    binderKey: bindedKey
+ * }
+ */
+
+let syncBindWithKeyMap = (ctx, keyMap, {
+    bindedProps = {},
+    stopSignal,
+    autoUpdate = false,
+    updatedSignalTypes = null,
+    onChildSignal,
+    toBinded = identity,
+    toBinder = identity
+} = {}) => {
+    // TODO check
+
+    let viewData = ctx.getData();
+    let props = viewData.props;
+    let mappings = [];
+    for (let binderKey in keyMap) {
+        mappings.push([binderKey, keyMap[binderKey]]);
+    }
+
+    let mapedPropsValue = mappings.reduce((prev, [binderKey, bindedKey]) => {
+        let propValue = get(props, binderKey); // get from binder
+        set(prev, bindedKey, toBinded(propValue, binderKey, bindedKey)); // set for binded
+        return prev;
+    }, {});
+
+    let onsignal = (signal, data, sourceCtx) => {
+        // when event happened, sync the data
+        mappings.forEach(([binderKey, bindedKey]) => {
+            let propValue = get(data.props, bindedKey); // get from child
+            set(props, binderKey, toBinder(propValue, binderKey, bindedKey)); // set for parent
+        });
+
+        // handle the signal if necessary
+        onChildSignal && onChildSignal(signal, data, sourceCtx);
+
+        if (!stopSignal) {
+            // pop up the signal, TODO wrap the sigal to resolve chain
+            ctx.notify(
+                Signal(signal.type, {
+                    sourceType: CHILD_SOURCE_TYPE,
+                    keyMap,
+                    sourceSignal: signal,
+                    sourceData: data,
+                    sourceCtx
+                })
+            );
+        }
+
+        if (autoUpdate) {
+            if (!updatedSignalTypes) {
+                ctx.update(); // update binder view
+            } else {
+                if (updatedSignalTypes.findIndex((type) => type === signal.type) !== -1) {
+                    ctx.update(); // update binder view
+                }
+            }
+        }
+    };
+
+    // construct child props
+    return Object.assign({
+        theme: props.theme // extend theme by default
+    }, bindedProps, mapedPropsValue, {
+        onsignal
+    });
+};
+
+module.exports = {
+    syncBindWithKeyMap
 };
 
 
