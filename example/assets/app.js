@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 34);
+/******/ 	return __webpack_require__(__webpack_require__.s = 36);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -300,11 +300,11 @@ let {
     isObject, funType, or, isString, isFalsy, likeArray
 } = __webpack_require__(0);
 
-let iterate = __webpack_require__(17);
+let iterate = __webpack_require__(19);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact
-} = __webpack_require__(36);
+} = __webpack_require__(38);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -406,118 +406,22 @@ module.exports = {
 "use strict";
 
 
-let styles = (...styleObjects) => {
-    return Object.assign({}, ...styleObjects);
-};
-
-let isMapObject = (v) => {
-    return v && typeof v === 'object' && !Array.isArray(v);
-};
-
-let deepMergeMap = (tar, def, path = '', options = {}) => {
-    let blackList = options.blackList || [];
-    if (blackList.findIndex((item) => item === path) !== -1) {
-        return tar;
-    }
-    if (isMapObject(def)) {
-        tar = tar || {};
-        if (isMapObject(tar)) {
-            for (let name in def) {
-                tar[name] = deepMergeMap(tar[name], def[name], path === '' ? name : path + '.' + name, options);
-            }
-        }
-        return tar;
-    } else {
-        if (tar === undefined) return def;
-        return tar;
-    }
-};
-
-let resolveFnValue = (fn, ...args) => {
-    if (typeof fn === 'function') {
-        return resolveFnValue(fn(...args));
-    }
-
-    return fn;
-};
-
-let get = (obj, key = '') => {
-    key = key.trim();
-    let parts = !key ? [] : key.split('.');
-
-    let partLen = parts.length;
-    for (let i = 0; i < partLen; i++) {
-        let part = parts[i].trim();
-        if (part) {
-            obj = obj[part];
-        }
-    }
-
-    return obj;
-};
-
-let set = (obj, key = '', value) => {
-    key = key.trim();
-    let parts = !key ? [] : key.split('.');
-    if (!parts.length) return;
-    let parent = obj;
-
-    for (let i = 0; i < parts.length - 1; i++) {
-        let part = parts[i];
-        part = part.trim();
-        if (part) {
-            let next = parent[part];
-            if (!isObject(next)) {
-                next = {};
-                parent[part] = next;
-            }
-            parent = next;
-        }
-    }
-
-    parent[parts[parts.length - 1]] = value;
-    return obj;
-};
-
-let isObject = (v) => v && typeof v === 'object';
-
-let likeArray = (v) => v && typeof v === 'object' && typeof v.length === 'number';
-
-module.exports = {
-    styles,
-    isMapObject,
-    deepMergeMap,
-    resolveFnValue,
-    get,
-    set,
-    isObject,
-    likeArray
-};
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 let {
     view
-} = __webpack_require__(4);
-let steadyTheme = __webpack_require__(21);
+} = __webpack_require__(5);
+let steadyTheme = __webpack_require__(23);
 let {
     deepMergeMap,
     resolveFnValue
-} = __webpack_require__(2);
-let ClassTable = __webpack_require__(55);
+} = __webpack_require__(3);
+let ClassTable = __webpack_require__(57);
 let {
     Signal
-} = __webpack_require__(7);
-let JsonTree = __webpack_require__(56);
+} = __webpack_require__(4);
+let JsonTree = __webpack_require__(24);
 let {
     executeAST
-} = __webpack_require__(22);
+} = __webpack_require__(15);
 
 /**
  * define the general interface for lumine view
@@ -621,13 +525,151 @@ module.exports = (viewFun, {
 
 
 /***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let styles = (...styleObjects) => {
+    return Object.assign({}, ...styleObjects);
+};
+
+let isMapObject = (v) => {
+    return v && typeof v === 'object' && !Array.isArray(v);
+};
+
+let deepMergeMap = (tar, def, path = '', options = {}) => {
+    let blackList = options.blackList || [];
+    if (blackList.findIndex((item) => item === path) !== -1) {
+        return tar;
+    }
+    if (isMapObject(def)) {
+        tar = tar || {};
+        if (isMapObject(tar)) {
+            for (let name in def) {
+                tar[name] = deepMergeMap(tar[name], def[name], path === '' ? name : path + '.' + name, options);
+            }
+        }
+        return tar;
+    } else {
+        if (tar === undefined) return def;
+        return tar;
+    }
+};
+
+let resolveFnValue = (fn, ...args) => {
+    if (typeof fn === 'function') {
+        return resolveFnValue(fn(...args));
+    }
+
+    return fn;
+};
+
+let get = (obj, key = '') => {
+    key = key.trim();
+    let parts = !key ? [] : key.split('.');
+
+    let partLen = parts.length;
+    for (let i = 0; i < partLen; i++) {
+        let part = parts[i].trim();
+        if (part) {
+            obj = obj[part];
+        }
+    }
+
+    return obj;
+};
+
+let set = (obj, key = '', value) => {
+    key = key.trim();
+    let parts = !key ? [] : key.split('.');
+    if (!parts.length) return;
+    let parent = obj;
+
+    for (let i = 0; i < parts.length - 1; i++) {
+        let part = parts[i];
+        part = part.trim();
+        if (part) {
+            let next = parent[part];
+            if (!isObject(next)) {
+                next = {};
+                parent[part] = next;
+            }
+            parent = next;
+        }
+    }
+
+    parent[parts[parts.length - 1]] = value;
+    return obj;
+};
+
+let isObject = (v) => v && typeof v === 'object';
+
+let likeArray = (v) => v && typeof v === 'object' && typeof v.length === 'number';
+
+module.exports = {
+    styles,
+    isMapObject,
+    deepMergeMap,
+    resolveFnValue,
+    get,
+    set,
+    isObject,
+    likeArray
+};
+
+
+/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(35);
+let Signal = (type, data) => {
+    return {
+        type,
+        data
+    };
+};
+
+let isSignalType = (s, type) => {
+    return s.type === type;
+};
+
+let onSignalType = (expectType, fn) => (signal, ...rest) => {
+    if (isSignalType(signal, expectType)) {
+        return fn(signal, ...rest);
+    }
+};
+
+let deliver = (ctx, type, extra) => (sourceSignal, sourceData, sourceCtx) => {
+    ctx.notify(Signal(type, {
+        sourceType: 'delivered',
+        sourceSignal,
+        sourceData,
+        sourceCtx,
+        extra
+    }));
+};
+
+module.exports = {
+    Signal,
+    onSignalType,
+    isSignalType,
+    deliver
+};
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(37);
 
 /**
  * @readme-doc
@@ -733,7 +775,40 @@ module.exports = __webpack_require__(35);
 
 
 /***/ }),
-/* 5 */
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n,
+    parseArgs
+} = __webpack_require__(5);
+
+module.exports = (...args) => {
+    let tagName = args[0];
+
+    if (typeof tagName === 'string') {
+        return n(...args);
+    } else {
+        let {
+            attributes,
+            childs
+        } = parseArgs(args, {
+            doParseStyle: false
+        });
+
+        return tagName({
+            props: attributes,
+            children: childs
+        });
+    }
+};
+
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -743,11 +818,11 @@ let {
     isObject, funType, or, isString, isFalsy, likeArray
 } = __webpack_require__(0);
 
-let iterate = __webpack_require__(29);
+let iterate = __webpack_require__(31);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact, reverse, overArgs
-} = __webpack_require__(73);
+} = __webpack_require__(74);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -841,81 +916,6 @@ module.exports = {
     compact,
     reverse,
     overArgs
-};
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    n,
-    parseArgs
-} = __webpack_require__(4);
-
-module.exports = (...args) => {
-    let tagName = args[0];
-
-    if (typeof tagName === 'string') {
-        return n(...args);
-    } else {
-        let {
-            attributes,
-            childs
-        } = parseArgs(args, {
-            doParseStyle: false
-        });
-
-        return tagName({
-            props: attributes,
-            children: childs
-        });
-    }
-};
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let Signal = (type, data) => {
-    return {
-        type,
-        data
-    };
-};
-
-let isSignalType = (s, type) => {
-    return s.type === type;
-};
-
-let onSignalType = (expectType, fn) => (signal, ...rest) => {
-    if (isSignalType(signal, expectType)) {
-        return fn(signal, ...rest);
-    }
-};
-
-let deliver = (ctx, type, extra) => (sourceSignal, sourceData, sourceCtx) => {
-    ctx.notify(Signal(type, {
-        sourceType: 'delivered',
-        sourceSignal,
-        sourceData,
-        sourceCtx,
-        extra
-    }));
-};
-
-module.exports = {
-    Signal,
-    onSignalType,
-    isSignalType,
-    deliver
 };
 
 
@@ -1119,11 +1119,63 @@ module.exports = {
  * console.log(m('"').type === MATCH);
  *
  **/
-module.exports = __webpack_require__(61);
+module.exports = __webpack_require__(62);
 
 
 /***/ }),
 /* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(5);
+let lumineView = __webpack_require__(2);
+let {
+    Signal
+} = __webpack_require__(4);
+let {
+    styles
+} = __webpack_require__(3);
+
+module.exports = lumineView(({
+    props,
+    children
+}, {
+    notify,
+    getClassName
+}) => {
+    // TODO validate
+    let attributes = {
+        'class': `${getClassName('btn')}`,
+        style: props.style,
+        onclick: () => {
+            notify(Signal('click'));
+        }
+    };
+    if (props.id) {
+        attributes.id = props.id;
+    }
+    return n('button', attributes, children[0]);
+}, {
+    defaultProps: {
+        style: (theme) => styles(theme.oneLineBulk)
+    },
+
+    classTable: (theme) => {
+        return {
+            'btn:hover': theme.actions.hover,
+            'btn:active': theme.actions.signal,
+            'btn:focus': theme.actions.focus
+        };
+    }
+});
+
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1136,9 +1188,9 @@ let {
     isObject, isNode
 } = __webpack_require__(0);
 
-let parseArgs = __webpack_require__(37);
+let parseArgs = __webpack_require__(39);
 
-let parseStyle = __webpack_require__(18);
+let parseStyle = __webpack_require__(20);
 
 const KABANERY_NODE = 'kabanery_node';
 
@@ -1240,13 +1292,13 @@ module.exports = {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let uuidv4 = __webpack_require__(19);
+let uuidv4 = __webpack_require__(21);
 
 let seed = uuidv4();
 
@@ -1258,7 +1310,7 @@ module.exports = {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1266,11 +1318,11 @@ module.exports = {
 
 let {
     createElement, createSvgElement
-} = __webpack_require__(51);
+} = __webpack_require__(53);
 
 let {
     bindEvents
-} = __webpack_require__(13);
+} = __webpack_require__(14);
 
 let {
     map
@@ -1278,7 +1330,7 @@ let {
 
 let {
     isKabaneryNode
-} = __webpack_require__(10);
+} = __webpack_require__(11);
 
 let reduceNode = (node) => {
     if (isKabaneryNode(node)) {
@@ -1300,17 +1352,17 @@ module.exports = reduceNode;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let EventMatrix = __webpack_require__(52);
+let EventMatrix = __webpack_require__(54);
 
 let {
     eventMapHook
-} = __webpack_require__(11);
+} = __webpack_require__(12);
 
 let {
     listenEventType,
@@ -1337,7 +1389,14 @@ module.exports = {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(59);
+
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1351,7 +1410,7 @@ module.exports = {
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1359,7 +1418,7 @@ module.exports = {
 
 let {
     reduce
-} = __webpack_require__(5);
+} = __webpack_require__(7);
 
 /**
  *
@@ -1438,7 +1497,7 @@ module.exports = {
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -1490,7 +1549,7 @@ module.exports = {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1597,7 +1656,7 @@ module.exports = iterate;
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1663,11 +1722,11 @@ let convertStyleValue = (value, key) => {
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var rng = __webpack_require__(44);
-var bytesToUuid = __webpack_require__(46);
+var rng = __webpack_require__(46);
+var bytesToUuid = __webpack_require__(48);
 
 function v4(options, buf, offset) {
   var i = buf && offset || 0;
@@ -1698,7 +1757,7 @@ module.exports = v4;
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1706,7 +1765,7 @@ module.exports = v4;
 
 let {
     attachDocument
-} = __webpack_require__(13);
+} = __webpack_require__(14);
 
 let {
     isNode
@@ -1716,7 +1775,7 @@ let {
     flat, forEach
 } = __webpack_require__(1);
 
-let reduceNode = __webpack_require__(12);
+let reduceNode = __webpack_require__(13);
 
 /**
  * @param parentNode
@@ -1745,7 +1804,7 @@ let getDoc = (node) => {
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1753,7 +1812,7 @@ let getDoc = (node) => {
 
 let {
     styles
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 let basics = {
     pageColor: '#e4e4e4',
@@ -1897,14 +1956,84 @@ module.exports = {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(58);
+"use strict";
+
+
+let {
+    autoId,
+    isObject,
+
+    modifySuccess,
+    removeNoneExist,
+    removeSuccess
+} = __webpack_require__(58);
+
+module.exports = (jsonData, {
+    missingValue = undefined
+} = {}) => {
+    let queryByPath = (path) => {
+        let cur = jsonData;
+        for (let i = 0; i < path.length; i++) {
+            if (!isObject(cur)) {
+                return missingValue;
+            } else {
+                if (cur.hasOwnProperty(path[i])) {
+                    cur = cur[path[i]];
+                } else {
+                    return missingValue;
+                }
+            }
+        }
+
+        return cur;
+    };
+
+    let setByPath = (path, value) => {
+        let parent = jsonData;
+
+        for (let i = 0; i < path.length - 1; i++) {
+            let part = path[i];
+            let next = parent[part];
+            if (!isObject(next)) { // if is not object, just override to a empty object
+                next = {}; // create a new middle node
+                parent[part] = next;
+            }
+            parent = next;
+        }
+
+        parent[path[path.length - 1]] = value; // set value
+        return modifySuccess(path, value);
+    };
+
+    return {
+        queryByPath,
+
+        setByPath,
+
+        removeByPath: (path) => {
+            let parentPath = path.slice(0, path.length - 1);
+            let lastKey = path[path.length - 1];
+            let parent = queryByPath(parentPath);
+            if (parent === missingValue || !isObject(parent) || !parent.hasOwnProperty(lastKey)) {
+                return removeNoneExist(path);
+            } else {
+                delete parent[lastKey];
+                return removeSuccess(path);
+            }
+        },
+
+        appendByPath: (path, value) => {
+            return setByPath(path.concat([autoId()]), value);
+        }
+    };
+};
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1946,11 +2075,11 @@ module.exports = __webpack_require__(58);
  * console.log('\n');
  * console.log(tokens3);
  */
-module.exports = __webpack_require__(60);
+module.exports = __webpack_require__(61);
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2053,7 +2182,7 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2063,11 +2192,11 @@ let {
     isObject, funType, or, isString, isFalsy, likeArray
 } = __webpack_require__(0);
 
-let iterate = __webpack_require__(26);
+let iterate = __webpack_require__(28);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact, reverse, overArgs
-} = __webpack_require__(65);
+} = __webpack_require__(66);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -2165,7 +2294,7 @@ module.exports = {
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2311,7 +2440,7 @@ module.exports = {
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2331,7 +2460,7 @@ module.exports = {
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2345,7 +2474,7 @@ module.exports = {
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2491,7 +2620,7 @@ module.exports = {
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports) {
 
 let getProductionId = (production) => {
@@ -2536,7 +2665,7 @@ module.exports = {
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2544,63 +2673,11 @@ module.exports = {
 
 let {
     n
-} = __webpack_require__(4);
-let lumineView = __webpack_require__(3);
-let {
-    Signal
-} = __webpack_require__(7);
+} = __webpack_require__(5);
+let lumineView = __webpack_require__(2);
 let {
     styles
-} = __webpack_require__(2);
-
-module.exports = lumineView(({
-    props,
-    children
-}, {
-    notify,
-    getClassName
-}) => {
-    // TODO validate
-    let attributes = {
-        'class': `${getClassName('btn')}`,
-        style: props.style,
-        onclick: () => {
-            notify(Signal('click'));
-        }
-    };
-    if (props.id) {
-        attributes.id = props.id;
-    }
-    return n('button', attributes, children[0]);
-}, {
-    defaultProps: {
-        style: (theme) => styles(theme.oneLineBulk)
-    },
-
-    classTable: (theme) => {
-        return {
-            'btn:hover': theme.actions.hover,
-            'btn:active': theme.actions.signal,
-            'btn:focus': theme.actions.focus
-        };
-    }
-});
-
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    n
-} = __webpack_require__(4);
-let lumineView = __webpack_require__(3);
-let {
-    styles
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 module.exports = lumineView(({
     props,
@@ -2619,7 +2696,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -2629,7 +2706,134 @@ module.exports = {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    parseStrToAst,
+    checkAST,
+    executeAST
+} = __webpack_require__(15);
+let JsonTree = __webpack_require__(24);
+
+/**
+ *
+ * atom updating
+ *
+ * 1. signal to update client state, like page UI.
+ *
+ * 2. signal to send request
+ *
+ * 3. response (from server or other) update client state, like page UI
+ */
+
+const clientState = {
+    localStorage: typeof localStorage !== 'undefined' && localStorage
+};
+
+let signalUpdateStateRunner = (code, variableMap, {
+    variableStub
+} = {}) => {
+    let ast = getTreeScriptAst(code, variableStub);
+
+    return (signal, viewState, ctx) => {
+        let data = Object.assign({
+            signal,
+            viewState
+        }, clientState);
+        updateTree(data, ast, variableMap, variableStub);
+        // update page
+        ctx.updateWithNotify();
+    };
+};
+
+let signalSendRequestRunner = (code, variableMap, {
+    variableStub
+} = {}) => {
+    let ast = getTreeScriptAst(code, variableStub);
+
+    return (signal, viewState, ctx, {
+        runApi,
+        apiMap
+    }) => {
+        let data = Object.assign({
+            signal,
+            viewState
+        }, clientState);
+        return runApi(updateTree(data, ast, Object.assign({}, variableMap, apiMap), variableStub));
+    };
+};
+
+let responseUpdateStateRunner = (code, variableMap, {
+    variableStub
+} = {}) => {
+    let ast = getTreeScriptAst(code, variableStub);
+
+    return (response, viewState, ctx) => {
+        updateTree(Object.assign({
+            response,
+            viewState
+        }, clientState), ast, variableMap, variableStub);
+        // update page
+        ctx.updateWithNotify();
+    };
+};
+
+let responseErrorRunner = (code, variableMap, {
+    variableStub
+} = {}) => {
+    let ast = getTreeScriptAst(code, variableStub);
+
+    return (error, viewState, ctx) => {
+        updateTree(Object.assign({
+            errorMsg: error.toString(),
+            error,
+            viewState,
+            ctx
+        }, clientState), ast, variableMap, variableStub);
+        // update page
+        ctx.updateWithNotify();
+    };
+};
+
+let getTreeScriptAst = (code, variableStub) => {
+    let ast = parseStrToAst(code);
+
+    if (variableStub) {
+        checkAST(ast, {
+            variableStub
+        });
+    }
+
+    return ast;
+};
+
+let updateTree = (source, ast, variableMap, variableStub) => {
+    let tree = JsonTree(source);
+
+    return executeAST(ast, {
+        queryByPath: tree.queryByPath,
+        setByPath: tree.setByPath,
+        removeByPath: tree.removeByPath,
+        appendByPath: tree.appendByPath,
+        variableMap,
+        variableStub
+    });
+};
+
+module.exports = {
+    signalUpdateStateRunner,
+    signalSendRequestRunner,
+    responseUpdateStateRunner,
+    responseErrorRunner
+};
+
+
+/***/ }),
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2637,28 +2841,32 @@ module.exports = {
 
 let {
     mount
-} = __webpack_require__(4);
+} = __webpack_require__(5);
 
 let n = __webpack_require__(6);
 
-let FunctionBar = __webpack_require__(54);
-let Button = __webpack_require__(31);
-let Input = __webpack_require__(84);
-let TextArea = __webpack_require__(85);
-let Hn = __webpack_require__(86);
-let Vn = __webpack_require__(87);
-let Notice = __webpack_require__(88);
-let TextLoading = __webpack_require__(90);
-let TestSignalUpdateStateRunnerView = __webpack_require__(91);
+let FunctionBar = __webpack_require__(56);
+let Button = __webpack_require__(10);
+let Input = __webpack_require__(85);
+let TextArea = __webpack_require__(86);
+let Hn = __webpack_require__(87);
+let Vn = __webpack_require__(88);
+let Notice = __webpack_require__(89);
+let TextLoading = __webpack_require__(91);
+let TestSignalUpdateStateRunnerView = __webpack_require__(92);
+let TestSignalActionFlow = __webpack_require__(93);
 //let PageMask = require('../lib/view/mask/pageMask');
 //let PageLoading = require('../lib/view/loading/pageLoading');
 let {
     signalUpdateStateRunner
-} = __webpack_require__(93);
-let steadyTheme = __webpack_require__(21);
+} = __webpack_require__(35);
+let {
+    signalActionFlow
+} = __webpack_require__(94);
+let steadyTheme = __webpack_require__(23);
 let {
     onSignalType
-} = __webpack_require__(7);
+} = __webpack_require__(4);
 
 let ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
 
@@ -2821,6 +3029,23 @@ let examples = [
         })
     },
 
+    {
+        name: 'TestSignalActionFlow',
+        render: () => n(TestSignalActionFlow, {
+            text: 'start',
+            text2: 'start2',
+            onsignal: signalActionFlow({
+                'doTestSAF': [{
+                    type: 'updateState',
+                    content: '.viewState.props.text = "cccc!!!"'
+                }, {
+                    type: 'updateState',
+                    content: '.viewState.props.text2 = "eeee!!!"'
+                }]
+            })
+        })
+    },
+
     /*
     {
         name: 'pageMask',
@@ -2878,7 +3103,7 @@ mount(Pager, document.body);
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2893,22 +3118,22 @@ let {
     isKabaneryNode,
     cn,
     parseStyle
-} = __webpack_require__(10);
+} = __webpack_require__(11);
 
-let plugs = __webpack_require__(39);
+let plugs = __webpack_require__(41);
 
-let view = __webpack_require__(42);
+let view = __webpack_require__(44);
 
-let mount = __webpack_require__(20);
+let mount = __webpack_require__(22);
 
-let N = __webpack_require__(53);
+let N = __webpack_require__(55);
 
-let reduceNode = __webpack_require__(12);
+let reduceNode = __webpack_require__(13);
 
 let {
     dispatchEvent,
     clearEvents
-} = __webpack_require__(13);
+} = __webpack_require__(14);
 
 module.exports = {
     n,
@@ -2931,13 +3156,13 @@ module.exports = {
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let iterate = __webpack_require__(17);
+let iterate = __webpack_require__(19);
 
 let defauls = {
     eq: (v1, v2) => v1 === v2
@@ -3036,13 +3261,13 @@ module.exports = {
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let parseAttribute = __webpack_require__(38);
+let parseAttribute = __webpack_require__(40);
 
 let {
     isString,
@@ -3133,7 +3358,7 @@ module.exports = parseArgs;
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3143,7 +3368,7 @@ let {
     isString
 } = __webpack_require__(0);
 
-let parseStyle = __webpack_require__(18);
+let parseStyle = __webpack_require__(20);
 
 let {
     mergeMap
@@ -3207,14 +3432,14 @@ module.exports = parseAttribute;
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let twowaybinding = __webpack_require__(40);
-let eventError = __webpack_require__(41);
+let twowaybinding = __webpack_require__(42);
+let eventError = __webpack_require__(43);
 
 module.exports = {
     twowaybinding,
@@ -3223,7 +3448,7 @@ module.exports = {
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3250,7 +3475,7 @@ module.exports = (obj, path) => (tagName, attributes, childExp) => {
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3282,7 +3507,7 @@ let wrapEventHandler = (fun, catcher) => {
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3302,11 +3527,11 @@ let {
     forEach
 } = __webpack_require__(1);
 
-let replace = __webpack_require__(43);
+let replace = __webpack_require__(45);
 
-let reduceNode = __webpack_require__(12);
+let reduceNode = __webpack_require__(13);
 
-let mount = __webpack_require__(20);
+let mount = __webpack_require__(22);
 
 /**
  * render function: (data) => node
@@ -3501,7 +3726,7 @@ module.exports = View;
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3521,9 +3746,9 @@ let {
 
 let {
     eventMapHook
-} = __webpack_require__(11);
+} = __webpack_require__(12);
 
-let applyAttibutes = __webpack_require__(47);
+let applyAttibutes = __webpack_require__(49);
 
 let replaceDirectly = (node, newNode) => {
     let parent = node.parentNode;
@@ -3637,7 +3862,7 @@ module.exports = (node, newNode) => {
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {// Unique ID creation requires a high quality random # generator.  In the
@@ -3674,10 +3899,10 @@ if (!rng) {
 
 module.exports = rng;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(47)))
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports) {
 
 var g;
@@ -3704,7 +3929,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports) {
 
 /**
@@ -3733,7 +3958,7 @@ module.exports = bytesToUuid;
 
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3741,7 +3966,7 @@ module.exports = bytesToUuid;
 
 let {
     getAttributeMap
-} = __webpack_require__(48);
+} = __webpack_require__(50);
 
 let {
     hasOwnProperty
@@ -3780,15 +4005,15 @@ module.exports = applyAttibutes;
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let shadowFrame = __webpack_require__(49);
+let shadowFrame = __webpack_require__(51);
 
-let startMomenter = __webpack_require__(50);
+let startMomenter = __webpack_require__(52);
 
 let getX = (elem) => {
     var x = 0;
@@ -3871,7 +4096,7 @@ module.exports = {
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3926,7 +4151,7 @@ module.exports = shadowFrame;
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3982,7 +4207,7 @@ module.exports = startMomenter;
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4029,7 +4254,7 @@ module.exports = {
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4043,7 +4268,7 @@ let {
     eventMapHook,
     globalEventTypePrefix,
     stopPropagationFlag
-} = __webpack_require__(11);
+} = __webpack_require__(12);
 
 module.exports = () => {
     let docs = [];
@@ -4185,7 +4410,7 @@ let getGlobalEventTypeId = (type) => `${globalEventTypePrefix}${type}`;
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4193,7 +4418,7 @@ let getGlobalEventTypeId = (type) => `${globalEventTypePrefix}${type}`;
 
 let {
     n
-} = __webpack_require__(10);
+} = __webpack_require__(11);
 
 let {
     isArray, isFunction, isObject
@@ -4241,22 +4466,22 @@ module.exports = (...args) => {
 
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(3);
+let lumineView = __webpack_require__(2);
 let {
     styles
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
-let Button = __webpack_require__(31);
+let Button = __webpack_require__(10);
 let {
     Signal,
     onSignalType
-} = __webpack_require__(7);
+} = __webpack_require__(4);
 let n = __webpack_require__(6);
 
 module.exports = lumineView(({
@@ -4346,7 +4571,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4354,13 +4579,13 @@ module.exports = lumineView(({
 
 let {
     isMapObject
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 let {
     mount,
     n,
     parseStyle
-} = __webpack_require__(4);
+} = __webpack_require__(5);
 
 const VIEW_CLASS_PREFIX = 'kabanery-lumine';
 
@@ -4443,90 +4668,13 @@ module.exports = (classTable) => {
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let {
-    autoId,
-    isObject,
-
-    modifySuccess,
-    removeNoneExist,
-    removeSuccess
-} = __webpack_require__(57);
-
-module.exports = (jsonData, {
-    missingValue = undefined
-} = {}) => {
-    let queryByPath = (path) => {
-        let cur = jsonData;
-        for (let i = 0; i < path.length; i++) {
-            if (!isObject(cur)) {
-                return missingValue;
-            } else {
-                if (cur.hasOwnProperty(path[i])) {
-                    cur = cur[path[i]];
-                } else {
-                    return missingValue;
-                }
-            }
-        }
-
-        return cur;
-    };
-
-    let setByPath = (path, value) => {
-        let parent = jsonData;
-
-        for (let i = 0; i < path.length - 1; i++) {
-            let part = path[i];
-            let next = parent[part];
-            if (!isObject(next)) { // if is not object, just override to a empty object
-                next = {}; // create a new middle node
-                parent[part] = next;
-            }
-            parent = next;
-        }
-
-        parent[path[path.length - 1]] = value; // set value
-        return modifySuccess(path, value);
-    };
-
-    return {
-        queryByPath,
-
-        setByPath,
-
-        removeByPath: (path) => {
-            let parentPath = path.slice(0, path.length - 1);
-            let lastKey = path[path.length - 1];
-            let parent = queryByPath(parentPath);
-            if (parent === missingValue || !isObject(parent) || !parent.hasOwnProperty(lastKey)) {
-                return removeNoneExist(path);
-            } else {
-                delete parent[lastKey];
-                return removeSuccess(path);
-            }
-        },
-
-        appendByPath: (path, value) => {
-            return setByPath(path.concat([autoId()]), value);
-        }
-    };
-};
-
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let uuidv4 = __webpack_require__(19);
+let uuidv4 = __webpack_require__(21);
 
 let autoId = () => {
     let time = new Date().getTime(); // used to sort by time
@@ -4581,18 +4729,18 @@ module.exports = {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let parser = __webpack_require__(59);
+let parser = __webpack_require__(60);
 let {
     checkAST,
     runTimeCheck,
     getVariable
-} = __webpack_require__(83);
+} = __webpack_require__(84);
 
 let {
     T_ATOM,
@@ -4604,7 +4752,7 @@ let {
     T_FUNCTION,
     T_NODE_NAME,
     T_NODE_NAME_VARIABLE
-} = __webpack_require__(16);
+} = __webpack_require__(18);
 
 let executeAST = (ast, {
     queryByPath,
@@ -4750,25 +4898,25 @@ module.exports = {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let streamTokenSpliter = __webpack_require__(23);
+let streamTokenSpliter = __webpack_require__(25);
 let {
     LR
-} = __webpack_require__(69);
+} = __webpack_require__(70);
 let {
     getProductionId,
     processTokens,
-} = __webpack_require__(30);
-let tokenTypes = __webpack_require__(80);
+} = __webpack_require__(32);
+let tokenTypes = __webpack_require__(81);
 let {
     ACTION,
     GOTO
-} = __webpack_require__(82);
+} = __webpack_require__(83);
 
 let {
     P_PROGRAM,
@@ -4813,7 +4961,7 @@ let {
     T_FUNCTION,
     T_NODE_NAME,
     T_NODE_NAME_VARIABLE
-} = __webpack_require__(16);
+} = __webpack_require__(18);
 
 module.exports = () => {
     let tokenSpliter = streamTokenSpliter.parser(tokenTypes);
@@ -5020,7 +5168,7 @@ module.exports = () => {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5032,13 +5180,13 @@ let {
 
 let {
     WAIT, MATCH, QUIT
-} = __webpack_require__(14);
+} = __webpack_require__(16);
 
 let {
     stateGraphDSL
 } = __webpack_require__(9);
 
-let buildFSM = __webpack_require__(66);
+let buildFSM = __webpack_require__(67);
 
 let {
     map
@@ -5046,16 +5194,16 @@ let {
 
 let {
     getMatch
-} = __webpack_require__(67);
+} = __webpack_require__(68);
 
 let {
     findToken,
     filterTypes
-} = __webpack_require__(68);
+} = __webpack_require__(69);
 
 let {
     assembleToken
-} = __webpack_require__(27);
+} = __webpack_require__(29);
 
 /**
  *
@@ -5289,7 +5437,7 @@ module.exports = {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5297,9 +5445,9 @@ module.exports = {
 
 let {
     QUIT, WAIT, MATCH
-} = __webpack_require__(62);
+} = __webpack_require__(63);
 
-let stateGraphDSL = __webpack_require__(63);
+let stateGraphDSL = __webpack_require__(64);
 
 const START_STATE = '__start__state__';
 
@@ -5372,7 +5520,7 @@ module.exports = {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5386,13 +5534,13 @@ module.exports = {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let actionDSL = __webpack_require__(24);
+let actionDSL = __webpack_require__(26);
 
 let {
     isNormalAction, isRangeAction, isUnionAction, isLeftAction, isEpsilonAction
@@ -5408,11 +5556,11 @@ let {
     circle,
 
     isEpsilonTransition
-} = __webpack_require__(64);
+} = __webpack_require__(65);
 
 let {
     mergeMap
-} = __webpack_require__(25);
+} = __webpack_require__(27);
 
 let transitionMaper = (graph) => {
     let transitions = {};
@@ -5618,7 +5766,7 @@ module.exports = mergeMap(actionDSL, {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5628,7 +5776,7 @@ let {
     isString, isObject
 } = __webpack_require__(0);
 
-let actionDSL = __webpack_require__(24);
+let actionDSL = __webpack_require__(26);
 
 let {
     toAction
@@ -5636,7 +5784,7 @@ let {
 
 let {
     mergeMap
-} = __webpack_require__(25);
+} = __webpack_require__(27);
 
 /**
  * graph definition DSL
@@ -5776,7 +5924,7 @@ module.exports = mergeMap(actionDSL, {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5784,7 +5932,7 @@ module.exports = mergeMap(actionDSL, {
 
 let {
     iterate
-} = __webpack_require__(26);
+} = __webpack_require__(28);
 
 let {
     isFunction
@@ -5901,7 +6049,7 @@ module.exports = {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5941,7 +6089,7 @@ module.exports = (stateMap, accepts) => {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5953,7 +6101,7 @@ let {
 
 let {
     MATCH, WAIT, QUIT
-} = __webpack_require__(14);
+} = __webpack_require__(16);
 
 let stringMatch = (word) => (prefix) => {
     if (word === prefix) return MATCH;
@@ -5973,7 +6121,7 @@ module.exports = {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5981,11 +6129,11 @@ module.exports = {
 
 let {
     WAIT, MATCH
-} = __webpack_require__(14);
+} = __webpack_require__(16);
 
 let {
     assembleToken
-} = __webpack_require__(27);
+} = __webpack_require__(29);
 
 let filterTypes = (nextLetter, prefix, tokenTypes) => {
     let parts = [],
@@ -6041,7 +6189,7 @@ module.exports = {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6090,11 +6238,11 @@ module.exports = {
  * let ast = lrParse(null); // null as end symbol
  * console.log(JSON.stringify(ast, null, 4));
  */
-module.exports = __webpack_require__(70);
+module.exports = __webpack_require__(71);
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6114,12 +6262,12 @@ module.exports = __webpack_require__(70);
  * 2. shift-in reduce
  */
 
-let LR = __webpack_require__(71);
-let LR1Table = __webpack_require__(74);
-let ctxFreeGrammer = __webpack_require__(79);
+let LR = __webpack_require__(72);
+let LR1Table = __webpack_require__(75);
+let ctxFreeGrammer = __webpack_require__(80);
 let {
     forEach
-} = __webpack_require__(5);
+} = __webpack_require__(7);
 
 /**
  * just used for testing
@@ -6147,7 +6295,7 @@ module.exports = {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6174,13 +6322,13 @@ module.exports = {
 
 let {
     END_SYMBOL, EXPAND_START_SYMBOL
-} = __webpack_require__(28);
+} = __webpack_require__(30);
 
 let {
     initAST,
     reduceAST,
     appendToken
-} = __webpack_require__(72);
+} = __webpack_require__(73);
 
 /**
  * configuration = [stack, tokens]
@@ -6335,7 +6483,7 @@ let getNextInputToken = (configuration) => {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6385,7 +6533,7 @@ let getNextInputToken = (configuration) => {
 
 let {
     map
-} = __webpack_require__(5);
+} = __webpack_require__(7);
 
 const TERMINAL_TYPE = 'terminal';
 const NONE_TERMINAL_TYPE = 'none-terminal';
@@ -6464,7 +6612,7 @@ module.exports = {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6472,7 +6620,7 @@ module.exports = {
 
 let {
     iterate
-} = __webpack_require__(29);
+} = __webpack_require__(31);
 
 let {
     isFunction
@@ -6589,23 +6737,23 @@ module.exports = {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let LR1CanonicalCollection = __webpack_require__(75);
+let LR1CanonicalCollection = __webpack_require__(76);
 let {
     forEach, findIndex
-} = __webpack_require__(5);
-let GO = __webpack_require__(76);
+} = __webpack_require__(7);
+let GO = __webpack_require__(77);
 let {
     LR1Itemer
-} = __webpack_require__(77);
+} = __webpack_require__(78);
 let {
     sameClosure
-} = __webpack_require__(15);
+} = __webpack_require__(17);
 
 module.exports = (grammer) => {
     let {
@@ -6674,7 +6822,7 @@ let getStateIndex = (C, I) => findIndex(C, I, {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6682,10 +6830,10 @@ let getStateIndex = (C, I) => findIndex(C, I, {
 
 let {
     buildClosure
-} = __webpack_require__(15);
+} = __webpack_require__(17);
 let {
     reduce
-} = __webpack_require__(5);
+} = __webpack_require__(7);
 
 /**
  * input: grammer G
@@ -6755,7 +6903,7 @@ let getGoToSymbolsSet = (symbols, I, go) => {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6763,11 +6911,11 @@ let getGoToSymbolsSet = (symbols, I, go) => {
 
 let {
     reduce, filter
-} = __webpack_require__(5);
+} = __webpack_require__(7);
 
 let {
     buildClosure
-} = __webpack_require__(15);
+} = __webpack_require__(17);
 
 /**
  * jump
@@ -6830,17 +6978,17 @@ module.exports = (grammer, LR1Grammer) => {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let First = __webpack_require__(78);
+let First = __webpack_require__(79);
 
 let {
     union, reduce, filter, flat, map
-} = __webpack_require__(5);
+} = __webpack_require__(7);
 
 let LR1Itemer = (grammer) => {
     let {
@@ -7027,7 +7175,7 @@ module.exports = {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7035,7 +7183,7 @@ module.exports = {
 
 let {
     contain, union, reduce, difference, forEach
-} = __webpack_require__(5);
+} = __webpack_require__(7);
 
 let {
     isArray
@@ -7140,7 +7288,7 @@ module.exports = (grammer) => {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7161,7 +7309,7 @@ module.exports = (grammer) => {
 
 const {
     END_SYMBOL, EXPAND_START_SYMBOL, EPSILON
-} = __webpack_require__(28);
+} = __webpack_require__(30);
 
 /**
  * context free grammer is read-only
@@ -7247,7 +7395,7 @@ let getNoneTerminalProductionMap = (producitons) => {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7256,11 +7404,11 @@ let getNoneTerminalProductionMap = (producitons) => {
 let {
     stringGraph,
     numberGraph
-} = __webpack_require__(81);
+} = __webpack_require__(82);
 
 let {
     buildFSM
-} = __webpack_require__(23);
+} = __webpack_require__(25);
 
 let FSM = __webpack_require__(9);
 let {
@@ -7391,7 +7539,7 @@ module.exports = [
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7449,13 +7597,13 @@ module.exports = {
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports) {
 
 module.exports={"GOTO":[{"PROGRAM":11,"EXPRESSION_LIST":12,"EXPRESSION":13,"UPDATE_EXPRESSION":14,"QUERY_EXPRESSION":15,"PATH":16,"ATOM_DATA":17},{"PATH":20},{"PATH":23},{},{"PATH":25},{"PATH":26},{},{},{},{},{},{},{},{},{},{},{},{},{"PATH":29},{"PATH":30},{},{"PATH":31},{"PATH":32},{},{"QUERY_EXPRESSION":43,"QUERY_EXPRESSION_LIST":44,"PATH":45,"ATOM_DATA":46},{},{},{"EXPRESSION_LIST":47,"EXPRESSION":13,"UPDATE_EXPRESSION":14,"QUERY_EXPRESSION":15,"PATH":16,"ATOM_DATA":17},{"QUERY_EXPRESSION":48,"PATH":49,"ATOM_DATA":17},{},{},{},{},{"QUERY_EXPRESSION":50,"PATH":49,"ATOM_DATA":17},{},{},{"PATH":52},{"PATH":53},{},{},{},{},{},{},{},{},{},{},{},{},{},{"QUERY_EXPRESSION":43,"QUERY_EXPRESSION_LIST":57,"PATH":45,"ATOM_DATA":46},{},{},{"QUERY_EXPRESSION":43,"QUERY_EXPRESSION_LIST":58,"PATH":45,"ATOM_DATA":46},{},{},{},{},{}],"ACTION":[{"$":{"type":"reduce","production":["EXPRESSION",[]]},"semicolon":{"type":"reduce","production":["EXPRESSION",[]]},"variableName":{"type":"shift","state":3},"delete":{"type":"shift","state":1},"append":{"type":"shift","state":2},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"nodeName":{"type":"shift","state":21},"nodeNameVariable":{"type":"shift","state":22}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"leftBracket":{"type":"shift","state":24}},{"$":{"type":"reduce","production":["PATH",["nodeName"]]},"assign":{"type":"reduce","production":["PATH",["nodeName"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"assign":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"$":{"type":"reduce","production":["ATOM_DATA",["true"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["true"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["false"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["false"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["null"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["null"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["string"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["string"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["number"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["number"]]}},{"$":{"type":"accept"}},{"$":{"type":"reduce","production":["PROGRAM",["EXPRESSION_LIST"]]}},{"$":{"type":"reduce","production":["EXPRESSION_LIST",["EXPRESSION"]]},"semicolon":{"type":"shift","state":27}},{"$":{"type":"reduce","production":["EXPRESSION",["UPDATE_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["EXPRESSION",["UPDATE_EXPRESSION"]]}},{"$":{"type":"reduce","production":["EXPRESSION",["QUERY_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["EXPRESSION",["QUERY_EXPRESSION"]]}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"assign":{"type":"shift","state":28}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]}},{"$":{"type":"reduce","production":["PATH",["nodeName"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"$":{"type":"reduce","production":["UPDATE_EXPRESSION",["delete","PATH"]]},"semicolon":{"type":"reduce","production":["UPDATE_EXPRESSION",["delete","PATH"]]}},{"assign":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":21},"nodeNameVariable":{"type":"shift","state":22}},{"assign":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":21},"nodeNameVariable":{"type":"shift","state":22}},{"assign":{"type":"shift","state":33}},{"rightBracket":{"type":"shift","state":35},"variableName":{"type":"shift","state":34},"true":{"type":"shift","state":38},"false":{"type":"shift","state":39},"null":{"type":"shift","state":40},"string":{"type":"shift","state":41},"number":{"type":"shift","state":42},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"$":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"assign":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"assign":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"$":{"type":"reduce","production":["EXPRESSION",[]]},"semicolon":{"type":"reduce","production":["EXPRESSION",[]]},"variableName":{"type":"shift","state":3},"delete":{"type":"shift","state":1},"append":{"type":"shift","state":2},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"variableName":{"type":"shift","state":3},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"$":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"assign":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"assign":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"variableName":{"type":"shift","state":3},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"leftBracket":{"type":"shift","state":51}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]}},{"comma":{"type":"reduce","production":["PATH",["nodeName"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"comma":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"comma":{"type":"reduce","production":["ATOM_DATA",["true"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["true"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["false"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["false"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["null"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["null"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["string"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["string"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["number"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["number"]]}},{"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION_LIST",["QUERY_EXPRESSION"]]},"comma":{"type":"shift","state":54}},{"rightBracket":{"type":"shift","state":55}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]}},{"$":{"type":"reduce","production":["EXPRESSION_LIST",["EXPRESSION","semicolon","EXPRESSION_LIST"]]}},{"$":{"type":"reduce","production":["UPDATE_EXPRESSION",["PATH","assign","QUERY_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["UPDATE_EXPRESSION",["PATH","assign","QUERY_EXPRESSION"]]}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]}},{"$":{"type":"reduce","production":["UPDATE_EXPRESSION",["append","PATH","assign","QUERY_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["UPDATE_EXPRESSION",["append","PATH","assign","QUERY_EXPRESSION"]]}},{"rightBracket":{"type":"shift","state":56},"variableName":{"type":"shift","state":34},"true":{"type":"shift","state":38},"false":{"type":"shift","state":39},"null":{"type":"shift","state":40},"string":{"type":"shift","state":41},"number":{"type":"shift","state":42},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"comma":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"comma":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"variableName":{"type":"shift","state":34},"true":{"type":"shift","state":38},"false":{"type":"shift","state":39},"null":{"type":"shift","state":40},"string":{"type":"shift","state":41},"number":{"type":"shift","state":42},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]}},{"rightBracket":{"type":"shift","state":59}},{"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION_LIST",["QUERY_EXPRESSION","comma","QUERY_EXPRESSION_LIST"]]}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]}}]}
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7468,7 +7616,7 @@ let {
     isObject,
     isFunction,
     isString
-} = __webpack_require__(30);
+} = __webpack_require__(32);
 
 let {
     T_ASSIGN,
@@ -7479,7 +7627,7 @@ let {
     T_NODE_NAME_VARIABLE,
 
     A_DEFAULT
-} = __webpack_require__(16);
+} = __webpack_require__(18);
 
 /**
  *
@@ -7597,7 +7745,7 @@ module.exports = {
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7605,17 +7753,17 @@ module.exports = {
 
 let {
     n
-} = __webpack_require__(4);
+} = __webpack_require__(5);
 
-let lumineView = __webpack_require__(3);
+let lumineView = __webpack_require__(2);
 
 let {
     Signal
-} = __webpack_require__(7);
+} = __webpack_require__(4);
 
 let {
     styles
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 module.exports = lumineView(({
     props
@@ -7655,7 +7803,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7663,17 +7811,17 @@ module.exports = lumineView(({
 
 let {
     n
-} = __webpack_require__(4);
+} = __webpack_require__(5);
 
-let lumineView = __webpack_require__(3);
+let lumineView = __webpack_require__(2);
 
 let {
     Signal
-} = __webpack_require__(7);
+} = __webpack_require__(4);
 
 let {
     styles
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 module.exports = lumineView(({
     props
@@ -7708,26 +7856,26 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(3);
+let lumineView = __webpack_require__(2);
 
 let n = __webpack_require__(6);
 
-let Full = __webpack_require__(32);
+let Full = __webpack_require__(33);
 
 let {
     styles
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 const {
     MODE_PERCENTAGE,
     MODE_PILE
-} = __webpack_require__(33);
+} = __webpack_require__(34);
 
 /**
  *
@@ -7791,26 +7939,26 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(3);
+let lumineView = __webpack_require__(2);
 
 let n = __webpack_require__(6);
 
-let Full = __webpack_require__(32);
+let Full = __webpack_require__(33);
 
 let {
     styles
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 const {
     MODE_PILE,
     MODE_PERCENTAGE
-} = __webpack_require__(33);
+} = __webpack_require__(34);
 
 /**
  * top + bottom
@@ -7864,25 +8012,25 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 let n = __webpack_require__(6);
-let lumineView = __webpack_require__(3);
+let lumineView = __webpack_require__(2);
 let {
     Signal
-} = __webpack_require__(7);
+} = __webpack_require__(4);
 
 let {
     styles
-} = __webpack_require__(2);
+} = __webpack_require__(3);
 
 let {
     compileTreeScript
-} = __webpack_require__(89);
+} = __webpack_require__(90);
 
 let S_HideNotice = compileTreeScript('.props.show=false');
 
@@ -7930,7 +8078,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7939,7 +8087,7 @@ module.exports = lumineView(({
 let {
     parseStrToAst,
     checkAST
-} = __webpack_require__(22);
+} = __webpack_require__(15);
 
 let compileTreeScript = (treeScriptCode, {
     variableStub
@@ -7964,7 +8112,7 @@ module.exports = {
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7972,7 +8120,7 @@ module.exports = {
 
 let n = __webpack_require__(6);
 
-let lumineView = __webpack_require__(3);
+let lumineView = __webpack_require__(2);
 
 // TODO easy disappear for loading view
 module.exports = lumineView(({
@@ -8020,19 +8168,19 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(3);
+let lumineView = __webpack_require__(2);
 let n = __webpack_require__(6);
-let Button = __webpack_require__(31);
+let Button = __webpack_require__(10);
 let {
     onSignalType,
     deliver
-} = __webpack_require__(7);
+} = __webpack_require__(4);
 
 module.exports = lumineView(({
     props
@@ -8046,106 +8194,175 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 92 */,
 /* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+let lumineView = __webpack_require__(2);
+let n = __webpack_require__(6);
+let Button = __webpack_require__(10);
 let {
-    parseStrToAst,
-    checkAST,
-    executeAST
-} = __webpack_require__(22);
-let JsonTree = __webpack_require__(56);
+    onSignalType,
+    deliver
+} = __webpack_require__(4);
+
+module.exports = lumineView(({
+    props
+}, ctx) => n('div', [
+    n(Button, {
+        onsignal: onSignalType('click', deliver(ctx, 'doTestSAF'))
+    }, 'testSAF'),
+
+    n('div', props.text),
+
+    n('div', props.text2)
+]));
+
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    signalUpdateStateRunner,
+    signalSendRequestRunner,
+    responseUpdateStateRunner,
+    responseErrorRunner
+} = __webpack_require__(35);
 
 /**
- *
- * atom updating
- *
- * 1. signal to update client state, like page UI.
- *
- * 2. signal to send request
- *
- * 3. response (from server or other) update client state, like page UI
+ * action flow
  */
+const ACTION_SIGNAL_UPDATE_STATE = 'updateState';
+const ACTION_SIGNAL_SEND_REQUEST = 'sendRequest';
 
-const clientState = {
-    localStorage: typeof localStorage !== 'undefined' && localStorage
-};
-
-let getSignalUpdateStateMap = (signal, viewState) => {
-    return Object.assign({
-        signal,
-        viewState
-    }, clientState);
-};
-
-let getResponseUpdateStateMap = (response, viewState) => {
-    return Object.assign({
-        response,
-        viewState
-    }, clientState);
-};
-
-let signalUpdateStateRunner = (code, variableMap, {
+/**
+ * variableMap: global variable map
+ *
+ * TODO support general action flow
+ */
+let signalActionFlow = (signalActionMap, pageEnv, variableMap = {}, {
     variableStub
 } = {}) => {
-    let ast = parseStrToAst(code);
-
-    checkAST(ast, {
+    parseSignalActionMap(signalActionMap, variableMap, {
         variableStub
     });
 
     return (signal, viewState, ctx) => {
-        let data = getSignalUpdateStateMap(signal, viewState);
-        let tree = JsonTree(data);
-
-        executeAST(ast, {
-            queryByPath: tree.queryByPath,
-            setByPath: tree.setByPath,
-            removeByPath: tree.removeByPath,
-            appendByPath: tree.appendByPath,
-            variableMap,
-            variableStub
-        });
-
-        // update page
-        ctx.updateWithNotify();
+        let actions = signalActionMap[signal.type] || [];
+        return Promise.all(actions.map((action) => {
+            return action.content(signal, viewState, ctx, pageEnv);
+        }));
     };
 };
 
-let responseUpdateStateRunner = (code, variableMap, {
+// TODO validate signalActionMap
+let parseSignalActionMap = (signalActionMap, variableMap, {
     variableStub
-} = {}) => {
-    let ast = parseStrToAst(code);
+}) => {
+    for (let name in signalActionMap) {
+        let actions = signalActionMap[name];
+        if (!Array.isArray(actions)) {
+            throw new Error(`Expect array for actions in signal action map. But got ${actions}.`);
+        }
+        for (let i = 0; i < actions.length; i++) {
+            parseSignalAction(actions[i], variableMap, {
+                variableStub
+            });
+        }
+    }
+};
 
-    checkAST(ast, {
-        variableStub
-    });
+let parseSignalAction = (signalAction, variableMap, {
+    variableStub
+}) => {
+    let type = signalAction.type;
+    let cnt = signalAction.content;
+    if (type === ACTION_SIGNAL_UPDATE_STATE) {
+        if (typeof cnt !== 'function') {
+            /**
+             * {
+             *    type,
+             *    content,
+             *    variableMap,
+             *    variableStub
+             * }
+             */
+            // action code to update runner
+            let signalUpdate = signalUpdateStateRunner(cnt,
+                getVariableMap(variableMap, signalAction),
 
-    return (response, viewState, ctx) => {
-        let data = getResponseUpdateStateMap(response, viewState);
-        let tree = JsonTree(data);
+                {
+                    variableStub: getVariableStub(variableStub, signalAction)
+                });
 
-        executeAST(ast, {
-            queryByPath: tree.queryByPath,
-            setByPath: tree.setByPath,
-            removeByPath: tree.removeByPath,
-            appendByPath: tree.appendByPath,
-            variableMap,
-            variableStub
-        });
+            signalAction.content = (...args) => {
+                return new Promise((resolve, reject) => {
+                    try {
+                        resolve(signalUpdate(...args));
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
+            };
+        }
+    } else if (type === ACTION_SIGNAL_SEND_REQUEST) {
+        /**
+         * {
+         *   type,
+         *   content,
+         *   variableMap,
+         *   variableStub,
+         *   response: action,
+         *   error: action
+         * }
+         */
+        if (typeof cnt !== 'function') {
+            let nextVariableMap = getVariableMap(variableMap, signalAction);
+            let nextVariableStub = getVariableStub(variableStub, signalAction);
+            let signalRequest = signalSendRequestRunner(cnt, nextVariableMap, {
+                variableStub: nextVariableStub
+            });
 
-        // update page
-        ctx.updateWithNotify();
-    };
+            let responseUpdate = signalAction.response && responseUpdateStateRunner(signalAction.response, nextVariableMap, {
+                variableStub: nextVariableStub
+            });
+
+            let errorUpdate = signalAction.error && responseErrorRunner(signalAction.error, nextVariableMap, {
+                variableStub: nextVariableStub
+            });
+
+            signalAction.content = (signal, data, ctx, pageEnv) => {
+                return signalRequest(signal, data, ctx, pageEnv).then((response) => {
+                    return responseUpdate(response, data, ctx);
+                }).catch((err) => {
+                    errorUpdate(err, data, ctx);
+                    throw err;
+                });
+            };
+        }
+    } else {
+        throw new Error(`unexpected action type for a signal action, type is ${type}`);
+    }
+};
+
+let getVariableMap = (variableMap, action) => {
+    if (!action.variableMap) return variableMap;
+    return Object.assign({}, variableMap, action.variableMap);
+};
+
+let getVariableStub = (variableStub, action) => {
+    if (!action.variableStub) return variableStub;
+    return Object.assign({}, variableStub, action.variableStub);
 };
 
 module.exports = {
-    signalUpdateStateRunner,
-    responseUpdateStateRunner
+    signalActionFlow
 };
 
 

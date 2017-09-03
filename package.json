@@ -1,6 +1,6 @@
 {
   "name": "kabanery-lumine",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "Common UIs",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "kabanery": "^0.2.13",
+    "pfc-compiler": "^0.1.9",
     "tree-script": "0.0.5"
   }
 }

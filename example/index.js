@@ -15,11 +15,15 @@ let Vn = require('../lib/view/layout/vn');
 let Notice = require('../lib/view/notice/notice');
 let TextLoading = require('../lib/view/loading/textLoading');
 let TestSignalUpdateStateRunnerView = require('./testViews/TestSignalUpdateStateRunnerView');
+let TestSignalActionFlow = require('./testViews/TestSignalActionFlow');
 //let PageMask = require('../lib/view/mask/pageMask');
 //let PageLoading = require('../lib/view/loading/pageLoading');
 let {
     signalUpdateStateRunner
 } = require('../lib/flow/updateFlow');
+let {
+    signalActionFlow
+} = require('../lib/flow/actionFlow');
 let steadyTheme = require('../lib/theme/steady');
 let {
     onSignalType
@@ -183,6 +187,23 @@ let examples = [
         render: () => n(TestSignalUpdateStateRunnerView, {
             text: 'init',
             onsignal: onSignalType('doTestSUS', ChangeText)
+        })
+    },
+
+    {
+        name: 'TestSignalActionFlow',
+        render: () => n(TestSignalActionFlow, {
+            text: 'start',
+            text2: 'start2',
+            onsignal: signalActionFlow({
+                'doTestSAF': [{
+                    type: 'updateState',
+                    content: '.viewState.props.text = "cccc!!!"'
+                }, {
+                    type: 'updateState',
+                    content: '.viewState.props.text2 = "eeee!!!"'
+                }]
+            })
         })
     },
 
