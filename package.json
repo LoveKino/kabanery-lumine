@@ -6,6 +6,9 @@
     "scripts": {
         "test": "mocha \"test/function/**/*.js\" -t 300000"
     },
+    "bin": {
+        "lumine-skelton": "./bin/lumine-skelton"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/LoveKino/kabanery-lumine.git"
