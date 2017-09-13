@@ -1,36 +1,36 @@
 {
-  "name": "kabanery-lumine",
-  "version": "0.0.30",
-  "description": "Common UIs",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha \"test/function/**/*.js\" -t 300000"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LoveKino/kabanery-lumine.git"
-  },
-  "keywords": [
-    "UI"
-  ],
-  "author": "ddchen",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/LoveKino/kabanery-lumine/issues"
-  },
-  "homepage": "https://github.com/LoveKino/kabanery-lumine#readme",
-  "devDependencies": {
-    "browser-js-env": "0.0.11",
-    "mocha": "^3.5.0",
-    "webpack": "^3.5.6"
-  },
-  "dependencies": {
-    "es6-promisify": "^5.0.0",
-    "kabanery": "^0.2.13",
-    "kabanery-spa": "0.0.17",
-    "mkdirp": "^0.5.1",
-    "pfc-compiler": "^0.1.9",
-    "tree-script": "0.0.5",
-    "yargs": "^8.0.2"
-  }
+    "name": "kabanery-lumine",
+    "version": "0.0.32",
+    "description": "Common UIs",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha \"test/function/**/*.js\" -t 300000"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LoveKino/kabanery-lumine.git"
+    },
+    "keywords": [
+        "UI"
+    ],
+    "author": "ddchen",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/LoveKino/kabanery-lumine/issues"
+    },
+    "homepage": "https://github.com/LoveKino/kabanery-lumine#readme",
+    "devDependencies": {
+        "browser-js-env": "0.0.11",
+        "mocha": "^3.5.0",
+        "webpack": "^3.5.6"
+    },
+    "dependencies": {
+        "es6-promisify": "^5.0.0",
+        "kabanery": "^0.2.13",
+        "kabanery-spa": "0.0.17",
+        "mkdirp": "^0.5.1",
+        "pfc-compiler": "^0.1.9",
+        "tree-script": "0.0.5",
+        "yargs": "^8.0.2"
+    }
 }
