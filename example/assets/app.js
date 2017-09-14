@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 38);
+/******/ 	return __webpack_require__(__webpack_require__.s = 39);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -304,7 +304,7 @@ let {
     deepMergeMap,
     resolveFnValue
 } = __webpack_require__(2);
-let ClassTable = __webpack_require__(59);
+let ClassTable = __webpack_require__(60);
 let {
     Signal
 } = __webpack_require__(3);
@@ -567,7 +567,7 @@ let iterate = __webpack_require__(19);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact
-} = __webpack_require__(40);
+} = __webpack_require__(41);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -702,7 +702,7 @@ module.exports = (...args) => {
 "use strict";
 
 
-module.exports = __webpack_require__(39);
+module.exports = __webpack_require__(40);
 
 /**
  * @readme-doc
@@ -822,7 +822,7 @@ let iterate = __webpack_require__(31);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact, reverse, overArgs
-} = __webpack_require__(76);
+} = __webpack_require__(77);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -1171,7 +1171,7 @@ module.exports = {
  * console.log(m('"').type === MATCH);
  *
  **/
-module.exports = __webpack_require__(64);
+module.exports = __webpack_require__(65);
 
 
 /***/ }),
@@ -1188,7 +1188,7 @@ let {
     isObject, isNode
 } = __webpack_require__(0);
 
-let parseArgs = __webpack_require__(41);
+let parseArgs = __webpack_require__(42);
 
 let parseStyle = __webpack_require__(20);
 
@@ -1318,7 +1318,7 @@ module.exports = {
 
 let {
     createElement, createSvgElement
-} = __webpack_require__(55);
+} = __webpack_require__(56);
 
 let {
     bindEvents
@@ -1358,7 +1358,7 @@ module.exports = reduceNode;
 "use strict";
 
 
-let EventMatrix = __webpack_require__(56);
+let EventMatrix = __webpack_require__(57);
 
 let {
     eventMapHook
@@ -1392,7 +1392,7 @@ module.exports = {
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(61);
+module.exports = __webpack_require__(62);
 
 
 /***/ }),
@@ -1725,8 +1725,8 @@ let convertStyleValue = (value, key) => {
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var rng = __webpack_require__(48);
-var bytesToUuid = __webpack_require__(50);
+var rng = __webpack_require__(49);
+var bytesToUuid = __webpack_require__(51);
 
 function v4(options, buf, offset) {
   var i = buf && offset || 0;
@@ -1975,7 +1975,7 @@ let {
     modifySuccess,
     removeNoneExist,
     removeSuccess
-} = __webpack_require__(60);
+} = __webpack_require__(61);
 
 module.exports = (jsonData, {
     missingValue = undefined
@@ -2081,7 +2081,7 @@ module.exports = (jsonData, {
  * console.log('\n');
  * console.log(tokens3);
  */
-module.exports = __webpack_require__(63);
+module.exports = __webpack_require__(64);
 
 
 /***/ }),
@@ -2202,7 +2202,7 @@ let iterate = __webpack_require__(28);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact, reverse, overArgs
-} = __webpack_require__(68);
+} = __webpack_require__(69);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -2766,9 +2766,107 @@ module.exports = {
 "use strict";
 
 
+let {styles} = __webpack_require__(2);
+
+let getPercentSum = (pers, childLen) => {
+  let sum = 0;
+  for (let i = 0; i < childLen; i++) {
+    let cur = pers[i];
+    cur = cur === undefined ? 1 : cur;
+    sum += pers[i];
+  }
+
+  return sum;
+};
+
+let getPercent = (sum, pers, index) => {
+  if (sum === 0) {
+    return 0;
+  }
+  return ((pers[index] === undefined ? 1 : pers[index]) / sum) * 100 + '%';
+};
+
+let getChildStylesInPercentage =
+    (children, pers, childStyles, theme, type = 'height') => {
+      let sum = getPercentSum(pers, children.length);
+
+      return children.map((_, index) => {
+        let value = getPercent(sum, pers, index);
+        let valueStyle = {[type] : value};
+        return getChildStyle(type, valueStyle, childStyles[index], theme);
+      });
+    };
+
+let getChildStylesInPile = (children, theme, childStyles, type = 'height') => {
+  return children.map((_, index) =>
+                          getChildStyle(type, {}, childStyles[index], theme));
+};
+
+let getChildStylesInPartion =
+    (frontPartions, backPartions, childStyles, theme, type = 'height') => {
+      // front childs
+      let topStyles = frontPartions.map((v, index) => {
+        return getChildStyle(type, {[type] : v, zIndex : 2}, childStyles[index],
+                             theme);
+      });
+
+      // back childs
+      let bottomStyles = backPartions.map((v, index) => {
+        return getChildStyle(type, {[type] : v, zIndex : 2},
+                             childStyles[topStyles.length + 1 + index], theme);
+      });
+
+      let prev = frontPartions.reduce((sum, v) => sum + v, 0);
+      let next = backPartions.reduce((sum, v) => sum + v, 0);
+
+      // flex one
+      let flexStyle =
+          getChildStyle(type,
+                        type === 'height' ? {
+                          height : '100%',
+                          marginBottom : -1 * (prev + next), // pull up nexts
+                          paddingBottom : prev + next        // scroll childs
+                        }
+                                          : {
+                                              width : '100%',
+                                              position : 'relative',
+                                              paddingLeft : prev + next,
+                                              marginRight : -1 * (prev + next),
+                                              left : -1 * (prev + next),
+                                              zIndex : 1
+                                            },
+                        childStyles[topStyles.length], theme);
+
+      return topStyles.concat([ flexStyle ]).concat(bottomStyles);
+    };
+
+let getChildStyle = (type, specialStyle, childStyle, theme) => {
+  return styles(theme.container, getFullDirection(type, theme),
+                type === 'width' ? {'float' : 'left'} : {}, specialStyle,
+                childStyle || {});
+};
+
+let getFullDirection = (type, theme) => {
+  return type === 'height' ? theme.fullParentWidth : theme.fullParentHeight;
+};
+
+module.exports = {
+  getChildStylesInPercentage,
+  getChildStylesInPile,
+  getChildStylesInPartion
+};
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 let lumineView = __webpack_require__(1);
 let n = __webpack_require__(5);
-let Mask = __webpack_require__(95);
+let Mask = __webpack_require__(96);
 let {
     styles
 } = __webpack_require__(2);
@@ -2825,7 +2923,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2952,7 +3050,7 @@ module.exports = {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2962,23 +3060,23 @@ let {mount} = __webpack_require__(6);
 
 let n = __webpack_require__(5);
 
-let FunctionBar = __webpack_require__(58);
+let FunctionBar = __webpack_require__(59);
 let Button = __webpack_require__(8);
 let Input = __webpack_require__(33);
-let TextArea = __webpack_require__(87);
-let Hn = __webpack_require__(88);
-let Vn = __webpack_require__(89);
-let Notice = __webpack_require__(90);
-let TextLoading = __webpack_require__(92);
+let TextArea = __webpack_require__(88);
+let Hn = __webpack_require__(89);
+let Vn = __webpack_require__(90);
+let Notice = __webpack_require__(91);
+let TextLoading = __webpack_require__(93);
 let TestSignalUpdateStateRunnerView =
-    __webpack_require__(93);
-let TestSignalActionFlow = __webpack_require__(94);
-let Modal = __webpack_require__(36);
-let InputDialog = __webpack_require__(97);
+    __webpack_require__(94);
+let TestSignalActionFlow = __webpack_require__(95);
+let Modal = __webpack_require__(37);
+let InputDialog = __webpack_require__(98);
 // let PageMask = require('../lib/view/mask/pageMask');
 // let PageLoading = require('../lib/view/loading/pageLoading');
-let {signalUpdateStateRunner} = __webpack_require__(37);
-let {signalActionFlow} = __webpack_require__(99);
+let {signalUpdateStateRunner} = __webpack_require__(38);
+let {signalActionFlow} = __webpack_require__(100);
 let steadyTheme = __webpack_require__(23);
 let {onSignalType} = __webpack_require__(3);
 
@@ -3242,7 +3340,7 @@ mount(Pager, document.body);
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3259,13 +3357,13 @@ let {
     parseStyle
 } = __webpack_require__(11);
 
-let plugs = __webpack_require__(43);
+let plugs = __webpack_require__(44);
 
-let view = __webpack_require__(46);
+let view = __webpack_require__(47);
 
 let mount = __webpack_require__(22);
 
-let N = __webpack_require__(57);
+let N = __webpack_require__(58);
 
 let reduceNode = __webpack_require__(13);
 
@@ -3295,7 +3393,7 @@ module.exports = {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3400,13 +3498,13 @@ module.exports = {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let parseAttribute = __webpack_require__(42);
+let parseAttribute = __webpack_require__(43);
 
 let {
     isString,
@@ -3497,7 +3595,7 @@ module.exports = parseArgs;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3571,14 +3669,14 @@ module.exports = parseAttribute;
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let twowaybinding = __webpack_require__(44);
-let eventError = __webpack_require__(45);
+let twowaybinding = __webpack_require__(45);
+let eventError = __webpack_require__(46);
 
 module.exports = {
     twowaybinding,
@@ -3587,7 +3685,7 @@ module.exports = {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3614,7 +3712,7 @@ module.exports = (obj, path) => (tagName, attributes, childExp) => {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3646,7 +3744,7 @@ let wrapEventHandler = (fun, catcher) => {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3666,7 +3764,7 @@ let {
     forEach
 } = __webpack_require__(4);
 
-let replace = __webpack_require__(47);
+let replace = __webpack_require__(48);
 
 let reduceNode = __webpack_require__(13);
 
@@ -3865,7 +3963,7 @@ module.exports = View;
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3887,7 +3985,7 @@ let {
     eventMapHook
 } = __webpack_require__(12);
 
-let applyAttibutes = __webpack_require__(51);
+let applyAttibutes = __webpack_require__(52);
 
 let replaceDirectly = (node, newNode) => {
     let parent = node.parentNode;
@@ -4001,7 +4099,7 @@ module.exports = (node, newNode) => {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {// Unique ID creation requires a high quality random # generator.  In the
@@ -4038,10 +4136,10 @@ if (!rng) {
 
 module.exports = rng;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50)))
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports) {
 
 var g;
@@ -4068,7 +4166,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports) {
 
 /**
@@ -4097,7 +4195,7 @@ module.exports = bytesToUuid;
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4105,7 +4203,7 @@ module.exports = bytesToUuid;
 
 let {
     getAttributeMap
-} = __webpack_require__(52);
+} = __webpack_require__(53);
 
 let {
     hasOwnProperty
@@ -4144,15 +4242,15 @@ module.exports = applyAttibutes;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let shadowFrame = __webpack_require__(53);
+let shadowFrame = __webpack_require__(54);
 
-let startMomenter = __webpack_require__(54);
+let startMomenter = __webpack_require__(55);
 
 let getX = (elem) => {
     var x = 0;
@@ -4235,7 +4333,7 @@ module.exports = {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4290,7 +4388,7 @@ module.exports = shadowFrame;
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4346,7 +4444,7 @@ module.exports = startMomenter;
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4393,7 +4491,7 @@ module.exports = {
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4549,7 +4647,7 @@ let getGlobalEventTypeId = (type) => `${globalEventTypePrefix}${type}`;
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4605,7 +4703,7 @@ module.exports = (...args) => {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4710,7 +4808,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4807,7 +4905,7 @@ module.exports = (classTable) => {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4868,18 +4966,18 @@ module.exports = {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let parser = __webpack_require__(62);
+let parser = __webpack_require__(63);
 let {
     checkAST,
     runTimeCheck,
     getVariable
-} = __webpack_require__(86);
+} = __webpack_require__(87);
 
 let {
     T_ATOM,
@@ -5037,7 +5135,7 @@ module.exports = {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5046,16 +5144,16 @@ module.exports = {
 let streamTokenSpliter = __webpack_require__(25);
 let {
     LR
-} = __webpack_require__(72);
+} = __webpack_require__(73);
 let {
     getProductionId,
     processTokens,
 } = __webpack_require__(32);
-let tokenTypes = __webpack_require__(83);
+let tokenTypes = __webpack_require__(84);
 let {
     ACTION,
     GOTO
-} = __webpack_require__(85);
+} = __webpack_require__(86);
 
 let {
     P_PROGRAM,
@@ -5307,7 +5405,7 @@ module.exports = () => {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5325,7 +5423,7 @@ let {
     stateGraphDSL
 } = __webpack_require__(10);
 
-let buildFSM = __webpack_require__(69);
+let buildFSM = __webpack_require__(70);
 
 let {
     map
@@ -5333,12 +5431,12 @@ let {
 
 let {
     getMatch
-} = __webpack_require__(70);
+} = __webpack_require__(71);
 
 let {
     findToken,
     filterTypes
-} = __webpack_require__(71);
+} = __webpack_require__(72);
 
 let {
     assembleToken
@@ -5576,7 +5674,7 @@ module.exports = {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5584,9 +5682,9 @@ module.exports = {
 
 let {
     QUIT, WAIT, MATCH
-} = __webpack_require__(65);
+} = __webpack_require__(66);
 
-let stateGraphDSL = __webpack_require__(66);
+let stateGraphDSL = __webpack_require__(67);
 
 const START_STATE = '__start__state__';
 
@@ -5659,7 +5757,7 @@ module.exports = {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5673,7 +5771,7 @@ module.exports = {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5695,7 +5793,7 @@ let {
     circle,
 
     isEpsilonTransition
-} = __webpack_require__(67);
+} = __webpack_require__(68);
 
 let {
     mergeMap
@@ -5905,7 +6003,7 @@ module.exports = mergeMap(actionDSL, {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6063,7 +6161,7 @@ module.exports = mergeMap(actionDSL, {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6188,7 +6286,7 @@ module.exports = {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6228,7 +6326,7 @@ module.exports = (stateMap, accepts) => {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6260,7 +6358,7 @@ module.exports = {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6328,7 +6426,7 @@ module.exports = {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6377,11 +6475,11 @@ module.exports = {
  * let ast = lrParse(null); // null as end symbol
  * console.log(JSON.stringify(ast, null, 4));
  */
-module.exports = __webpack_require__(73);
+module.exports = __webpack_require__(74);
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6401,9 +6499,9 @@ module.exports = __webpack_require__(73);
  * 2. shift-in reduce
  */
 
-let LR = __webpack_require__(74);
-let LR1Table = __webpack_require__(77);
-let ctxFreeGrammer = __webpack_require__(82);
+let LR = __webpack_require__(75);
+let LR1Table = __webpack_require__(78);
+let ctxFreeGrammer = __webpack_require__(83);
 let {
     forEach
 } = __webpack_require__(7);
@@ -6434,7 +6532,7 @@ module.exports = {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6467,7 +6565,7 @@ let {
     initAST,
     reduceAST,
     appendToken
-} = __webpack_require__(75);
+} = __webpack_require__(76);
 
 /**
  * configuration = [stack, tokens]
@@ -6622,7 +6720,7 @@ let getNextInputToken = (configuration) => {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6751,7 +6849,7 @@ module.exports = {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6876,20 +6974,20 @@ module.exports = {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let LR1CanonicalCollection = __webpack_require__(78);
+let LR1CanonicalCollection = __webpack_require__(79);
 let {
     forEach, findIndex
 } = __webpack_require__(7);
-let GO = __webpack_require__(79);
+let GO = __webpack_require__(80);
 let {
     LR1Itemer
-} = __webpack_require__(80);
+} = __webpack_require__(81);
 let {
     sameClosure
 } = __webpack_require__(17);
@@ -6961,7 +7059,7 @@ let getStateIndex = (C, I) => findIndex(C, I, {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7042,7 +7140,7 @@ let getGoToSymbolsSet = (symbols, I, go) => {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7117,13 +7215,13 @@ module.exports = (grammer, LR1Grammer) => {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let First = __webpack_require__(81);
+let First = __webpack_require__(82);
 
 let {
     union, reduce, filter, flat, map
@@ -7314,7 +7412,7 @@ module.exports = {
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7427,7 +7525,7 @@ module.exports = (grammer) => {
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7534,7 +7632,7 @@ let getNoneTerminalProductionMap = (producitons) => {
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7543,7 +7641,7 @@ let getNoneTerminalProductionMap = (producitons) => {
 let {
     stringGraph,
     numberGraph
-} = __webpack_require__(84);
+} = __webpack_require__(85);
 
 let {
     buildFSM
@@ -7678,7 +7776,7 @@ module.exports = [
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7736,13 +7834,13 @@ module.exports = {
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports) {
 
 module.exports={"GOTO":[{"PROGRAM":11,"EXPRESSION_LIST":12,"EXPRESSION":13,"UPDATE_EXPRESSION":14,"QUERY_EXPRESSION":15,"PATH":16,"ATOM_DATA":17},{"PATH":20},{"PATH":23},{},{"PATH":25},{"PATH":26},{},{},{},{},{},{},{},{},{},{},{},{},{"PATH":29},{"PATH":30},{},{"PATH":31},{"PATH":32},{},{"QUERY_EXPRESSION":43,"QUERY_EXPRESSION_LIST":44,"PATH":45,"ATOM_DATA":46},{},{},{"EXPRESSION_LIST":47,"EXPRESSION":13,"UPDATE_EXPRESSION":14,"QUERY_EXPRESSION":15,"PATH":16,"ATOM_DATA":17},{"QUERY_EXPRESSION":48,"PATH":49,"ATOM_DATA":17},{},{},{},{},{"QUERY_EXPRESSION":50,"PATH":49,"ATOM_DATA":17},{},{},{"PATH":52},{"PATH":53},{},{},{},{},{},{},{},{},{},{},{},{},{},{"QUERY_EXPRESSION":43,"QUERY_EXPRESSION_LIST":57,"PATH":45,"ATOM_DATA":46},{},{},{"QUERY_EXPRESSION":43,"QUERY_EXPRESSION_LIST":58,"PATH":45,"ATOM_DATA":46},{},{},{},{},{}],"ACTION":[{"$":{"type":"reduce","production":["EXPRESSION",[]]},"semicolon":{"type":"reduce","production":["EXPRESSION",[]]},"variableName":{"type":"shift","state":3},"delete":{"type":"shift","state":1},"append":{"type":"shift","state":2},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"nodeName":{"type":"shift","state":21},"nodeNameVariable":{"type":"shift","state":22}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"leftBracket":{"type":"shift","state":24}},{"$":{"type":"reduce","production":["PATH",["nodeName"]]},"assign":{"type":"reduce","production":["PATH",["nodeName"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"assign":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"$":{"type":"reduce","production":["ATOM_DATA",["true"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["true"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["false"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["false"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["null"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["null"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["string"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["string"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["number"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["number"]]}},{"$":{"type":"accept"}},{"$":{"type":"reduce","production":["PROGRAM",["EXPRESSION_LIST"]]}},{"$":{"type":"reduce","production":["EXPRESSION_LIST",["EXPRESSION"]]},"semicolon":{"type":"shift","state":27}},{"$":{"type":"reduce","production":["EXPRESSION",["UPDATE_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["EXPRESSION",["UPDATE_EXPRESSION"]]}},{"$":{"type":"reduce","production":["EXPRESSION",["QUERY_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["EXPRESSION",["QUERY_EXPRESSION"]]}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"assign":{"type":"shift","state":28}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]}},{"$":{"type":"reduce","production":["PATH",["nodeName"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"$":{"type":"reduce","production":["UPDATE_EXPRESSION",["delete","PATH"]]},"semicolon":{"type":"reduce","production":["UPDATE_EXPRESSION",["delete","PATH"]]}},{"assign":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":21},"nodeNameVariable":{"type":"shift","state":22}},{"assign":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":21},"nodeNameVariable":{"type":"shift","state":22}},{"assign":{"type":"shift","state":33}},{"rightBracket":{"type":"shift","state":35},"variableName":{"type":"shift","state":34},"true":{"type":"shift","state":38},"false":{"type":"shift","state":39},"null":{"type":"shift","state":40},"string":{"type":"shift","state":41},"number":{"type":"shift","state":42},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"$":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"assign":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"assign":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"$":{"type":"reduce","production":["EXPRESSION",[]]},"semicolon":{"type":"reduce","production":["EXPRESSION",[]]},"variableName":{"type":"shift","state":3},"delete":{"type":"shift","state":1},"append":{"type":"shift","state":2},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"variableName":{"type":"shift","state":3},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"$":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"assign":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"assign":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"variableName":{"type":"shift","state":3},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"leftBracket":{"type":"shift","state":51}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]}},{"comma":{"type":"reduce","production":["PATH",["nodeName"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"comma":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"comma":{"type":"reduce","production":["ATOM_DATA",["true"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["true"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["false"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["false"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["null"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["null"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["string"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["string"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["number"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["number"]]}},{"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION_LIST",["QUERY_EXPRESSION"]]},"comma":{"type":"shift","state":54}},{"rightBracket":{"type":"shift","state":55}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]}},{"$":{"type":"reduce","production":["EXPRESSION_LIST",["EXPRESSION","semicolon","EXPRESSION_LIST"]]}},{"$":{"type":"reduce","production":["UPDATE_EXPRESSION",["PATH","assign","QUERY_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["UPDATE_EXPRESSION",["PATH","assign","QUERY_EXPRESSION"]]}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]}},{"$":{"type":"reduce","production":["UPDATE_EXPRESSION",["append","PATH","assign","QUERY_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["UPDATE_EXPRESSION",["append","PATH","assign","QUERY_EXPRESSION"]]}},{"rightBracket":{"type":"shift","state":56},"variableName":{"type":"shift","state":34},"true":{"type":"shift","state":38},"false":{"type":"shift","state":39},"null":{"type":"shift","state":40},"string":{"type":"shift","state":41},"number":{"type":"shift","state":42},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"comma":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"comma":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"variableName":{"type":"shift","state":34},"true":{"type":"shift","state":38},"false":{"type":"shift","state":39},"null":{"type":"shift","state":40},"string":{"type":"shift","state":41},"number":{"type":"shift","state":42},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]}},{"rightBracket":{"type":"shift","state":59}},{"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION_LIST",["QUERY_EXPRESSION","comma","QUERY_EXPRESSION_LIST"]]}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]}}]}
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7884,7 +7982,7 @@ module.exports = {
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7937,7 +8035,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7957,7 +8055,7 @@ let {
   getChildStylesInPercentage,
   getChildStylesInPile,
   getChildStylesInPartion
-} = __webpack_require__(100);
+} = __webpack_require__(36);
 
 /**
  *
@@ -8003,7 +8101,7 @@ module.exports = lumineView(({props, children}) => {
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8021,7 +8119,7 @@ let {
   getChildStylesInPercentage,
   getChildStylesInPile,
   getChildStylesInPartion
-} = __webpack_require__(100);
+} = __webpack_require__(36);
 
 module.exports = lumineView(({props, children}) => {
   let {theme, style, mode, pers, topPartions, bottomPartions} = props;
@@ -8056,7 +8154,7 @@ module.exports = lumineView(({props, children}) => {
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8074,7 +8172,7 @@ let {
 
 let {
     compileTreeScript
-} = __webpack_require__(91);
+} = __webpack_require__(92);
 
 let S_HideNotice = compileTreeScript('.props.show=false');
 
@@ -8122,7 +8220,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8156,7 +8254,7 @@ module.exports = {
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8212,7 +8310,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8238,7 +8336,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8266,13 +8364,13 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let FullWindow = __webpack_require__(96);
+let FullWindow = __webpack_require__(97);
 let lumineView = __webpack_require__(1);
 let n = __webpack_require__(5);
 
@@ -8295,7 +8393,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8334,7 +8432,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8346,12 +8444,12 @@ let {
     onSignalType,
     deliver
 } = __webpack_require__(3);
-let Modal = __webpack_require__(36);
+let Modal = __webpack_require__(37);
 let Input = __webpack_require__(33);
 let Button = __webpack_require__(8);
 let {
     syncBindWithKeyMap
-} = __webpack_require__(98);
+} = __webpack_require__(99);
 let {
     styles
 } = __webpack_require__(2);
@@ -8421,7 +8519,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8520,7 +8618,7 @@ module.exports = {
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8531,7 +8629,7 @@ let {
     signalSendRequestRunner,
     responseUpdateStateRunner,
     responseErrorRunner
-} = __webpack_require__(37);
+} = __webpack_require__(38);
 
 /**
  * action flow
@@ -8666,102 +8764,6 @@ let getVariableStub = (variableStub, action) => {
 module.exports = {
     signalActionFlow,
     runSignalActions
-};
-
-
-/***/ }),
-/* 100 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {styles} = __webpack_require__(2);
-
-let getPercentSum = (pers, childLen) => {
-  let sum = 0;
-  for (let i = 0; i < childLen; i++) {
-    sum += pers[i];
-  }
-
-  return sum;
-};
-
-let getPercent = (sum, pers, index) => {
-  if (sum === 0) {
-    return 0;
-  }
-  return ((pers[index] === undefined ? 1 : pers[index]) / sum) * 100 + '%';
-};
-
-let getChildStylesInPercentage =
-    (children, pers, childStyles, theme, type = 'height') => {
-      let sum = getPercentSum(pers, children.length);
-
-      return children.map((_, index) => {
-        let value = getPercent(sum, pers, index);
-        let valueStyle = {[type] : value};
-        return getChildStyle(type, valueStyle, childStyles[index], theme);
-      });
-    };
-
-let getChildStylesInPile = (children, theme, childStyles, type = 'height') => {
-  return children.map((_, index) =>
-                          getChildStyle(type, {}, childStyles[index], theme));
-};
-
-let getChildStylesInPartion =
-    (frontPartions, backPartions, childStyles, theme, type = 'height') => {
-      // front childs
-      let topStyles = frontPartions.map((v, index) => {
-        return getChildStyle(type, {[type] : v, zIndex : 2}, childStyles[index],
-                             theme);
-      });
-
-      // back childs
-      let bottomStyles = backPartions.map((v, index) => {
-        return getChildStyle(type, {[type] : v, zIndex : 2},
-                             childStyles[topStyles.length + 1 + index], theme);
-      });
-
-      let prev = frontPartions.reduce((sum, v) => sum + v, 0);
-      let next = backPartions.reduce((sum, v) => sum + v, 0);
-
-      // flex one
-      let flexStyle =
-          getChildStyle(type,
-                        type === 'height' ? {
-                          height : '100%',
-                          marginBottom : -1 * (prev + next), // pull up nexts
-                          paddingBottom : prev + next        // scroll childs
-                        }
-                                          : {
-                                              width : '100%',
-                                              position : 'relative',
-                                              paddingLeft : prev + next,
-                                              marginRight : -1 * (prev + next),
-                                              left : -1 * (prev + next),
-                                              zIndex : 1
-                                            },
-                        childStyles[topStyles.length], theme);
-
-      return topStyles.concat([ flexStyle ]).concat(bottomStyles);
-    };
-
-let getChildStyle = (type, specialStyle, childStyle, theme) => {
-  return styles(theme.container, getFullDirection(type, theme),
-                type === 'width' ? {'float' : 'left'} : {}, specialStyle,
-                childStyle || {});
-};
-
-let getFullDirection = (type, theme) => {
-  return type === 'height' ? theme.fullParentWidth : theme.fullParentHeight;
-};
-
-module.exports = {
-  getChildStylesInPercentage,
-  getChildStylesInPile,
-  getChildStylesInPartion
 };
 
 
