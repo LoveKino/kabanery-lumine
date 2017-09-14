@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 36);
+/******/ 	return __webpack_require__(__webpack_require__.s = 38);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -297,127 +297,17 @@ module.exports = {
 
 
 let {
-    isObject, funType, or, isString, isFalsy, likeArray
-} = __webpack_require__(0);
-
-let iterate = __webpack_require__(19);
-
-let {
-    map, reduce, find, findIndex, forEach, filter, any, exist, compact
-} = __webpack_require__(38);
-
-let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
-
-let difference = (list1, list2, fopts) => {
-    return reduce(list1, (prev, item) => {
-        if (!contain(list2, item, fopts) &&
-            !contain(prev, item, fopts)) {
-            prev.push(item);
-        }
-        return prev;
-    }, []);
-};
-
-let union = (list1, list2, fopts) => deRepeat(list2, fopts, deRepeat(list1, fopts));
-
-let mergeMap = (map1 = {}, map2 = {}) => reduce(map2, setValueKey, reduce(map1, setValueKey, {}));
-
-let setValueKey = (obj, value, key) => {
-    obj[key] = value;
-    return obj;
-};
-
-let interset = (list1, list2, fopts) => {
-    return reduce(list1, (prev, cur) => {
-        if (contain(list2, cur, fopts)) {
-            prev.push(cur);
-        }
-        return prev;
-    }, []);
-};
-
-let deRepeat = (list, fopts, init = []) => {
-    return reduce(list, (prev, cur) => {
-        if (!contain(prev, cur, fopts)) {
-            prev.push(cur);
-        }
-        return prev;
-    }, init);
-};
-
-/**
- * a.b.c
- */
-let get = funType((sandbox, name = '') => {
-    name = name.trim();
-    let parts = !name ? [] : name.split('.');
-    return reduce(parts, getValue, sandbox, invertLogic);
-}, [
-    isObject,
-    or(isString, isFalsy)
-]);
-
-let getValue = (obj, key) => obj[key];
-
-let invertLogic = v => !v;
-
-let delay = (time) => new Promise((resolve) => {
-    setTimeout(resolve, time);
-});
-
-let flat = (list) => {
-    if (likeArray(list) && !isString(list)) {
-        return reduce(list, (prev, item) => {
-            prev = prev.concat(flat(item));
-            return prev;
-        }, []);
-    } else {
-        return [list];
-    }
-};
-
-module.exports = {
-    flat,
-    contain,
-    difference,
-    union,
-    interset,
-    map,
-    reduce,
-    iterate,
-    find,
-    findIndex,
-    deRepeat,
-    forEach,
-    filter,
-    any,
-    exist,
-    get,
-    delay,
-    mergeMap,
-    compact
-};
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
     view
-} = __webpack_require__(5);
+} = __webpack_require__(6);
 let steadyTheme = __webpack_require__(23);
 let {
     deepMergeMap,
     resolveFnValue
-} = __webpack_require__(3);
-let ClassTable = __webpack_require__(57);
+} = __webpack_require__(2);
+let ClassTable = __webpack_require__(59);
 let {
     Signal
-} = __webpack_require__(4);
+} = __webpack_require__(3);
 let JsonTree = __webpack_require__(24);
 let {
     executeAST
@@ -525,7 +415,7 @@ module.exports = (viewFun, {
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -621,7 +511,7 @@ module.exports = {
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -663,13 +553,156 @@ module.exports = {
 
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    isObject, funType, or, isString, isFalsy, likeArray
+} = __webpack_require__(0);
+
+let iterate = __webpack_require__(19);
+
+let {
+    map, reduce, find, findIndex, forEach, filter, any, exist, compact
+} = __webpack_require__(40);
+
+let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
+
+let difference = (list1, list2, fopts) => {
+    return reduce(list1, (prev, item) => {
+        if (!contain(list2, item, fopts) &&
+            !contain(prev, item, fopts)) {
+            prev.push(item);
+        }
+        return prev;
+    }, []);
+};
+
+let union = (list1, list2, fopts) => deRepeat(list2, fopts, deRepeat(list1, fopts));
+
+let mergeMap = (map1 = {}, map2 = {}) => reduce(map2, setValueKey, reduce(map1, setValueKey, {}));
+
+let setValueKey = (obj, value, key) => {
+    obj[key] = value;
+    return obj;
+};
+
+let interset = (list1, list2, fopts) => {
+    return reduce(list1, (prev, cur) => {
+        if (contain(list2, cur, fopts)) {
+            prev.push(cur);
+        }
+        return prev;
+    }, []);
+};
+
+let deRepeat = (list, fopts, init = []) => {
+    return reduce(list, (prev, cur) => {
+        if (!contain(prev, cur, fopts)) {
+            prev.push(cur);
+        }
+        return prev;
+    }, init);
+};
+
+/**
+ * a.b.c
+ */
+let get = funType((sandbox, name = '') => {
+    name = name.trim();
+    let parts = !name ? [] : name.split('.');
+    return reduce(parts, getValue, sandbox, invertLogic);
+}, [
+    isObject,
+    or(isString, isFalsy)
+]);
+
+let getValue = (obj, key) => obj[key];
+
+let invertLogic = v => !v;
+
+let delay = (time) => new Promise((resolve) => {
+    setTimeout(resolve, time);
+});
+
+let flat = (list) => {
+    if (likeArray(list) && !isString(list)) {
+        return reduce(list, (prev, item) => {
+            prev = prev.concat(flat(item));
+            return prev;
+        }, []);
+    } else {
+        return [list];
+    }
+};
+
+module.exports = {
+    flat,
+    contain,
+    difference,
+    union,
+    interset,
+    map,
+    reduce,
+    iterate,
+    find,
+    findIndex,
+    deRepeat,
+    forEach,
+    filter,
+    any,
+    exist,
+    get,
+    delay,
+    mergeMap,
+    compact
+};
+
+
+/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(37);
+let {
+    n,
+    parseArgs
+} = __webpack_require__(6);
+
+module.exports = (...args) => {
+    let tagName = args[0];
+
+    if (typeof tagName === 'string') {
+        return n(...args);
+    } else {
+        let {
+            attributes,
+            childs
+        } = parseArgs(args, {
+            doParseStyle: false
+        });
+
+        return tagName({
+            props: attributes,
+            children: childs
+        });
+    }
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(39);
 
 /**
  * @readme-doc
@@ -775,39 +808,6 @@ module.exports = __webpack_require__(37);
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    n,
-    parseArgs
-} = __webpack_require__(5);
-
-module.exports = (...args) => {
-    let tagName = args[0];
-
-    if (typeof tagName === 'string') {
-        return n(...args);
-    } else {
-        let {
-            attributes,
-            childs
-        } = parseArgs(args, {
-            doParseStyle: false
-        });
-
-        return tagName({
-            props: attributes,
-            children: childs
-        });
-    }
-};
-
-
-/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -822,7 +822,7 @@ let iterate = __webpack_require__(31);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact, reverse, overArgs
-} = __webpack_require__(74);
+} = __webpack_require__(76);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -927,8 +927,60 @@ module.exports = {
 
 
 let {
+    n
+} = __webpack_require__(6);
+let lumineView = __webpack_require__(1);
+let {
+    Signal
+} = __webpack_require__(3);
+let {
+    styles
+} = __webpack_require__(2);
+
+module.exports = lumineView(({
+    props,
+    children
+}, {
+    notify,
+    getClassName
+}) => {
+    // TODO validate
+    let attributes = {
+        'class': `${getClassName('btn')}`,
+        style: props.style,
+        onclick: () => {
+            notify(Signal('click'));
+        }
+    };
+    if (props.id) {
+        attributes.id = props.id;
+    }
+    return n('button', attributes, children[0]);
+}, {
+    defaultProps: {
+        style: (theme) => styles(theme.oneLineBulk)
+    },
+
+    classTable: (theme) => {
+        return {
+            'btn:hover': theme.actions.hover,
+            'btn:active': theme.actions.signal,
+            'btn:focus': theme.actions.focus
+        };
+    }
+});
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
     reduce
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 let {
     funType, isObject, or, isString, isFalsy
 } = __webpack_require__(0);
@@ -1076,7 +1128,7 @@ module.exports = {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1119,59 +1171,7 @@ module.exports = {
  * console.log(m('"').type === MATCH);
  *
  **/
-module.exports = __webpack_require__(62);
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    n
-} = __webpack_require__(5);
-let lumineView = __webpack_require__(2);
-let {
-    Signal
-} = __webpack_require__(4);
-let {
-    styles
-} = __webpack_require__(3);
-
-module.exports = lumineView(({
-    props,
-    children
-}, {
-    notify,
-    getClassName
-}) => {
-    // TODO validate
-    let attributes = {
-        'class': `${getClassName('btn')}`,
-        style: props.style,
-        onclick: () => {
-            notify(Signal('click'));
-        }
-    };
-    if (props.id) {
-        attributes.id = props.id;
-    }
-    return n('button', attributes, children[0]);
-}, {
-    defaultProps: {
-        style: (theme) => styles(theme.oneLineBulk)
-    },
-
-    classTable: (theme) => {
-        return {
-            'btn:hover': theme.actions.hover,
-            'btn:active': theme.actions.signal,
-            'btn:focus': theme.actions.focus
-        };
-    }
-});
+module.exports = __webpack_require__(64);
 
 
 /***/ }),
@@ -1183,12 +1183,12 @@ module.exports = lumineView(({
 
 let {
     map
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 let {
     isObject, isNode
 } = __webpack_require__(0);
 
-let parseArgs = __webpack_require__(39);
+let parseArgs = __webpack_require__(41);
 
 let parseStyle = __webpack_require__(20);
 
@@ -1318,7 +1318,7 @@ module.exports = {
 
 let {
     createElement, createSvgElement
-} = __webpack_require__(53);
+} = __webpack_require__(55);
 
 let {
     bindEvents
@@ -1326,7 +1326,7 @@ let {
 
 let {
     map
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 
 let {
     isKabaneryNode
@@ -1358,7 +1358,7 @@ module.exports = reduceNode;
 "use strict";
 
 
-let EventMatrix = __webpack_require__(54);
+let EventMatrix = __webpack_require__(56);
 
 let {
     eventMapHook
@@ -1392,7 +1392,7 @@ module.exports = {
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(59);
+module.exports = __webpack_require__(61);
 
 
 /***/ }),
@@ -1725,8 +1725,8 @@ let convertStyleValue = (value, key) => {
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var rng = __webpack_require__(46);
-var bytesToUuid = __webpack_require__(48);
+var rng = __webpack_require__(48);
+var bytesToUuid = __webpack_require__(50);
 
 function v4(options, buf, offset) {
   var i = buf && offset || 0;
@@ -1773,7 +1773,7 @@ let {
 
 let {
     flat, forEach
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 
 let reduceNode = __webpack_require__(13);
 
@@ -1812,7 +1812,7 @@ let getDoc = (node) => {
 
 let {
     styles
-} = __webpack_require__(3);
+} = __webpack_require__(2);
 
 let basics = {
     pageColor: '#e4e4e4',
@@ -1975,7 +1975,7 @@ let {
     modifySuccess,
     removeNoneExist,
     removeSuccess
-} = __webpack_require__(58);
+} = __webpack_require__(60);
 
 module.exports = (jsonData, {
     missingValue = undefined
@@ -2081,7 +2081,7 @@ module.exports = (jsonData, {
  * console.log('\n');
  * console.log(tokens3);
  */
-module.exports = __webpack_require__(61);
+module.exports = __webpack_require__(63);
 
 
 /***/ }),
@@ -2202,7 +2202,7 @@ let iterate = __webpack_require__(28);
 
 let {
     map, reduce, find, findIndex, forEach, filter, any, exist, compact, reverse, overArgs
-} = __webpack_require__(66);
+} = __webpack_require__(68);
 
 let contain = (list, item, fopts) => findIndex(list, item, fopts) !== -1;
 
@@ -2679,40 +2679,153 @@ module.exports = {
 
 let {
     n
-} = __webpack_require__(5);
-let lumineView = __webpack_require__(2);
+} = __webpack_require__(6);
+
+let lumineView = __webpack_require__(1);
+
 let {
-    styles
+    Signal
 } = __webpack_require__(3);
 
+let {
+    styles
+} = __webpack_require__(2);
+
 module.exports = lumineView(({
-    props,
-    children
+    props
+}, {
+    notify,
+    getClassName
 }) => {
-    return n('div', {
-        style: props.style
-    }, children);
+    let attributes = {
+        'class': `${getClassName('input')}`,
+        style: props.style,
+        type: props.type,
+        placeholder: props.placeholder,
+        oninput: (e) => {
+            props.value = e.target.value;
+            notify(Signal('input'));
+        },
+        value: props.value
+    };
+    if (props.id) {
+        attributes.id = props.id;
+    }
+    return n('input', attributes);
 }, {
     defaultProps: {
-        style: (theme) => styles(theme.fullParent)
+        value: '',
+        type: 'value',
+        placeholder: '',
+        style: (theme) => styles(theme.inputBox, theme.underLineBorder)
     },
 
-    defaultChildren: ['']
+    classTable: (theme) => {
+        return {
+            'input:focus': styles(theme.actions.focus, theme.underLineFocus)
+        };
+    }
 });
 
 
 /***/ }),
 /* 34 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {
-    MODE_PILE: 'pile',
-    MODE_PERCENTAGE: 'percentage'
-};
+"use strict";
+
+
+let {n} = __webpack_require__(6);
+let lumineView = __webpack_require__(1);
+let {styles} = __webpack_require__(2);
+
+module.exports = lumineView(({props, children}) => {
+  return n('div', {style : props.style}, children);
+}, {
+  defaultProps : {style : (theme) => styles(theme.fullParent)},
+
+  defaultChildren : [ '' ]
+});
 
 
 /***/ }),
 /* 35 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  MODE_PILE : 'pile',
+  MODE_PERCENTAGE : 'percentage',
+  MODE_PARTION : 'partion'
+};
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let lumineView = __webpack_require__(1);
+let n = __webpack_require__(5);
+let Mask = __webpack_require__(95);
+let {
+    styles
+} = __webpack_require__(2);
+let {
+    onSignalType
+} = __webpack_require__(3);
+
+module.exports = lumineView(({
+    props,
+    children
+}, {
+    updateWithNotify
+}) => {
+    return props.show ? n(Mask, {
+        style: props.style.maskStyle,
+        theme: props.theme,
+        onsignal: onSignalType('fullwindow-click', () => {
+            if (props.autoHide) {
+                updateWithNotify(null, 'props.show', false);
+            }
+        })
+    }, [
+        n('div', {
+            style: {
+                display: 'table-cell',
+                verticalAlign: 'middle'
+            }
+        }, [ // middle
+            n('div', {
+                style: props.style.modalContainer,
+                onclick: (e) => {
+                    e.stopPropagation();
+                }
+            }, children)
+        ])
+    ]) : n('div');
+}, {
+    defaultProps: {
+        show: true,
+        autoHide: false,
+        style: (theme) => {
+            return {
+                maskStyle: {
+                    textAlign: 'center',
+                    display: 'table'
+                },
+                modalContainer: styles(theme.modalBulk, {
+                    padding: theme.basics.narrowPadding
+                })
+            };
+        }
+    }
+});
+
+
+/***/ }),
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2839,297 +2952,297 @@ module.exports = {
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let {
-    mount
-} = __webpack_require__(5);
+let {mount} = __webpack_require__(6);
 
-let n = __webpack_require__(6);
+let n = __webpack_require__(5);
 
-let FunctionBar = __webpack_require__(56);
-let Button = __webpack_require__(10);
-let Input = __webpack_require__(85);
-let TextArea = __webpack_require__(86);
-let Hn = __webpack_require__(87);
-let Vn = __webpack_require__(88);
-let Notice = __webpack_require__(89);
-let TextLoading = __webpack_require__(91);
-let TestSignalUpdateStateRunnerView = __webpack_require__(92);
-let TestSignalActionFlow = __webpack_require__(93);
-let Modal = __webpack_require__(95);
-let InputDialog = __webpack_require__(98);
-//let PageMask = require('../lib/view/mask/pageMask');
-//let PageLoading = require('../lib/view/loading/pageLoading');
-let {
-    signalUpdateStateRunner
-} = __webpack_require__(35);
-let {
-    signalActionFlow
-} = __webpack_require__(94);
+let FunctionBar = __webpack_require__(58);
+let Button = __webpack_require__(8);
+let Input = __webpack_require__(33);
+let TextArea = __webpack_require__(87);
+let Hn = __webpack_require__(88);
+let Vn = __webpack_require__(89);
+let Notice = __webpack_require__(90);
+let TextLoading = __webpack_require__(92);
+let TestSignalUpdateStateRunnerView =
+    __webpack_require__(93);
+let TestSignalActionFlow = __webpack_require__(94);
+let Modal = __webpack_require__(36);
+let InputDialog = __webpack_require__(97);
+// let PageMask = require('../lib/view/mask/pageMask');
+// let PageLoading = require('../lib/view/loading/pageLoading');
+let {signalUpdateStateRunner} = __webpack_require__(37);
+let {signalActionFlow} = __webpack_require__(99);
 let steadyTheme = __webpack_require__(23);
-let {
-    onSignalType
-} = __webpack_require__(4);
+let {onSignalType} = __webpack_require__(3);
 
 let ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
 
 let log = console.log; // eslint-disable-line
 
 let logSignal = (signal, data) => {
-    log(JSON.stringify(signal));
-    log(JSON.stringify(data));
+  log(JSON.stringify(signal));
+  log(JSON.stringify(data));
 };
 
 let examples = [
 
-    {
-        name: 'function bar',
-        render: () => n(FunctionBar, {
-            title: 'demo',
-            leftLogos: [
-                n('div', '<'), 'a', 'b'
-            ],
-            rightLogos: ['c', 'd'],
+  {
+    name : 'function bar',
+    render : () => n(FunctionBar, {
+      title : 'demo',
+      leftLogos : [ n('div', '<'), 'a', 'b' ],
+      rightLogos : [ 'c', 'd' ],
 
-            onsignal: logSignal
-        })
-    },
-    {
-        name: 'button',
-        render: () => n(Button, {
-            onsignal: logSignal
-        }, ['demo'])
-    },
+      onsignal : logSignal
+    })
+  },
+  {
+    name : 'button',
+    render : () => n(Button, {onsignal : logSignal}, [ 'demo' ])
+  },
 
-    {
-        name: 'input',
-        render: () => n(Input, {
-            value: 'abc',
-            onsignal: logSignal
-        })
-    },
+  {
+    name : 'input',
+    render : () => n(Input, {value : 'abc', onsignal : logSignal})
+  },
 
-    {
-        name: 'hn',
-        render: () => n('div', {
-            style: {
-                width: 400
+  {
+    name : 'hn',
+    render : () =>
+        n('div', {style : {width : 400}}, [ n(Hn, {
+            style : {
+              childs : [
+                {backgroundColor : 'blue'}, {backgroundColor : 'red'},
+                {backgroundColor : 'yellow'}
+              ]
             }
-        }, [n(Hn, {
-            style: {
-                childs: [{
-                    backgroundColor: 'blue'
-                }, {
-                    backgroundColor: 'red'
-                }, {
-                    backgroundColor: 'yellow'
-                }]
+          },
+                                              [
+                                                n('span', 'this is 1'),
+                                                n('span', 'this is 2..'),
+                                                n('span', 'this is 3....')
+                                              ]) ])
+  },
+
+  {
+    name : 'hn2: percentage',
+    render : () =>
+        n('div', {style : {width : 400}}, [ n(Hn, {
+            mode : 'percentage',
+            pers : [ 4, 8, 3 ],
+            style : {
+              childs : [
+                {backgroundColor : 'blue'}, {backgroundColor : 'red'},
+                {backgroundColor : 'yellow'}
+              ]
             }
-        }, [
-            n('span', 'this is 1'),
-            n('span', 'this is 2..'),
-            n('span', 'this is 3....')
-        ])])
-    },
+          },
+                                              [
+                                                n('span', 'this is 1'),
+                                                n('span', 'this is 2..'),
+                                                n('span', 'this is 3....')
+                                              ]) ])
+  },
 
-    {
-        name: 'hn2: percentage',
-        render: () => n('div', {
-            style: {
-                width: 400
+  {
+    name : 'hn3: MODE_PARTION',
+    render : () => n('div', {style : {width : 400, height : 200}},
+                     [
+                       n(Hn, {
+                         mode : 'partion',
+                         leftPartions : [ 50, 30 ],
+                         rightPartions : [ 20, 25 ],
+                         style : {
+                           childs : [
+                             {backgroundColor : 'blue'},
+                             {backgroundColor : 'red'},
+                             {backgroundColor : 'yellow'},
+                             {backgroundColor : 'purple'},
+                             {backgroundColor : 'green'}
+                           ]
+                         }
+                       },
+                         [
+                           n('span', 'this is 1'), n('span', 'this is 2..'),
+                           n('div style="width:340px;background-color:white;"',
+                             'this is 3'),
+                           n('div', 'in bottom'), n('div', 'last in bottom')
+                         ])
+                     ])
+  },
+
+  {
+    name : 'vn',
+    render : () =>
+        n('div', {style : {width : 400}}, [ n(Vn, {
+            style : {
+              childs : [
+                {backgroundColor : 'blue'}, {backgroundColor : 'red'},
+                {backgroundColor : 'yellow'}
+              ]
             }
-        }, [n(Hn, {
-            mode: 'percentage',
-            pers: [4, 8, 3],
-            style: {
-                childs: [{
-                    backgroundColor: 'blue'
-                }, {
-                    backgroundColor: 'red'
-                }, {
-                    backgroundColor: 'yellow'
-                }]
-            }
-        }, [
-            n('span', 'this is 1'),
-            n('span', 'this is 2..'),
-            n('span', 'this is 3....')
-        ])])
-    },
+          },
+                                              [
+                                                n('span', 'this is 1'),
+                                                n('span', 'this is 2..'),
+                                                n('span', 'this is 3....')
+                                              ]) ])
+  },
 
-    {
-        name: 'vn',
-        render: () => n('div', {
-            style: {
-                width: 400
-            }
-        }, [
-            n(Vn, {
-                style: {
-                    childs: [{
-                        backgroundColor: 'blue'
-                    }, {
-                        backgroundColor: 'red'
-                    }, {
-                        backgroundColor: 'yellow'
-                    }]
-                }
-            }, [
-                n('span', 'this is 1'),
-                n('span', 'this is 2..'),
-                n('span', 'this is 3....')
-            ])
-        ])
-    },
+  {
+    name : 'vn2: MODE_PERCENTAGE',
+    render : () => n('div', {style : {width : 400, height : 200}},
+                     [
+                       n(Vn, {
+                         mode : 'percentage',
+                         pers : [ 3, 6, 9 ],
+                         style : {
+                           childs : [
+                             {backgroundColor : 'blue'},
+                             {backgroundColor : 'red'},
+                             {backgroundColor : 'yellow'}
+                           ]
+                         }
+                       },
+                         [
+                           n('span', 'this is 1'), n('span', 'this is 2..'),
+                           n('span', 'this is 3....')
+                         ])
+                     ])
+  },
+  {
+    name : 'vn3: MODE_PARTION',
+    render :
+        () => n('div', {style : {width : 400, height : 200}},
+                [ n(Vn,
+                    {
+                      mode : 'partion',
+                      topPartions : [ 50, 30 ],
+                      bottomPartions : [ 20, 25 ],
+                      style : {
+                        childs :
+                            [
+                              {backgroundColor : 'blue'},
+                              {backgroundColor : 'red'},
+                              {backgroundColor : 'yellow'},
+                              {backgroundColor : 'purple'},
+                              {backgroundColor : 'green'}
+                            ]
+                      }
+                    },
+                    [
+                      n('span', 'this is 1'), n('span', 'this is 2..'),
+                      n('div',
+                        [ 1, 1, 1, 1, 1, 1, 1 ].map(
+                            (_, index) => n('div', `this is 3:${index}....`))),
+                      n('div', 'in bottom'), n('div', 'last in bottom')
+                    ]) ])
+  },
+  {
+    name : 'notice',
 
-    {
-        name: 'vn2: MODE_PERCENTAGE',
-        render: () => n('div', {
-            style: {
-                width: 400,
-                height: 200
-            }
-        }, [
-            n(Vn, {
-                mode: 'percentage',
-                pers: [3, 6, 9],
-                style: {
-                    childs: [{
-                        backgroundColor: 'blue'
-                    }, {
-                        backgroundColor: 'red'
-                    }, {
-                        backgroundColor: 'yellow'
-                    }]
-                }
-            }, [
-                n('span', 'this is 1'),
-                n('span', 'this is 2..'),
-                n('span', 'this is 3....')
-            ])
-        ])
-    },
+    render : () => n(Notice, {
+      text :
+          'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................',
+      onsignal : logSignal
+    })
+  },
 
-    {
-        name: 'notice',
+  {name : 'textLoading', render : () => n(TextLoading)},
 
-        render: () => n(Notice, {
-            text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................',
-            onsignal: logSignal
-        })
-    },
+  {
+    name : 'TestSignalUpdateStateRunnerView',
+    render : () =>
+        n(TestSignalUpdateStateRunnerView,
+          {text : 'init', onsignal : onSignalType('doTestSUS', ChangeText)})
+  },
 
-    {
-        name: 'textLoading',
-        render: () => n(TextLoading)
-    },
+  {
+    name : 'TestSignalActionFlow',
+    render : () => n(TestSignalActionFlow, {
+      text : 'start',
+      text2 : 'start2',
+      onsignal : signalActionFlow({
+        'doTestSAF' : [
+          {type : 'updateState', content : '.viewState.props.text = "cccc!!!"'},
+          {
+            type : 'updateState',
+            content : '.viewState.props.text2 = "eeee!!!"'
+          }
+        ]
+      })
+    })
+  },
 
-    {
-        name: 'TestSignalUpdateStateRunnerView',
-        render: () => n(TestSignalUpdateStateRunnerView, {
-            text: 'init',
-            onsignal: onSignalType('doTestSUS', ChangeText)
-        })
-    },
+  {
+    name : 'Modal',
+    render : () => n(Modal, {autoHide : true}, [ n('div', 123) ])
+  },
 
-    {
-        name: 'TestSignalActionFlow',
-        render: () => n(TestSignalActionFlow, {
-            text: 'start',
-            text2: 'start2',
-            onsignal: signalActionFlow({
-                'doTestSAF': [{
-                    type: 'updateState',
-                    content: '.viewState.props.text = "cccc!!!"'
-                }, {
-                    type: 'updateState',
-                    content: '.viewState.props.text2 = "eeee!!!"'
-                }]
-            })
-        })
-    },
+  {
+    name : 'InputDialog',
+    render : () => n(InputDialog, {
+      title : 'test',
+      text : 'start',
+      autoHide : true,
+      placeholder : 'place something',
+      onsignal : logSignal
+    })
+  }
 
-    {
-        name: 'Modal',
-        render: () => n(Modal, {
-            autoHide: true
-        }, [n('div', 123)])
-    },
+  /*
+  {
+      name: 'pageMask',
+      render: () => n(PageMask)
+  },
 
-    {
-        name: 'InputDialog',
-        render: () => n(InputDialog, {
-            title: 'test',
-            text: 'start',
-            autoHide: true,
-            placeholder: 'place something',
-            onsignal: logSignal
-        })
-    }
+  {
+      name: 'PageLoading',
+      render: () => n(PageLoading)
+  },
 
-    /*
-    {
-        name: 'pageMask',
-        render: () => n(PageMask)
-    },
-
-    {
-        name: 'PageLoading',
-        render: () => n(PageLoading)
-    },
-
-    */
+  */
 ];
 
-let Pager = n('div', {
-    style: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: steadyTheme.basics.pageColor
-    }
-}, examples.map(({
-    name,
-    render
-}) => {
-    return n('div', {
-        style: {
-            padding: 8
-        }
-    }, [
+let Pager = n(
+    'div', {
+      style : {
+        width : '100%',
+        height : '100%',
+        backgroundColor : steadyTheme.basics.pageColor
+      }
+    },
+    examples.map(({name, render}) => {
+      return n('div', {style : {padding : 8}}, [
         n('div style="font-weight:bold;"', {
-            style: {
-                width: '100%',
-                backgroundColor: steadyTheme.basics.borderColor
-            }
-        }, name),
+          style : {
+            width : '100%',
+            backgroundColor : steadyTheme.basics.borderColor
+          }
+        },
+          name),
 
-        n('div', {
-            style: {
-                padding: 8
-            }
-        }, [
-            n('div', 'code'),
-            n(TextArea, {
-                value: render.toString()
-            }),
-            n('br'),
+        n('div', {style : {padding : 8}},
+          [
+            n('div', 'code'), n(TextArea, {value : render.toString()}), n('br'),
 
-            n('div', 'UI'),
-            render()
-        ])
-    ]);
-}));
+            n('div', 'UI'), render()
+          ])
+      ]);
+    }));
 
 mount(Pager, document.body);
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3146,13 +3259,13 @@ let {
     parseStyle
 } = __webpack_require__(11);
 
-let plugs = __webpack_require__(41);
+let plugs = __webpack_require__(43);
 
-let view = __webpack_require__(44);
+let view = __webpack_require__(46);
 
 let mount = __webpack_require__(22);
 
-let N = __webpack_require__(55);
+let N = __webpack_require__(57);
 
 let reduceNode = __webpack_require__(13);
 
@@ -3182,7 +3295,7 @@ module.exports = {
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3287,13 +3400,13 @@ module.exports = {
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let parseAttribute = __webpack_require__(40);
+let parseAttribute = __webpack_require__(42);
 
 let {
     isString,
@@ -3384,7 +3497,7 @@ module.exports = parseArgs;
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3398,7 +3511,7 @@ let parseStyle = __webpack_require__(20);
 
 let {
     mergeMap
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 
 const ITEM_REG = /([\w-]+)\s*=\s*(([\w-]+)|('.*?')|(".*?"))/;
 
@@ -3458,14 +3571,14 @@ module.exports = parseAttribute;
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let twowaybinding = __webpack_require__(42);
-let eventError = __webpack_require__(43);
+let twowaybinding = __webpack_require__(44);
+let eventError = __webpack_require__(45);
 
 module.exports = {
     twowaybinding,
@@ -3474,7 +3587,7 @@ module.exports = {
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3482,7 +3595,7 @@ module.exports = {
 
 let {
     get, set
-} = __webpack_require__(8);
+} = __webpack_require__(9);
 
 module.exports = (obj, path) => (tagName, attributes, childExp) => {
     let value = get(obj, path, '');
@@ -3501,7 +3614,7 @@ module.exports = (obj, path) => (tagName, attributes, childExp) => {
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3533,7 +3646,7 @@ let wrapEventHandler = (fun, catcher) => {
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3541,7 +3654,7 @@ let wrapEventHandler = (fun, catcher) => {
 
 let {
     set
-} = __webpack_require__(8);
+} = __webpack_require__(9);
 
 let {
     isObject,
@@ -3551,9 +3664,9 @@ let {
 
 let {
     forEach
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 
-let replace = __webpack_require__(45);
+let replace = __webpack_require__(47);
 
 let reduceNode = __webpack_require__(13);
 
@@ -3752,7 +3865,7 @@ module.exports = View;
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3760,7 +3873,7 @@ module.exports = View;
 
 let {
     toArray
-} = __webpack_require__(8);
+} = __webpack_require__(9);
 
 let {
     isNode
@@ -3768,13 +3881,13 @@ let {
 
 let {
     forEach
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 
 let {
     eventMapHook
 } = __webpack_require__(12);
 
-let applyAttibutes = __webpack_require__(49);
+let applyAttibutes = __webpack_require__(51);
 
 let replaceDirectly = (node, newNode) => {
     let parent = node.parentNode;
@@ -3888,7 +4001,7 @@ module.exports = (node, newNode) => {
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {// Unique ID creation requires a high quality random # generator.  In the
@@ -3925,10 +4038,10 @@ if (!rng) {
 
 module.exports = rng;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(47)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49)))
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports) {
 
 var g;
@@ -3955,7 +4068,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports) {
 
 /**
@@ -3984,7 +4097,7 @@ module.exports = bytesToUuid;
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3992,15 +4105,15 @@ module.exports = bytesToUuid;
 
 let {
     getAttributeMap
-} = __webpack_require__(50);
+} = __webpack_require__(52);
 
 let {
     hasOwnProperty
-} = __webpack_require__(8);
+} = __webpack_require__(9);
 
 let {
     forEach
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 
 let applyAttibutes = (node, newNode) => {
     // attributes
@@ -4031,15 +4144,15 @@ module.exports = applyAttibutes;
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let shadowFrame = __webpack_require__(51);
+let shadowFrame = __webpack_require__(53);
 
-let startMomenter = __webpack_require__(52);
+let startMomenter = __webpack_require__(54);
 
 let getX = (elem) => {
     var x = 0;
@@ -4122,7 +4235,7 @@ module.exports = {
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4177,7 +4290,7 @@ module.exports = shadowFrame;
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4233,7 +4346,7 @@ module.exports = startMomenter;
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4280,7 +4393,7 @@ module.exports = {
 
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4288,7 +4401,7 @@ module.exports = {
 
 let {
     contain
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 
 let {
     eventMapHook,
@@ -4436,7 +4549,7 @@ let getGlobalEventTypeId = (type) => `${globalEventTypePrefix}${type}`;
 
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4452,7 +4565,7 @@ let {
 
 let {
     map
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 
 module.exports = (...args) => {
     let tagName = args[0],
@@ -4492,23 +4605,23 @@ module.exports = (...args) => {
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(2);
+let lumineView = __webpack_require__(1);
 let {
     styles
-} = __webpack_require__(3);
+} = __webpack_require__(2);
 
-let Button = __webpack_require__(10);
+let Button = __webpack_require__(8);
 let {
     Signal,
     onSignalType
-} = __webpack_require__(4);
-let n = __webpack_require__(6);
+} = __webpack_require__(3);
+let n = __webpack_require__(5);
 
 module.exports = lumineView(({
     props
@@ -4597,7 +4710,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4605,13 +4718,13 @@ module.exports = lumineView(({
 
 let {
     isMapObject
-} = __webpack_require__(3);
+} = __webpack_require__(2);
 
 let {
     mount,
     n,
     parseStyle
-} = __webpack_require__(5);
+} = __webpack_require__(6);
 
 const VIEW_CLASS_PREFIX = 'kabanery-lumine';
 
@@ -4694,7 +4807,7 @@ module.exports = (classTable) => {
 
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4755,18 +4868,18 @@ module.exports = {
 
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let parser = __webpack_require__(60);
+let parser = __webpack_require__(62);
 let {
     checkAST,
     runTimeCheck,
     getVariable
-} = __webpack_require__(84);
+} = __webpack_require__(86);
 
 let {
     T_ATOM,
@@ -4924,7 +5037,7 @@ module.exports = {
 
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4933,16 +5046,16 @@ module.exports = {
 let streamTokenSpliter = __webpack_require__(25);
 let {
     LR
-} = __webpack_require__(70);
+} = __webpack_require__(72);
 let {
     getProductionId,
     processTokens,
 } = __webpack_require__(32);
-let tokenTypes = __webpack_require__(81);
+let tokenTypes = __webpack_require__(83);
 let {
     ACTION,
     GOTO
-} = __webpack_require__(83);
+} = __webpack_require__(85);
 
 let {
     P_PROGRAM,
@@ -5194,7 +5307,7 @@ module.exports = () => {
 
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5210,22 +5323,22 @@ let {
 
 let {
     stateGraphDSL
-} = __webpack_require__(9);
+} = __webpack_require__(10);
 
-let buildFSM = __webpack_require__(67);
+let buildFSM = __webpack_require__(69);
 
 let {
     map
-} = __webpack_require__(1);
+} = __webpack_require__(4);
 
 let {
     getMatch
-} = __webpack_require__(68);
+} = __webpack_require__(70);
 
 let {
     findToken,
     filterTypes
-} = __webpack_require__(69);
+} = __webpack_require__(71);
 
 let {
     assembleToken
@@ -5463,7 +5576,7 @@ module.exports = {
 
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5471,9 +5584,9 @@ module.exports = {
 
 let {
     QUIT, WAIT, MATCH
-} = __webpack_require__(63);
+} = __webpack_require__(65);
 
-let stateGraphDSL = __webpack_require__(64);
+let stateGraphDSL = __webpack_require__(66);
 
 const START_STATE = '__start__state__';
 
@@ -5546,7 +5659,7 @@ module.exports = {
 
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5560,7 +5673,7 @@ module.exports = {
 
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5582,7 +5695,7 @@ let {
     circle,
 
     isEpsilonTransition
-} = __webpack_require__(65);
+} = __webpack_require__(67);
 
 let {
     mergeMap
@@ -5792,7 +5905,7 @@ module.exports = mergeMap(actionDSL, {
 
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5950,7 +6063,7 @@ module.exports = mergeMap(actionDSL, {
 
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6075,7 +6188,7 @@ module.exports = {
 
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6085,7 +6198,7 @@ const START_STATE = '__start__state__';
 
 let {
     stateGraphDSL, DFA
-} = __webpack_require__(9);
+} = __webpack_require__(10);
 
 /**
  * build a fda to do the matching work
@@ -6115,7 +6228,7 @@ module.exports = (stateMap, accepts) => {
 
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6147,7 +6260,7 @@ module.exports = {
 
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6215,7 +6328,7 @@ module.exports = {
 
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6264,11 +6377,11 @@ module.exports = {
  * let ast = lrParse(null); // null as end symbol
  * console.log(JSON.stringify(ast, null, 4));
  */
-module.exports = __webpack_require__(71);
+module.exports = __webpack_require__(73);
 
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6288,9 +6401,9 @@ module.exports = __webpack_require__(71);
  * 2. shift-in reduce
  */
 
-let LR = __webpack_require__(72);
-let LR1Table = __webpack_require__(75);
-let ctxFreeGrammer = __webpack_require__(80);
+let LR = __webpack_require__(74);
+let LR1Table = __webpack_require__(77);
+let ctxFreeGrammer = __webpack_require__(82);
 let {
     forEach
 } = __webpack_require__(7);
@@ -6321,7 +6434,7 @@ module.exports = {
 
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6354,7 +6467,7 @@ let {
     initAST,
     reduceAST,
     appendToken
-} = __webpack_require__(73);
+} = __webpack_require__(75);
 
 /**
  * configuration = [stack, tokens]
@@ -6509,7 +6622,7 @@ let getNextInputToken = (configuration) => {
 
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6638,7 +6751,7 @@ module.exports = {
 
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6763,20 +6876,20 @@ module.exports = {
 
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let LR1CanonicalCollection = __webpack_require__(76);
+let LR1CanonicalCollection = __webpack_require__(78);
 let {
     forEach, findIndex
 } = __webpack_require__(7);
-let GO = __webpack_require__(77);
+let GO = __webpack_require__(79);
 let {
     LR1Itemer
-} = __webpack_require__(78);
+} = __webpack_require__(80);
 let {
     sameClosure
 } = __webpack_require__(17);
@@ -6848,7 +6961,7 @@ let getStateIndex = (C, I) => findIndex(C, I, {
 
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6929,7 +7042,7 @@ let getGoToSymbolsSet = (symbols, I, go) => {
 
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7004,13 +7117,13 @@ module.exports = (grammer, LR1Grammer) => {
 
 
 /***/ }),
-/* 78 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let First = __webpack_require__(79);
+let First = __webpack_require__(81);
 
 let {
     union, reduce, filter, flat, map
@@ -7201,7 +7314,7 @@ module.exports = {
 
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7314,7 +7427,7 @@ module.exports = (grammer) => {
 
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7421,7 +7534,7 @@ let getNoneTerminalProductionMap = (producitons) => {
 
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7430,13 +7543,13 @@ let getNoneTerminalProductionMap = (producitons) => {
 let {
     stringGraph,
     numberGraph
-} = __webpack_require__(82);
+} = __webpack_require__(84);
 
 let {
     buildFSM
 } = __webpack_require__(25);
 
-let FSM = __webpack_require__(9);
+let FSM = __webpack_require__(10);
 let {
     stateGraphDSL
 } = FSM;
@@ -7565,7 +7678,7 @@ module.exports = [
 
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7573,7 +7686,7 @@ module.exports = [
 
 let {
     stateGraphDSL
-} = __webpack_require__(9);
+} = __webpack_require__(10);
 
 let {
     g, c, union, range, sequence, circle, left, repeat
@@ -7623,13 +7736,13 @@ module.exports = {
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports) {
 
 module.exports={"GOTO":[{"PROGRAM":11,"EXPRESSION_LIST":12,"EXPRESSION":13,"UPDATE_EXPRESSION":14,"QUERY_EXPRESSION":15,"PATH":16,"ATOM_DATA":17},{"PATH":20},{"PATH":23},{},{"PATH":25},{"PATH":26},{},{},{},{},{},{},{},{},{},{},{},{},{"PATH":29},{"PATH":30},{},{"PATH":31},{"PATH":32},{},{"QUERY_EXPRESSION":43,"QUERY_EXPRESSION_LIST":44,"PATH":45,"ATOM_DATA":46},{},{},{"EXPRESSION_LIST":47,"EXPRESSION":13,"UPDATE_EXPRESSION":14,"QUERY_EXPRESSION":15,"PATH":16,"ATOM_DATA":17},{"QUERY_EXPRESSION":48,"PATH":49,"ATOM_DATA":17},{},{},{},{},{"QUERY_EXPRESSION":50,"PATH":49,"ATOM_DATA":17},{},{},{"PATH":52},{"PATH":53},{},{},{},{},{},{},{},{},{},{},{},{},{},{"QUERY_EXPRESSION":43,"QUERY_EXPRESSION_LIST":57,"PATH":45,"ATOM_DATA":46},{},{},{"QUERY_EXPRESSION":43,"QUERY_EXPRESSION_LIST":58,"PATH":45,"ATOM_DATA":46},{},{},{},{},{}],"ACTION":[{"$":{"type":"reduce","production":["EXPRESSION",[]]},"semicolon":{"type":"reduce","production":["EXPRESSION",[]]},"variableName":{"type":"shift","state":3},"delete":{"type":"shift","state":1},"append":{"type":"shift","state":2},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"nodeName":{"type":"shift","state":21},"nodeNameVariable":{"type":"shift","state":22}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"leftBracket":{"type":"shift","state":24}},{"$":{"type":"reduce","production":["PATH",["nodeName"]]},"assign":{"type":"reduce","production":["PATH",["nodeName"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"assign":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"$":{"type":"reduce","production":["ATOM_DATA",["true"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["true"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["false"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["false"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["null"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["null"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["string"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["string"]]}},{"$":{"type":"reduce","production":["ATOM_DATA",["number"]]},"semicolon":{"type":"reduce","production":["ATOM_DATA",["number"]]}},{"$":{"type":"accept"}},{"$":{"type":"reduce","production":["PROGRAM",["EXPRESSION_LIST"]]}},{"$":{"type":"reduce","production":["EXPRESSION_LIST",["EXPRESSION"]]},"semicolon":{"type":"shift","state":27}},{"$":{"type":"reduce","production":["EXPRESSION",["UPDATE_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["EXPRESSION",["UPDATE_EXPRESSION"]]}},{"$":{"type":"reduce","production":["EXPRESSION",["QUERY_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["EXPRESSION",["QUERY_EXPRESSION"]]}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"assign":{"type":"shift","state":28}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]}},{"$":{"type":"reduce","production":["PATH",["nodeName"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"$":{"type":"reduce","production":["UPDATE_EXPRESSION",["delete","PATH"]]},"semicolon":{"type":"reduce","production":["UPDATE_EXPRESSION",["delete","PATH"]]}},{"assign":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":21},"nodeNameVariable":{"type":"shift","state":22}},{"assign":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":21},"nodeNameVariable":{"type":"shift","state":22}},{"assign":{"type":"shift","state":33}},{"rightBracket":{"type":"shift","state":35},"variableName":{"type":"shift","state":34},"true":{"type":"shift","state":38},"false":{"type":"shift","state":39},"null":{"type":"shift","state":40},"string":{"type":"shift","state":41},"number":{"type":"shift","state":42},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"$":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"assign":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"assign":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"$":{"type":"reduce","production":["EXPRESSION",[]]},"semicolon":{"type":"reduce","production":["EXPRESSION",[]]},"variableName":{"type":"shift","state":3},"delete":{"type":"shift","state":1},"append":{"type":"shift","state":2},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":4},"nodeNameVariable":{"type":"shift","state":5}},{"variableName":{"type":"shift","state":3},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"$":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"$":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"semicolon":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"assign":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"assign":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"variableName":{"type":"shift","state":3},"true":{"type":"shift","state":6},"false":{"type":"shift","state":7},"null":{"type":"shift","state":8},"string":{"type":"shift","state":9},"number":{"type":"shift","state":10},"nodeName":{"type":"shift","state":18},"nodeNameVariable":{"type":"shift","state":19}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName"]]},"leftBracket":{"type":"shift","state":51}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]}},{"comma":{"type":"reduce","production":["PATH",["nodeName"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeName"]]},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"comma":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeNameVariable"]]},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"comma":{"type":"reduce","production":["ATOM_DATA",["true"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["true"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["false"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["false"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["null"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["null"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["string"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["string"]]}},{"comma":{"type":"reduce","production":["ATOM_DATA",["number"]]},"rightBracket":{"type":"reduce","production":["ATOM_DATA",["number"]]}},{"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION_LIST",["QUERY_EXPRESSION"]]},"comma":{"type":"shift","state":54}},{"rightBracket":{"type":"shift","state":55}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["ATOM_DATA"]]}},{"$":{"type":"reduce","production":["EXPRESSION_LIST",["EXPRESSION","semicolon","EXPRESSION_LIST"]]}},{"$":{"type":"reduce","production":["UPDATE_EXPRESSION",["PATH","assign","QUERY_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["UPDATE_EXPRESSION",["PATH","assign","QUERY_EXPRESSION"]]}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["PATH"]]}},{"$":{"type":"reduce","production":["UPDATE_EXPRESSION",["append","PATH","assign","QUERY_EXPRESSION"]]},"semicolon":{"type":"reduce","production":["UPDATE_EXPRESSION",["append","PATH","assign","QUERY_EXPRESSION"]]}},{"rightBracket":{"type":"shift","state":56},"variableName":{"type":"shift","state":34},"true":{"type":"shift","state":38},"false":{"type":"shift","state":39},"null":{"type":"shift","state":40},"string":{"type":"shift","state":41},"number":{"type":"shift","state":42},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"comma":{"type":"reduce","production":["PATH",["nodeName","PATH"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeName","PATH"]]}},{"comma":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]},"rightBracket":{"type":"reduce","production":["PATH",["nodeNameVariable","PATH"]]}},{"variableName":{"type":"shift","state":34},"true":{"type":"shift","state":38},"false":{"type":"shift","state":39},"null":{"type":"shift","state":40},"string":{"type":"shift","state":41},"number":{"type":"shift","state":42},"nodeName":{"type":"shift","state":36},"nodeNameVariable":{"type":"shift","state":37}},{"$":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]},"semicolon":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","rightBracket"]]}},{"rightBracket":{"type":"shift","state":59}},{"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION_LIST",["QUERY_EXPRESSION","comma","QUERY_EXPRESSION_LIST"]]}},{"comma":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]},"rightBracket":{"type":"reduce","production":["QUERY_EXPRESSION",["variableName","leftBracket","QUERY_EXPRESSION_LIST","rightBracket"]]}}]}
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7771,7 +7884,7 @@ module.exports = {
 
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7779,75 +7892,17 @@ module.exports = {
 
 let {
     n
-} = __webpack_require__(5);
+} = __webpack_require__(6);
 
-let lumineView = __webpack_require__(2);
-
-let {
-    Signal
-} = __webpack_require__(4);
-
-let {
-    styles
-} = __webpack_require__(3);
-
-module.exports = lumineView(({
-    props
-}, {
-    notify,
-    getClassName
-}) => {
-    let attributes = {
-        'class': `${getClassName('input')}`,
-        style: props.style,
-        type: props.type,
-        placeholder: props.placeholder,
-        oninput: (e) => {
-            props.value = e.target.value;
-            notify(Signal('input'));
-        },
-        value: props.value
-    };
-    if (props.id) {
-        attributes.id = props.id;
-    }
-    return n('input', attributes);
-}, {
-    defaultProps: {
-        value: '',
-        type: 'value',
-        placeholder: '',
-        style: (theme) => styles(theme.inputBox, theme.underLineBorder)
-    },
-
-    classTable: (theme) => {
-        return {
-            'input:focus': styles(theme.actions.focus, theme.underLineFocus)
-        };
-    }
-});
-
-
-/***/ }),
-/* 86 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    n
-} = __webpack_require__(5);
-
-let lumineView = __webpack_require__(2);
+let lumineView = __webpack_require__(1);
 
 let {
     Signal
-} = __webpack_require__(4);
+} = __webpack_require__(3);
 
 let {
     styles
-} = __webpack_require__(3);
+} = __webpack_require__(2);
 
 module.exports = lumineView(({
     props
@@ -7882,26 +7937,27 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(2);
+let lumineView = __webpack_require__(1);
 
-let n = __webpack_require__(6);
+let n = __webpack_require__(5);
 
-let Full = __webpack_require__(33);
+let Full = __webpack_require__(34);
+
+let {styles} = __webpack_require__(2);
+
+const {MODE_PERCENTAGE, MODE_PILE, MODE_PARTION} = __webpack_require__(35);
 
 let {
-    styles
-} = __webpack_require__(3);
-
-const {
-    MODE_PERCENTAGE,
-    MODE_PILE
-} = __webpack_require__(34);
+  getChildStylesInPercentage,
+  getChildStylesInPile,
+  getChildStylesInPartion
+} = __webpack_require__(100);
 
 /**
  *
@@ -7914,126 +7970,35 @@ const {
  *  flex
  */
 
-module.exports = lumineView(({
-    props,
-    children
-}) => {
-    let {
-        theme,
-        style,
-        mode,
-        pers
-    } = props;
-    // TODO validate
-    if (mode === MODE_PILE) {
-        style.childs = children.map((_, index) => styles(theme.container, theme.fullParentHeight, {
-            'float': 'left'
-        }, style.childs[index] || {}));
-    } else if (mode === MODE_PERCENTAGE) {
-        let sum = children.reduce((prev, _, index) => {
-            let cur = pers[index];
-            cur = cur === undefined ? 1 : cur;
-            return prev + cur;
-        }, 0);
+module.exports = lumineView(({props, children}) => {
+  let {theme, style, mode, pers, leftPartions, rightPartions} = props;
+  // TODO validate
+  if (mode === MODE_PILE) {
+    style.childs = getChildStylesInPile(children, theme, style.childs, 'width');
+  } else if (mode === MODE_PERCENTAGE) {
+    style.childs = getChildStylesInPercentage(children, pers, style.childs,
+                                              theme, 'width');
+  } else if (mode === MODE_PARTION) {
+    style.childs = getChildStylesInPartion(leftPartions, rightPartions,
+                                           style.childs, theme, 'width');
+  }
 
-        style.childs = children.map((_, index) => styles(theme.container, theme.fullParentHeight, {
-            'float': 'left',
-            width: sum === 0 ? 0 : ((pers[index] === undefined ? 1 : pers[index]) / sum) * 100 + '%'
-        }, style.childs[index] || {}));
-    }
+  return n(Full, {style : style.container, theme}, [
+    children.map((child, index) =>
+                     n('div', {style : style.childs[index]}, child)),
 
-    return n(Full, {
-        style: style.container,
-        theme
-    }, [
-        children.map((child, index) => n('div', {
-            style: style.childs[index]
-        }, child)),
-
-        (mode === MODE_PERCENTAGE || mode === MODE_PILE) && n('div style="clear:both"')
-    ]);
+    (mode === MODE_PERCENTAGE || mode === MODE_PILE) &&
+        n('div style="clear:both"')
+  ]);
 }, {
-    defaultProps: {
-        mode: MODE_PILE,
-        pers: [],
-        style: {
-            container: {},
-            childs: []
-        }
-    }
-});
+  defaultProps : {
+    mode : MODE_PILE,
+    pers : [],         // percentage distribution
+    leftPartions : [], // fixed width or height in top direction
 
-
-/***/ }),
-/* 88 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let lumineView = __webpack_require__(2);
-
-let n = __webpack_require__(6);
-
-let Full = __webpack_require__(33);
-
-let {
-    styles
-} = __webpack_require__(3);
-
-const {
-    MODE_PILE,
-    MODE_PERCENTAGE
-} = __webpack_require__(34);
-
-/**
- * top + bottom
- */
-
-module.exports = lumineView(({
-    props,
-    children
-}) => {
-    let {
-        theme,
-        style,
-        mode,
-        pers
-    } = props;
-
-    // TODO validate
-
-    if (mode === MODE_PERCENTAGE) {
-        let sum = children.reduce((prev, _, index) => {
-            let cur = pers[index];
-            cur = cur === undefined ? 1 : cur;
-            return prev + cur;
-        }, 0);
-
-        style.childs = children.map((_, index) => styles(theme.container, theme.fullParentWidth, {
-            height: sum === 0 ? 0 : ((pers[index] === undefined ? 1 : pers[index]) / sum) * 100 + '%'
-        }, style.childs[index] || {}));
-    } else if (mode === MODE_PILE) {
-        style.childs = children.map((_, index) => styles(theme.container, theme.fullParentWidth, style.childs[index] || {}));
-    }
-
-    return n(Full, {
-        style: style.container,
-        theme
-    }, [
-        children.map((child, i) => n('div', {
-            style: style.childs[i]
-        }, [child]))
-    ]);
-}, {
-    defaultProps: {
-        mode: MODE_PILE,
-        pers: [],
-        style: {
-            container: {},
-            childs: {}
-        }
-    }
+    rightPartions : [], // fixed width or height in bottom direction
+    style : {container : {}, childs : []}
+  }
 });
 
 
@@ -8044,19 +8009,72 @@ module.exports = lumineView(({
 "use strict";
 
 
-let n = __webpack_require__(6);
-let lumineView = __webpack_require__(2);
-let {
-    Signal
-} = __webpack_require__(4);
+let lumineView = __webpack_require__(1);
+
+let n = __webpack_require__(5);
+
+let Full = __webpack_require__(34);
+
+const {MODE_PILE, MODE_PERCENTAGE, MODE_PARTION} = __webpack_require__(35);
 
 let {
-    styles
+  getChildStylesInPercentage,
+  getChildStylesInPile,
+  getChildStylesInPartion
+} = __webpack_require__(100);
+
+module.exports = lumineView(({props, children}) => {
+  let {theme, style, mode, pers, topPartions, bottomPartions} = props;
+
+  // child container style
+  if (mode === MODE_PERCENTAGE) {
+    style.childs = getChildStylesInPercentage(children, pers, style.childs,
+                                              theme, 'height');
+  } else if (mode === MODE_PILE) {
+    style.childs =
+        getChildStylesInPile(children, theme, style.childs, 'height');
+  } else if (mode === MODE_PARTION) {
+    style.childs = getChildStylesInPartion(topPartions, bottomPartions,
+                                           style.childs, theme, 'height');
+  }
+
+  return n(
+      Full, {style : style.container, theme},
+      [ children.map((child, i) => n('div', {style : style.childs[i] || {}},
+                                     [ child ])) ]);
+}, {
+  defaultProps : {
+    mode : MODE_PILE,
+    pers : [], // percentage distribution
+
+    topPartions : [],    // fixed width or height in top direction
+    bottomPartions : [], // fixed width or height in bottom direction
+
+    style : {container : {}, childs : {}}
+  }
+});
+
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let n = __webpack_require__(5);
+let lumineView = __webpack_require__(1);
+let {
+    Signal
 } = __webpack_require__(3);
 
 let {
+    styles
+} = __webpack_require__(2);
+
+let {
     compileTreeScript
-} = __webpack_require__(90);
+} = __webpack_require__(91);
 
 let S_HideNotice = compileTreeScript('.props.show=false');
 
@@ -8104,7 +8122,7 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8138,15 +8156,15 @@ module.exports = {
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let n = __webpack_require__(6);
+let n = __webpack_require__(5);
 
-let lumineView = __webpack_require__(2);
+let lumineView = __webpack_require__(1);
 
 // TODO easy disappear for loading view
 module.exports = lumineView(({
@@ -8194,19 +8212,19 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(2);
-let n = __webpack_require__(6);
-let Button = __webpack_require__(10);
+let lumineView = __webpack_require__(1);
+let n = __webpack_require__(5);
+let Button = __webpack_require__(8);
 let {
     onSignalType,
     deliver
-} = __webpack_require__(4);
+} = __webpack_require__(3);
 
 module.exports = lumineView(({
     props
@@ -8220,19 +8238,19 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(2);
-let n = __webpack_require__(6);
-let Button = __webpack_require__(10);
+let lumineView = __webpack_require__(1);
+let n = __webpack_require__(5);
+let Button = __webpack_require__(8);
 let {
     onSignalType,
     deliver
-} = __webpack_require__(4);
+} = __webpack_require__(3);
 
 module.exports = lumineView(({
     props
@@ -8248,7 +8266,261 @@ module.exports = lumineView(({
 
 
 /***/ }),
-/* 94 */
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let FullWindow = __webpack_require__(96);
+let lumineView = __webpack_require__(1);
+let n = __webpack_require__(5);
+
+module.exports = lumineView(({
+    props,
+    children
+}) => {
+    return n(FullWindow, props, children);
+}, {
+    defaultProps: {
+        style: (theme) => {
+            return {
+                backgroundColor: theme.basics.veilColor,
+                color: theme.basics.fontColor,
+                zIndex: 1000
+            };
+        }
+    }
+});
+
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(6);
+let lumineView = __webpack_require__(1);
+let {
+    styles
+} = __webpack_require__(2);
+let {
+    Signal
+} = __webpack_require__(3);
+
+module.exports = lumineView(({
+    props,
+    children
+}, {
+    notify
+}) => {
+    return n('div', {
+        style: props.style,
+        onclick: () => {
+            notify(Signal('fullwindow-click'));
+        }
+    }, children);
+}, {
+    defaultProps: {
+        style: (theme) => styles(theme.fullWindow)
+    },
+
+    defaultChildren: []
+});
+
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let lumineView = __webpack_require__(1);
+let n = __webpack_require__(5);
+let {
+    onSignalType,
+    deliver
+} = __webpack_require__(3);
+let Modal = __webpack_require__(36);
+let Input = __webpack_require__(33);
+let Button = __webpack_require__(8);
+let {
+    syncBindWithKeyMap
+} = __webpack_require__(98);
+let {
+    styles
+} = __webpack_require__(2);
+
+module.exports = lumineView(({
+    props
+}, ctx) => {
+    return n(Modal, syncBindWithKeyMap(ctx, {
+        'show': 'show',
+        'autoHide': 'autoHide',
+        'style.modalStyle': 'style'
+    }, {
+        bindedProps: {
+            theme: props.theme
+        }
+    }), [
+        props.title && n('h4', {
+            style: props.style.titleStyle
+        }, props.title),
+        n(Input, syncBindWithKeyMap(ctx, {
+            'text': 'value'
+        }, {
+            bindedProps: {
+                placeholder: props.placeholder,
+                theme: props.theme
+            }
+        })),
+
+        n('br'),
+
+        n(Button, {
+            style: props.style.cancelBtnStyle,
+            onsignal: onSignalType('click', deliver(ctx, 'cancel-dialog')),
+        }, [props.cancelBtnText]),
+
+        n(Button, {
+            style: props.style.okBtnStyle,
+            onsignal: onSignalType('click', deliver(ctx, 'ok-dialog')),
+        }, [props.okBtnText])
+    ]);
+}, {
+    defaultProps: {
+        show: true,
+        autoHide: false,
+        title: '',
+        text: '',
+        cancelBtnText: 'cancel',
+        okBtnText: 'ok',
+        style: (theme) => {
+            return {
+                modalStyle: {},
+                titleStyle: styles(theme.container, {
+                    padding: theme.basics.narrowPadding
+                }),
+                cancelBtnStyle: {
+                    width: 100,
+                    margin: theme.basics.narrowMargin
+                },
+                okBtnStyle: {
+                    width: 100,
+                    margin: theme.basics.narrowMargin
+                }
+            };
+        }
+    }
+});
+
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    get,
+    set
+} = __webpack_require__(2);
+
+let {
+    Signal
+} = __webpack_require__(3);
+
+const CHILD_SOURCE_TYPE = 'child';
+
+const identity = v => v;
+
+/**
+ * binding view with another view's props through a key map
+ *
+ * keyMap = {
+ *    binderKey: bindedKey
+ * }
+ */
+
+let syncBindWithKeyMap = (ctx, keyMap, {
+    bindedProps = {},
+    stopSignal,
+    autoUpdate = false,
+    updatedSignalTypes = null,
+    onChildSignal,
+    toBinded = identity,
+    toBinder = identity
+} = {}) => {
+    // TODO check
+
+    let viewData = ctx.getData();
+    let props = viewData.props;
+    let mappings = [];
+    for (let binderKey in keyMap) {
+        mappings.push([binderKey, keyMap[binderKey]]);
+    }
+
+    let mapedPropsValue = mappings.reduce((prev, [binderKey, bindedKey]) => {
+        let propValue = get(props, binderKey); // get from binder
+        set(prev, bindedKey, toBinded(propValue, binderKey, bindedKey)); // set for binded
+        return prev;
+    }, {});
+
+    let onsignal = (signal, data, sourceCtx) => {
+        // when event happened, sync the data
+        mappings.forEach(([binderKey, bindedKey]) => {
+            let propValue = get(data.props, bindedKey); // get from child
+            set(props, binderKey, toBinder(propValue, binderKey, bindedKey)); // set for parent
+        });
+
+        // handle the signal if necessary
+        onChildSignal && onChildSignal(signal, data, sourceCtx);
+
+        if (!stopSignal) {
+            // pop up the signal, TODO wrap the sigal to resolve chain
+            ctx.notify(
+                Signal(signal.type, {
+                    sourceType: CHILD_SOURCE_TYPE,
+                    keyMap,
+                    sourceSignal: signal,
+                    sourceData: data,
+                    sourceCtx
+                })
+            );
+        }
+
+        if (autoUpdate) {
+            if (!updatedSignalTypes) {
+                ctx.update(); // update binder view
+            } else {
+                if (updatedSignalTypes.findIndex((type) => type === signal.type) !== -1) {
+                    ctx.update(); // update binder view
+                }
+            }
+        }
+    };
+
+    // construct child props
+    return Object.assign({
+        theme: props.theme // extend theme by default
+    }, bindedProps, mapedPropsValue, {
+        onsignal
+    });
+};
+
+module.exports = {
+    syncBindWithKeyMap
+};
+
+
+/***/ }),
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8259,7 +8531,7 @@ let {
     signalSendRequestRunner,
     responseUpdateStateRunner,
     responseErrorRunner
-} = __webpack_require__(35);
+} = __webpack_require__(37);
 
 /**
  * action flow
@@ -8398,321 +8670,98 @@ module.exports = {
 
 
 /***/ }),
-/* 95 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-let lumineView = __webpack_require__(2);
-let n = __webpack_require__(6);
-let Mask = __webpack_require__(96);
-let {
-    styles
-} = __webpack_require__(3);
-let {
-    onSignalType
-} = __webpack_require__(4);
+let {styles} = __webpack_require__(2);
 
-module.exports = lumineView(({
-    props,
-    children
-}, {
-    updateWithNotify
-}) => {
-    return props.show ? n(Mask, {
-        style: props.style.maskStyle,
-        theme: props.theme,
-        onsignal: onSignalType('fullwindow-click', () => {
-            if (props.autoHide) {
-                updateWithNotify(null, 'props.show', false);
-            }
-        })
-    }, [
-        n('div', {
-            style: {
-                display: 'table-cell',
-                verticalAlign: 'middle'
-            }
-        }, [ // middle
-            n('div', {
-                style: props.style.modalContainer,
-                onclick: (e) => {
-                    e.stopPropagation();
-                }
-            }, children)
-        ])
-    ]) : n('div');
-}, {
-    defaultProps: {
-        show: true,
-        autoHide: false,
-        style: (theme) => {
-            return {
-                maskStyle: {
-                    textAlign: 'center',
-                    display: 'table'
-                },
-                modalContainer: styles(theme.modalBulk, {
-                    padding: theme.basics.narrowPadding
-                })
-            };
-        }
-    }
-});
+let getPercentSum = (pers, childLen) => {
+  let sum = 0;
+  for (let i = 0; i < childLen; i++) {
+    sum += pers[i];
+  }
 
+  return sum;
+};
 
-/***/ }),
-/* 96 */
-/***/ (function(module, exports, __webpack_require__) {
+let getPercent = (sum, pers, index) => {
+  if (sum === 0) {
+    return 0;
+  }
+  return ((pers[index] === undefined ? 1 : pers[index]) / sum) * 100 + '%';
+};
 
-"use strict";
+let getChildStylesInPercentage =
+    (children, pers, childStyles, theme, type = 'height') => {
+      let sum = getPercentSum(pers, children.length);
 
-
-let FullWindow = __webpack_require__(97);
-let lumineView = __webpack_require__(2);
-let n = __webpack_require__(6);
-
-module.exports = lumineView(({
-    props,
-    children
-}) => {
-    return n(FullWindow, props, children);
-}, {
-    defaultProps: {
-        style: (theme) => {
-            return {
-                backgroundColor: theme.basics.veilColor,
-                color: theme.basics.fontColor,
-                zIndex: 1000
-            };
-        }
-    }
-});
-
-
-/***/ }),
-/* 97 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    n
-} = __webpack_require__(5);
-let lumineView = __webpack_require__(2);
-let {
-    styles
-} = __webpack_require__(3);
-let {
-    Signal
-} = __webpack_require__(4);
-
-module.exports = lumineView(({
-    props,
-    children
-}, {
-    notify
-}) => {
-    return n('div', {
-        style: props.style,
-        onclick: () => {
-            notify(Signal('fullwindow-click'));
-        }
-    }, children);
-}, {
-    defaultProps: {
-        style: (theme) => styles(theme.fullWindow)
-    },
-
-    defaultChildren: []
-});
-
-
-/***/ }),
-/* 98 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let lumineView = __webpack_require__(2);
-let n = __webpack_require__(6);
-let {
-    onSignalType,
-    deliver
-} = __webpack_require__(4);
-let Modal = __webpack_require__(95);
-let Input = __webpack_require__(85);
-let Button = __webpack_require__(10);
-let {
-    syncBindWithKeyMap
-} = __webpack_require__(99);
-let {
-    styles
-} = __webpack_require__(3);
-
-module.exports = lumineView(({
-    props
-}, ctx) => {
-    return n(Modal, syncBindWithKeyMap(ctx, {
-        'show': 'show',
-        'autoHide': 'autoHide',
-        'style.modalStyle': 'style'
-    }, {
-        bindedProps: {
-            theme: props.theme
-        }
-    }), [
-        props.title && n('h4', {
-            style: props.style.titleStyle
-        }, props.title),
-        n(Input, syncBindWithKeyMap(ctx, {
-            'text': 'value'
-        }, {
-            bindedProps: {
-                placeholder: props.placeholder,
-                theme: props.theme
-            }
-        })),
-
-        n('br'),
-
-        n(Button, {
-            style: props.style.cancelBtnStyle,
-            onsignal: onSignalType('click', deliver(ctx, 'cancel-dialog')),
-        }, [props.cancelBtnText]),
-
-        n(Button, {
-            style: props.style.okBtnStyle,
-            onsignal: onSignalType('click', deliver(ctx, 'ok-dialog')),
-        }, [props.okBtnText])
-    ]);
-}, {
-    defaultProps: {
-        show: true,
-        autoHide: false,
-        title: '',
-        text: '',
-        cancelBtnText: 'cancel',
-        okBtnText: 'ok',
-        style: (theme) => {
-            return {
-                modalStyle: {},
-                titleStyle: styles(theme.container, {
-                    padding: theme.basics.narrowPadding
-                }),
-                cancelBtnStyle: {
-                    width: 100,
-                    margin: theme.basics.narrowMargin
-                },
-                okBtnStyle: {
-                    width: 100,
-                    margin: theme.basics.narrowMargin
-                }
-            };
-        }
-    }
-});
-
-
-/***/ }),
-/* 99 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-let {
-    get,
-    set
-} = __webpack_require__(3);
-
-let {
-    Signal
-} = __webpack_require__(4);
-
-const CHILD_SOURCE_TYPE = 'child';
-
-const identity = v => v;
-
-/**
- * binding view with another view's props through a key map
- *
- * keyMap = {
- *    binderKey: bindedKey
- * }
- */
-
-let syncBindWithKeyMap = (ctx, keyMap, {
-    bindedProps = {},
-    stopSignal,
-    autoUpdate = false,
-    updatedSignalTypes = null,
-    onChildSignal,
-    toBinded = identity,
-    toBinder = identity
-} = {}) => {
-    // TODO check
-
-    let viewData = ctx.getData();
-    let props = viewData.props;
-    let mappings = [];
-    for (let binderKey in keyMap) {
-        mappings.push([binderKey, keyMap[binderKey]]);
-    }
-
-    let mapedPropsValue = mappings.reduce((prev, [binderKey, bindedKey]) => {
-        let propValue = get(props, binderKey); // get from binder
-        set(prev, bindedKey, toBinded(propValue, binderKey, bindedKey)); // set for binded
-        return prev;
-    }, {});
-
-    let onsignal = (signal, data, sourceCtx) => {
-        // when event happened, sync the data
-        mappings.forEach(([binderKey, bindedKey]) => {
-            let propValue = get(data.props, bindedKey); // get from child
-            set(props, binderKey, toBinder(propValue, binderKey, bindedKey)); // set for parent
-        });
-
-        // handle the signal if necessary
-        onChildSignal && onChildSignal(signal, data, sourceCtx);
-
-        if (!stopSignal) {
-            // pop up the signal, TODO wrap the sigal to resolve chain
-            ctx.notify(
-                Signal(signal.type, {
-                    sourceType: CHILD_SOURCE_TYPE,
-                    keyMap,
-                    sourceSignal: signal,
-                    sourceData: data,
-                    sourceCtx
-                })
-            );
-        }
-
-        if (autoUpdate) {
-            if (!updatedSignalTypes) {
-                ctx.update(); // update binder view
-            } else {
-                if (updatedSignalTypes.findIndex((type) => type === signal.type) !== -1) {
-                    ctx.update(); // update binder view
-                }
-            }
-        }
+      return children.map((_, index) => {
+        let value = getPercent(sum, pers, index);
+        let valueStyle = {[type] : value};
+        return getChildStyle(type, valueStyle, childStyles[index], theme);
+      });
     };
 
-    // construct child props
-    return Object.assign({
-        theme: props.theme // extend theme by default
-    }, bindedProps, mapedPropsValue, {
-        onsignal
-    });
+let getChildStylesInPile = (children, theme, childStyles, type = 'height') => {
+  return children.map((_, index) =>
+                          getChildStyle(type, {}, childStyles[index], theme));
+};
+
+let getChildStylesInPartion =
+    (frontPartions, backPartions, childStyles, theme, type = 'height') => {
+      // front childs
+      let topStyles = frontPartions.map((v, index) => {
+        return getChildStyle(type, {[type] : v, zIndex : 2}, childStyles[index],
+                             theme);
+      });
+
+      // back childs
+      let bottomStyles = backPartions.map((v, index) => {
+        return getChildStyle(type, {[type] : v, zIndex : 2},
+                             childStyles[topStyles.length + 1 + index], theme);
+      });
+
+      let prev = frontPartions.reduce((sum, v) => sum + v, 0);
+      let next = backPartions.reduce((sum, v) => sum + v, 0);
+
+      // flex one
+      let flexStyle =
+          getChildStyle(type,
+                        type === 'height' ? {
+                          height : '100%',
+                          marginBottom : -1 * (prev + next), // pull up nexts
+                          paddingBottom : prev + next        // scroll childs
+                        }
+                                          : {
+                                              width : '100%',
+                                              position : 'relative',
+                                              paddingLeft : prev + next,
+                                              marginRight : -1 * (prev + next),
+                                              left : -1 * (prev + next),
+                                              zIndex : 1
+                                            },
+                        childStyles[topStyles.length], theme);
+
+      return topStyles.concat([ flexStyle ]).concat(bottomStyles);
+    };
+
+let getChildStyle = (type, specialStyle, childStyle, theme) => {
+  return styles(theme.container, getFullDirection(type, theme),
+                type === 'width' ? {'float' : 'left'} : {}, specialStyle,
+                childStyle || {});
+};
+
+let getFullDirection = (type, theme) => {
+  return type === 'height' ? theme.fullParentWidth : theme.fullParentHeight;
 };
 
 module.exports = {
-    syncBindWithKeyMap
+  getChildStylesInPercentage,
+  getChildStylesInPile,
+  getChildStylesInPartion
 };
 
 
