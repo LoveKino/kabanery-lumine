@@ -296,122 +296,9 @@ module.exports = {
 "use strict";
 
 
-let {
-    view
-} = __webpack_require__(6);
-let steadyTheme = __webpack_require__(23);
-let {
-    deepMergeMap,
-    resolveFnValue
-} = __webpack_require__(2);
-let ClassTable = __webpack_require__(60);
-let {
-    Signal
-} = __webpack_require__(3);
-let JsonTree = __webpack_require__(24);
-let {
-    executeAST
-} = __webpack_require__(15);
+let lumineViewer = __webpack_require__(110);
 
-/**
- * define the general interface for lumine view
- *
- * 1. unify view data structure
- *
- *    view data = {
- *       // public data
- *       props,
- *       children // child views
- *    }
- *
- *    props.onsigal
- *    props.theme
- *
- * 2. onsignal interface
- *
- *    onsignal: (signal, data, ctx) -> Any
- */
-
-module.exports = (viewFun, {
-    defaultProps = {},
-    defaultChildren = [],
-    theme = steadyTheme,
-    classTable
-} = {}) => {
-    let defaultStyle = defaultProps.style || {};
-
-    let defaultStyleValue = resolveFnValue(defaultStyle, theme);
-    let classTableValue = resolveFnValue(classTable, theme);
-
-    let {
-        appendStyle,
-        getClassName,
-        updateClassTable
-    } = ClassTable(classTableValue);
-
-    return view((viewData, ctx) => {
-        viewData.props = viewData.props || {};
-        viewData.children = (viewData.children && viewData.children.length) ? viewData.children : defaultChildren;
-        viewData.props.theme = viewData.props.theme || theme;
-
-        appendStyle();
-        // TODO check view Data
-
-        // update defaultStyleValue
-        if (viewData.props.theme && typeof defaultStyle === 'function') {
-            defaultStyleValue = resolveFnValue(defaultStyle, viewData.props.theme);
-        }
-
-        // update class table
-        if (viewData.theme && typeof classTable === 'function') {
-            classTableValue = resolveFnValue(classTable, viewData.props.theme);
-            updateClassTable(classTableValue);
-        }
-
-        // merge props (deep merge)
-        viewData.props.style = deepMergeMap(viewData.props.style, defaultStyleValue);
-        viewData.props = deepMergeMap(viewData.props, defaultProps);
-
-        // signal system
-        let notify = (signal) => {
-            viewData.props.onsignal && viewData.props.onsignal(signal, ctx.getData(), ctx);
-        };
-
-        let viewDataTree = JsonTree(viewData);
-
-        // update with tree script
-        let updateTree = ({
-            ast,
-            variableStub
-        }, variableMap, signal) => {
-            signal = signal || Signal('update-view-data');
-            // update view data by running update script
-            executeAST(ast, {
-                queryByPath: viewDataTree.queryByPath,
-                setByPath: viewDataTree.setByPath,
-                removeByPath: viewDataTree.removeByPath,
-                appendByPath: viewDataTree.appendByPath,
-                variableMap,
-                variableStub
-            });
-            updateWithNotify(signal);
-        };
-
-        let updateWithNotify = (signal, ...updateScript) => {
-            signal = signal || Signal('update-view-data');
-            ctx.update(...updateScript);
-            // notify
-            notify(signal);
-        };
-
-        ctx.notify = notify;
-        ctx.updateWithNotify = updateWithNotify;
-        ctx.updateTree = updateTree;
-        ctx.getClassName = getClassName;
-
-        return viewFun(viewData, ctx);
-    });
-};
+module.exports = (viewFun, options) => lumineViewer(viewFun)(options);
 
 
 /***/ }),
@@ -679,7 +566,7 @@ module.exports = (...args) => {
 
     if (typeof tagName === 'string') {
         return n(...args);
-    } else {
+    } else { // regard as lumine view
         let {
             attributes,
             childs
@@ -926,37 +813,12 @@ module.exports = {
 "use strict";
 
 
-let {
-    n
-} = __webpack_require__(6);
-let lumineView = __webpack_require__(1);
-let {
-    Signal
-} = __webpack_require__(3);
+let Buttoner = __webpack_require__(111);
 let {
     styles
 } = __webpack_require__(2);
 
-module.exports = lumineView(({
-    props,
-    children
-}, {
-    notify,
-    getClassName
-}) => {
-    // TODO validate
-    let attributes = {
-        'class': `${getClassName('btn')}`,
-        style: props.style,
-        onclick: () => {
-            notify(Signal('click'));
-        }
-    };
-    if (props.id) {
-        attributes.id = props.id;
-    }
-    return n('button', attributes, children[0]);
-}, {
+module.exports = Buttoner({
     defaultProps: {
         style: (theme) => styles(theme.oneLineBulk)
     },
@@ -964,7 +826,7 @@ module.exports = lumineView(({
     classTable: (theme) => {
         return {
             'btn:hover': theme.actions.hover,
-            'btn:active': theme.actions.signal,
+            'btn:active': theme.actions.active,
             'btn:focus': theme.actions.focus
         };
     }
@@ -1810,15 +1672,13 @@ let getDoc = (node) => {
 "use strict";
 
 
-let {
-    styles
-} = __webpack_require__(2);
+let base = __webpack_require__(104);
 
-let basics = {
-    pageColor: '#e4e4e4',
-    hoverColor: '#e9ece5',
-    blockColor: '#3b3a36',
-    borderColor: '#b3c2bf',
+module.exports = base({
+    pageColor: 'white',
+    hoverColor: '#90CAF9',
+    blockColor: '#2196F3',
+    borderColor: '#1565C0',
     veilColor: 'rgba(60,60,60,0.6)',
     fontColor: 'white',
     noticeColor: 'rgb(23, 21, 21)',
@@ -1831,134 +1691,7 @@ let basics = {
 
     contrastBlockColor: 'white',
     contrastFontColor: 'black'
-};
-
-let container = {
-    position: 'relative',
-    boxSizing: 'border-box',
-    margin: 0,
-    padding: 0,
-    border: 0,
-    borderRadius: 0,
-    overflow: 'auto'
-};
-
-let fullParentHeight = {
-    height: '100%'
-};
-
-let fullParentWidth = {
-    width: '100%'
-};
-
-let fullWindow = styles(container, {
-    position: 'fixed',
-    left: 0,
-    top: 0,
-}, fullParentWidth, fullParentHeight);
-
-let fullParent = styles(container, fullParentWidth, fullParentHeight);
-
-let bulk = styles(container, {
-    minWidth: 40,
-    backgroundColor: basics.blockColor,
-    color: basics.fontColor
 });
-
-let contrastBulk = styles(bulk, {
-    backgroundColor: basics.contrastBlockColor,
-    color: basics.contrastFontColor
-});
-
-let oneLineBulk = styles(bulk, {
-    padding: basics.narrowPadding,
-    fontSize: basics.normalSize,
-    textAlign: 'center',
-    lineHeight: 20,
-    textDecoration: 'none',
-    border: 'none',
-    color: basics.fontColor
-});
-
-let modalBulk = styles(oneLineBulk, contrastBulk, {
-    display: 'inline-block'
-});
-
-let flat = {
-    appearance: 'none',
-    '-webkit-appearance': 'none',
-    '-moz-appearance': 'none',
-    boxShadow: 'none',
-    borderRadius: 'none',
-    border: 0
-};
-
-let inputBox = styles(contrastBulk, flat, {
-    width: 260,
-    padding: basics.narrowPadding,
-    backgroundColor: basics.fontColor
-});
-
-let textAreaBox = styles(inputBox, {
-    width: 360,
-    height: 200,
-    outline: 'none',
-    resize: 'none',
-    overflow: 'auto',
-    border: `1px solid ${basics.borderColor}`,
-    borderRadius: 5,
-    fontSize: 16
-});
-
-let underLineBorder = {
-    border: 0,
-    borderRadius: 0,
-    'border-bottom': `1px solid ${basics.borderColor}`
-};
-
-let underLineFocus = {
-    'border-bottom': `1px solid ${basics.blockColor}`
-};
-
-let actions = {
-    cling: {
-        margin: 0,
-        padding: 0,
-        boxSizing: 'border-box'
-    },
-
-    hover: {
-        backgroundColor: basics.hoverColor
-    },
-
-    active: {
-        backgroundColor: basics.hoverColor
-    },
-
-    focus: {
-        outline: 'none'
-    }
-};
-
-module.exports = {
-    basics,
-
-    bulk,
-    oneLineBulk,
-    modalBulk,
-    inputBox,
-    textAreaBox,
-    underLineBorder,
-    underLineFocus,
-    container,
-
-    fullWindow,
-    fullParent,
-    fullParentWidth,
-    fullParentHeight,
-
-    actions
-};
 
 
 /***/ }),
@@ -3056,7 +2789,9 @@ module.exports = {
 "use strict";
 
 
-let {mount} = __webpack_require__(6);
+let {
+    mount
+} = __webpack_require__(6);
 
 let n = __webpack_require__(5);
 
@@ -3075,265 +2810,348 @@ let Modal = __webpack_require__(37);
 let InputDialog = __webpack_require__(98);
 // let PageMask = require('../lib/view/mask/pageMask');
 // let PageLoading = require('../lib/view/loading/pageLoading');
-let {signalUpdateStateRunner} = __webpack_require__(38);
-let {signalActionFlow} = __webpack_require__(100);
+let {
+    signalUpdateStateRunner
+} = __webpack_require__(38);
+let {
+    signalActionFlow
+} = __webpack_require__(100);
 let steadyTheme = __webpack_require__(23);
-let {onSignalType} = __webpack_require__(3);
+let {
+    onSignalType
+} = __webpack_require__(3);
+let {
+    styles
+} = __webpack_require__(2);
 
 let ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
 
 let log = console.log; // eslint-disable-line
 
 let logSignal = (signal, data) => {
-  log(JSON.stringify(signal));
-  log(JSON.stringify(data));
+    log(JSON.stringify(signal));
+    log(JSON.stringify(data));
 };
 
 let examples = [
 
-  {
-    name : 'function bar',
-    render : () => n(FunctionBar, {
-      title : 'demo',
-      leftLogos : [ n('div', '<'), 'a', 'b' ],
-      rightLogos : [ 'c', 'd' ],
+    {
+        name: 'function bar',
+        render: () => n(FunctionBar, {
+            title: 'demo',
+            leftLogos: [n('div', '<'), 'a', 'b'],
+            rightLogos: ['c', 'd'],
 
-      onsignal : logSignal
-    })
-  },
-  {
-    name : 'button',
-    render : () => n(Button, {onsignal : logSignal}, [ 'demo' ])
-  },
+            onsignal: logSignal
+        })
+    },
+    {
+        name: 'button',
+        render: () => n(Button, {
+            onsignal: logSignal
+        }, ['demo'])
+    },
 
-  {
-    name : 'input',
-    render : () => n(Input, {value : 'abc', onsignal : logSignal})
-  },
+    {
+        name: 'input',
+        render: () => n(Input, {
+            value: 'abc',
+            onsignal: logSignal
+        })
+    },
 
-  {
-    name : 'hn',
-    render : () =>
-        n('div', {style : {width : 400}}, [ n(Hn, {
-            style : {
-              childs : [
-                {backgroundColor : 'blue'}, {backgroundColor : 'red'},
-                {backgroundColor : 'yellow'}
-              ]
+    {
+        name: 'hn',
+        render: () =>
+            n('div', {
+                style: {
+                    width: 400
+                }
+            }, [n(Hn, {
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        }, {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'),
+                n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])])
+    },
+
+    {
+        name: 'hn2: percentage',
+        render: () =>
+            n('div', {
+                style: {
+                    width: 400
+                }
+            }, [n(Hn, {
+                mode: 'percentage',
+                pers: [4, 8, 3],
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        }, {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'),
+                n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])])
+    },
+
+    {
+        name: 'hn3: MODE_PARTION',
+        render: () => n('div', {
+            style: {
+                width: 400,
+                height: 200
             }
-          },
-                                              [
-                                                n('span', 'this is 1'),
-                                                n('span', 'this is 2..'),
-                                                n('span', 'this is 3....')
-                                              ]) ])
-  },
+        }, [
+            n(Hn, {
+                mode: 'partion',
+                leftPartions: [50, 30],
+                rightPartions: [20, 25],
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        },
+                        {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        },
+                        {
+                            backgroundColor: 'purple'
+                        },
+                        {
+                            backgroundColor: 'green'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'), n('span', 'this is 2..'),
+                n('div style="width:340px;background-color:white;"',
+                    'this is 3'),
+                n('div', 'in bottom'), n('div', 'last in bottom')
+            ])
+        ])
+    },
 
-  {
-    name : 'hn2: percentage',
-    render : () =>
-        n('div', {style : {width : 400}}, [ n(Hn, {
-            mode : 'percentage',
-            pers : [ 4, 8, 3 ],
-            style : {
-              childs : [
-                {backgroundColor : 'blue'}, {backgroundColor : 'red'},
-                {backgroundColor : 'yellow'}
-              ]
+    {
+        name: 'vn',
+        render: () =>
+            n('div', {
+                style: {
+                    width: 400
+                }
+            }, [n(Vn, {
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        }, {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'),
+                n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])])
+    },
+
+    {
+        name: 'vn2: MODE_PERCENTAGE',
+        render: () => n('div', {
+            style: {
+                width: 400,
+                height: 200
             }
-          },
-                                              [
-                                                n('span', 'this is 1'),
-                                                n('span', 'this is 2..'),
-                                                n('span', 'this is 3....')
-                                              ]) ])
-  },
+        }, [
+            n(Vn, {
+                mode: 'percentage',
+                pers: [3, 6, 9],
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        },
+                        {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'), n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])
+        ])
+    },
+    {
+        name: 'vn3: MODE_PARTION',
+        render:
+            () => n('div', {
+                style: {
+                    width: 400,
+                    height: 200
+                }
+            }, [n(Vn, {
+                mode: 'partion',
+                topPartions: [50, 30],
+                bottomPartions: [20, 25],
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        },
+                        {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        },
+                        {
+                            backgroundColor: 'purple'
+                        },
+                        {
+                            backgroundColor: 'green'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'), n('span', 'this is 2..'),
+                n('div', [1, 1, 1, 1, 1, 1, 1].map(
+                    (_, index) => n('div', `this is 3:${index}....`))),
+                n('div', 'in bottom'), n('div', 'last in bottom')
+            ])])
+    },
+    {
+        name: 'notice',
 
-  {
-    name : 'hn3: MODE_PARTION',
-    render : () => n('div', {style : {width : 400, height : 200}},
-                     [
-                       n(Hn, {
-                         mode : 'partion',
-                         leftPartions : [ 50, 30 ],
-                         rightPartions : [ 20, 25 ],
-                         style : {
-                           childs : [
-                             {backgroundColor : 'blue'},
-                             {backgroundColor : 'red'},
-                             {backgroundColor : 'yellow'},
-                             {backgroundColor : 'purple'},
-                             {backgroundColor : 'green'}
-                           ]
-                         }
-                       },
-                         [
-                           n('span', 'this is 1'), n('span', 'this is 2..'),
-                           n('div style="width:340px;background-color:white;"',
-                             'this is 3'),
-                           n('div', 'in bottom'), n('div', 'last in bottom')
-                         ])
-                     ])
-  },
+        render: () => n(Notice, {
+            text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................',
+            onsignal: logSignal
+        })
+    },
 
-  {
-    name : 'vn',
-    render : () =>
-        n('div', {style : {width : 400}}, [ n(Vn, {
-            style : {
-              childs : [
-                {backgroundColor : 'blue'}, {backgroundColor : 'red'},
-                {backgroundColor : 'yellow'}
-              ]
-            }
-          },
-                                              [
-                                                n('span', 'this is 1'),
-                                                n('span', 'this is 2..'),
-                                                n('span', 'this is 3....')
-                                              ]) ])
-  },
+    {
+        name: 'textLoading',
+        render: () => n(TextLoading)
+    },
 
-  {
-    name : 'vn2: MODE_PERCENTAGE',
-    render : () => n('div', {style : {width : 400, height : 200}},
-                     [
-                       n(Vn, {
-                         mode : 'percentage',
-                         pers : [ 3, 6, 9 ],
-                         style : {
-                           childs : [
-                             {backgroundColor : 'blue'},
-                             {backgroundColor : 'red'},
-                             {backgroundColor : 'yellow'}
-                           ]
-                         }
-                       },
-                         [
-                           n('span', 'this is 1'), n('span', 'this is 2..'),
-                           n('span', 'this is 3....')
-                         ])
-                     ])
-  },
-  {
-    name : 'vn3: MODE_PARTION',
-    render :
-        () => n('div', {style : {width : 400, height : 200}},
-                [ n(Vn,
-                    {
-                      mode : 'partion',
-                      topPartions : [ 50, 30 ],
-                      bottomPartions : [ 20, 25 ],
-                      style : {
-                        childs :
-                            [
-                              {backgroundColor : 'blue'},
-                              {backgroundColor : 'red'},
-                              {backgroundColor : 'yellow'},
-                              {backgroundColor : 'purple'},
-                              {backgroundColor : 'green'}
-                            ]
-                      }
+    {
+        name: 'TestSignalUpdateStateRunnerView',
+        render: () =>
+            n(TestSignalUpdateStateRunnerView, {
+                text: 'init',
+                onsignal: onSignalType('doTestSUS', ChangeText)
+            })
+    },
+
+    {
+        name: 'TestSignalActionFlow',
+        render: () => n(TestSignalActionFlow, {
+            text: 'start',
+            text2: 'start2',
+            onsignal: signalActionFlow({
+                'doTestSAF': [{
+                        type: 'updateState',
+                        content: '.viewState.props.text = "cccc!!!"'
                     },
-                    [
-                      n('span', 'this is 1'), n('span', 'this is 2..'),
-                      n('div',
-                        [ 1, 1, 1, 1, 1, 1, 1 ].map(
-                            (_, index) => n('div', `this is 3:${index}....`))),
-                      n('div', 'in bottom'), n('div', 'last in bottom')
-                    ]) ])
-  },
-  {
-    name : 'notice',
+                    {
+                        type: 'updateState',
+                        content: '.viewState.props.text2 = "eeee!!!"'
+                    }
+                ]
+            })
+        })
+    },
 
-    render : () => n(Notice, {
-      text :
-          'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................',
-      onsignal : logSignal
-    })
-  },
+    {
+        name: 'Modal',
+        render: () => n(Modal, {
+            autoHide: true
+        }, [n('div', 123)])
+    },
 
-  {name : 'textLoading', render : () => n(TextLoading)},
+    {
+        name: 'InputDialog',
+        render: () => n(InputDialog, {
+            title: 'test',
+            text: 'start',
+            autoHide: true,
+            placeholder: 'place something',
+            onsignal: logSignal
+        })
+    }
 
-  {
-    name : 'TestSignalUpdateStateRunnerView',
-    render : () =>
-        n(TestSignalUpdateStateRunnerView,
-          {text : 'init', onsignal : onSignalType('doTestSUS', ChangeText)})
-  },
+    /*
+    {
+        name: 'pageMask',
+        render: () => n(PageMask)
+    },
 
-  {
-    name : 'TestSignalActionFlow',
-    render : () => n(TestSignalActionFlow, {
-      text : 'start',
-      text2 : 'start2',
-      onsignal : signalActionFlow({
-        'doTestSAF' : [
-          {type : 'updateState', content : '.viewState.props.text = "cccc!!!"'},
-          {
-            type : 'updateState',
-            content : '.viewState.props.text2 = "eeee!!!"'
-          }
-        ]
-      })
-    })
-  },
-
-  {
-    name : 'Modal',
-    render : () => n(Modal, {autoHide : true}, [ n('div', 123) ])
-  },
-
-  {
-    name : 'InputDialog',
-    render : () => n(InputDialog, {
-      title : 'test',
-      text : 'start',
-      autoHide : true,
-      placeholder : 'place something',
-      onsignal : logSignal
-    })
-  }
-
-  /*
-  {
-      name: 'pageMask',
-      render: () => n(PageMask)
-  },
-
-  {
-      name: 'PageLoading',
-      render: () => n(PageLoading)
-  },
-
-  */
+    {
+        name: 'PageLoading',
+        render: () => n(PageLoading)
+    }
+    */
 ];
 
 let Pager = n(
     'div', {
-      style : {
-        width : '100%',
-        height : '100%',
-        backgroundColor : steadyTheme.basics.pageColor
-      }
+        style: {
+            width: '100%',
+            height: '100%',
+            backgroundColor: steadyTheme.basics.pageColor
+        }
     },
-    examples.map(({name, render}) => {
-      return n('div', {style : {padding : 8}}, [
-        n('div style="font-weight:bold;"', {
-          style : {
-            width : '100%',
-            backgroundColor : steadyTheme.basics.borderColor
-          }
-        },
-          name),
+    examples.map(({
+        name,
+        render
+    }) => {
+        return n('div', {
+            style: {
+                padding: 8
+            }
+        }, [
+            n('div style="font-weight:bold;"', {
+                    style: steadyTheme.oneLineBulk
+                },
+                name),
 
-        n('div', {style : {padding : 8}},
-          [
-            n('div', 'code'), n(TextArea, {value : render.toString()}), n('br'),
+            n('div', {
+                style: {
+                    padding: 8
+                }
+            }, [
+                n('div', 'code'), n(TextArea, {
+                    value: render.toString()
+                }), n('br'),
 
-            n('div', 'UI'), render()
-          ])
-      ]);
+                n('div', 'UI'), render()
+            ])
+        ]);
     }));
 
 mount(Pager, document.body);
@@ -8424,7 +8242,9 @@ module.exports = lumineView(({
     }, children);
 }, {
     defaultProps: {
-        style: (theme) => styles(theme.fullWindow)
+        style: (theme) => {
+            return styles(theme.fullWindow);
+        }
     },
 
     defaultChildren: []
@@ -8446,7 +8266,7 @@ let {
 } = __webpack_require__(3);
 let Modal = __webpack_require__(37);
 let Input = __webpack_require__(33);
-let Button = __webpack_require__(8);
+let FlatButton = __webpack_require__(108);
 let {
     syncBindWithKeyMap
 } = __webpack_require__(99);
@@ -8480,12 +8300,12 @@ module.exports = lumineView(({
 
         n('br'),
 
-        n(Button, {
+        n(FlatButton, {
             style: props.style.cancelBtnStyle,
             onsignal: onSignalType('click', deliver(ctx, 'cancel-dialog')),
         }, [props.cancelBtnText]),
 
-        n(Button, {
+        n(FlatButton, {
             style: props.style.okBtnStyle,
             onsignal: onSignalType('click', deliver(ctx, 'ok-dialog')),
         }, [props.okBtnText])
@@ -8765,6 +8585,439 @@ module.exports = {
     signalActionFlow,
     runSignalActions
 };
+
+
+/***/ }),
+/* 101 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    styles
+} = __webpack_require__(2);
+
+let container = {
+    position: 'relative',
+    boxSizing: 'border-box',
+    margin: 0,
+    padding: 0,
+    border: 0,
+    borderRadius: 0,
+    overflow: 'auto'
+};
+
+let fullParentHeight = {
+    height: '100%'
+};
+
+let fullParentWidth = {
+    width: '100%'
+};
+
+let fullWindow = styles(container, {
+        position: 'fixed',
+        left: 0,
+        top: 0,
+    },
+    fullParentWidth, fullParentHeight);
+
+let fullParent = styles(container, fullParentWidth, fullParentHeight);
+
+let flat = {
+    appearance: 'none',
+    '-webkit-appearance': 'none',
+    '-moz-appearance': 'none',
+    boxShadow: 'none',
+    borderRadius: 'none',
+    border: 0
+};
+
+module.exports = {
+    fullWindow,
+    fullParent,
+    fullParentWidth,
+    fullParentHeight,
+    container,
+    flat
+};
+
+
+/***/ }),
+/* 102 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    styles
+} = __webpack_require__(2);
+
+let layout = __webpack_require__(101);
+
+let {
+    container
+} = layout;
+
+module.exports = (basics) => {
+    let bulk = styles(container, {
+        minWidth: 40,
+        backgroundColor: basics.blockColor,
+        color: basics.fontColor
+    });
+
+    let contrastBulk = styles(bulk, {
+        backgroundColor: basics.contrastBlockColor,
+        color: basics.contrastFontColor
+    });
+
+    let oneLineBulk = styles(bulk, {
+        padding: basics.narrowPadding,
+        fontSize: basics.normalSize,
+        textAlign: 'center',
+        lineHeight: 20,
+        textDecoration: 'none',
+        border: 'none',
+        color: basics.fontColor
+    });
+
+    let flatOneLineBulk = styles(oneLineBulk, {
+        backgroundColor: basics.contrastBlockColor,
+        color: basics.blockColor
+    });
+
+    let modalBulk = styles(oneLineBulk, contrastBulk, {
+        display: 'inline-block'
+    });
+
+    return {
+        bulk,
+        contrastBulk,
+        oneLineBulk,
+        modalBulk,
+        flatOneLineBulk
+    };
+}
+
+
+/***/ }),
+/* 103 */
+/***/ (function(module, exports) {
+
+module.exports = (basics) => {
+    return {
+        cling: {
+            margin: 0,
+            padding: 0,
+            boxSizing: 'border-box'
+        },
+
+        hover: {
+            backgroundColor: basics.hoverColor
+        },
+
+        active: {
+            backgroundColor: basics.hoverColor
+        },
+
+        focus: {
+            outline: 'none'
+        },
+
+        flatHover: {
+            color: basics.hoverColor
+        },
+
+        flatActive: {
+            color: basics.hoverColor
+        }
+    }
+};
+
+
+/***/ }),
+/* 104 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    styles
+} = __webpack_require__(2);
+
+let layout = __webpack_require__(101);
+let Bulk = __webpack_require__(102);
+let Actions = __webpack_require__(103);
+let Widget = __webpack_require__(105);
+
+module.exports = (basics, custom = {}) => {
+    let bulks = Bulk(basics);
+    let actions = Actions(basics);
+    let widgets = Widget(basics, layout, bulks);
+
+    if (typeof custom === 'function') {
+        custom = custom(basics, layout, bulks);
+    }
+
+    bulks = Object.assign(bulks, custom.bulks || {});
+    actions = Object.assign(actions, custom.actions || {});
+    widgets = Object.assign(widgets, custom.widgets || {});
+
+    return Object.assign({
+        basics,
+        actions
+    }, layout, bulks, actions, widgets);
+};
+
+
+/***/ }),
+/* 105 */
+/***/ (function(module, exports, __webpack_require__) {
+
+let {
+    styles
+} = __webpack_require__(2);
+
+module.exports = (basics, layout, bulks) => {
+    let {
+        contrastBulk
+    } = bulks;
+    let {
+        container,
+        flat
+    } = layout;
+
+    let inputBox = styles(contrastBulk, flat, {
+        width: 260,
+        padding: basics.narrowPadding,
+        backgroundColor: basics.fontColor
+    });
+
+    let textAreaBox = styles(inputBox, {
+        width: 360,
+        height: 200,
+        outline: 'none',
+        resize: 'none',
+        overflow: 'auto',
+        border: `1px solid ${basics.borderColor}`,
+        borderRadius: 5,
+        fontSize: 16
+    });
+
+    let underLineBorder = {
+        border: 0,
+        borderRadius: 0,
+        'border-bottom': `1px solid ${basics.borderColor}`
+    };
+
+    let underLineFocus = {
+        'border-bottom': `1px solid ${basics.blockColor}`
+    };
+
+    return {
+        inputBox,
+        textAreaBox,
+        underLineBorder,
+        underLineFocus
+    };
+};
+
+
+/***/ }),
+/* 106 */,
+/* 107 */,
+/* 108 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let Buttoner = __webpack_require__(111);
+
+module.exports = Buttoner({
+    defaultProps: {
+        style: (theme) => {
+            return theme.flatOneLineBulk;
+        }
+    },
+
+    classTable: (theme) => {
+        return {
+            'btn:hover': theme.actions.flatHover,
+            'btn:active': theme.actions.flatActive,
+            'btn:focus': theme.actions.focus
+        };
+    }
+});
+
+
+/***/ }),
+/* 109 */,
+/* 110 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    view
+} = __webpack_require__(6);
+let steadyTheme = __webpack_require__(23);
+let {
+    deepMergeMap,
+    resolveFnValue
+} = __webpack_require__(2);
+let ClassTable = __webpack_require__(60);
+let {
+    Signal
+} = __webpack_require__(3);
+let JsonTree = __webpack_require__(24);
+let {
+    executeAST
+} = __webpack_require__(15);
+
+/**
+ * define the general interface for lumine view
+ *
+ * 1. unify view data structure
+ *
+ *    view data = {
+ *       // public data
+ *       props,
+ *       children // child views
+ *    }
+ *
+ *    props.onsigal
+ *    props.theme
+ *
+ * 2. onsignal interface
+ *
+ *    onsignal: (signal, data, ctx) -> Any
+ */
+
+module.exports = (viewFun) => ({
+    defaultProps = {},
+    defaultChildren = [],
+    theme = steadyTheme,
+    classTable
+} = {}) => {
+    let defaultStyle = defaultProps.style || {};
+
+    let defaultStyleValue = resolveFnValue(defaultStyle, theme);
+    let classTableValue = resolveFnValue(classTable, theme);
+
+    let {
+        appendStyle,
+        getClassName,
+        updateClassTable
+    } = ClassTable(classTableValue);
+
+    return view((viewData, ctx) => {
+        viewData.props = viewData.props || {};
+        viewData.children = (viewData.children && viewData.children.length) ? viewData.children : defaultChildren;
+        viewData.props.theme = viewData.props.theme || theme;
+
+        appendStyle();
+        // TODO check view Data
+
+        // update defaultStyleValue
+        if (viewData.props.theme && typeof defaultStyle === 'function') {
+            defaultStyleValue = resolveFnValue(defaultStyle, viewData.props.theme);
+        }
+
+        // update class table
+        if (viewData.theme && typeof classTable === 'function') {
+            classTableValue = resolveFnValue(classTable, viewData.props.theme);
+            updateClassTable(classTableValue);
+        }
+
+        // merge props (deep merge)
+        viewData.props.style = deepMergeMap(viewData.props.style, defaultStyleValue);
+        viewData.props = deepMergeMap(viewData.props, defaultProps);
+
+        // signal system
+        let notify = (signal) => {
+            viewData.props.onsignal && viewData.props.onsignal(signal, ctx.getData(), ctx);
+        };
+
+        let viewDataTree = JsonTree(viewData);
+
+        // update with tree script
+        let updateTree = ({
+            ast,
+            variableStub
+        }, variableMap, signal) => {
+            signal = signal || Signal('update-view-data');
+            // update view data by running update script
+            executeAST(ast, {
+                queryByPath: viewDataTree.queryByPath,
+                setByPath: viewDataTree.setByPath,
+                removeByPath: viewDataTree.removeByPath,
+                appendByPath: viewDataTree.appendByPath,
+                variableMap,
+                variableStub
+            });
+            updateWithNotify(signal);
+        };
+
+        let updateWithNotify = (signal, ...updateScript) => {
+            signal = signal || Signal('update-view-data');
+            ctx.update(...updateScript);
+            // notify
+            notify(signal);
+        };
+
+        ctx.notify = notify;
+        ctx.updateWithNotify = updateWithNotify;
+        ctx.updateTree = updateTree;
+        ctx.getClassName = getClassName;
+
+        return viewFun(viewData, ctx);
+    });
+};
+
+
+/***/ }),
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(6);
+let lumineViewer = __webpack_require__(110);
+let {
+    Signal
+} = __webpack_require__(3);
+let {
+    styles
+} = __webpack_require__(2);
+
+module.exports = lumineViewer(({
+    props,
+    children
+}, {
+    notify,
+    getClassName
+}) => {
+    // TODO validate
+    let attributes = {
+        'class': `${getClassName('btn')}`,
+        style: props.style,
+        onclick: () => {
+            notify(Signal('click'));
+        }
+    };
+    if (props.id) {
+        attributes.id = props.id;
+    }
+    return n('button', attributes, children[0]);
+});
 
 
 /***/ })

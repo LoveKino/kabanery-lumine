@@ -1,6 +1,8 @@
 'use strict';
 
-let {mount} = require('kabanery');
+let {
+    mount
+} = require('kabanery');
 
 let n = require('../lib/util/n');
 
@@ -19,265 +21,348 @@ let Modal = require('../lib/view/modal/modal');
 let InputDialog = require('../lib/view/modal/inputDialog');
 // let PageMask = require('../lib/view/mask/pageMask');
 // let PageLoading = require('../lib/view/loading/pageLoading');
-let {signalUpdateStateRunner} = require('../lib/flow/updateFlow');
-let {signalActionFlow} = require('../lib/flow/actionFlow');
+let {
+    signalUpdateStateRunner
+} = require('../lib/flow/updateFlow');
+let {
+    signalActionFlow
+} = require('../lib/flow/actionFlow');
 let steadyTheme = require('../lib/theme/steady');
-let {onSignalType} = require('../lib/util/signal');
+let {
+    onSignalType
+} = require('../lib/util/signal');
+let {
+    styles
+} = require('../lib/util/helper');
 
 let ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
 
 let log = console.log; // eslint-disable-line
 
 let logSignal = (signal, data) => {
-  log(JSON.stringify(signal));
-  log(JSON.stringify(data));
+    log(JSON.stringify(signal));
+    log(JSON.stringify(data));
 };
 
 let examples = [
 
-  {
-    name : 'function bar',
-    render : () => n(FunctionBar, {
-      title : 'demo',
-      leftLogos : [ n('div', '<'), 'a', 'b' ],
-      rightLogos : [ 'c', 'd' ],
+    {
+        name: 'function bar',
+        render: () => n(FunctionBar, {
+            title: 'demo',
+            leftLogos: [n('div', '<'), 'a', 'b'],
+            rightLogos: ['c', 'd'],
 
-      onsignal : logSignal
-    })
-  },
-  {
-    name : 'button',
-    render : () => n(Button, {onsignal : logSignal}, [ 'demo' ])
-  },
+            onsignal: logSignal
+        })
+    },
+    {
+        name: 'button',
+        render: () => n(Button, {
+            onsignal: logSignal
+        }, ['demo'])
+    },
 
-  {
-    name : 'input',
-    render : () => n(Input, {value : 'abc', onsignal : logSignal})
-  },
+    {
+        name: 'input',
+        render: () => n(Input, {
+            value: 'abc',
+            onsignal: logSignal
+        })
+    },
 
-  {
-    name : 'hn',
-    render : () =>
-        n('div', {style : {width : 400}}, [ n(Hn, {
-            style : {
-              childs : [
-                {backgroundColor : 'blue'}, {backgroundColor : 'red'},
-                {backgroundColor : 'yellow'}
-              ]
+    {
+        name: 'hn',
+        render: () =>
+            n('div', {
+                style: {
+                    width: 400
+                }
+            }, [n(Hn, {
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        }, {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'),
+                n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])])
+    },
+
+    {
+        name: 'hn2: percentage',
+        render: () =>
+            n('div', {
+                style: {
+                    width: 400
+                }
+            }, [n(Hn, {
+                mode: 'percentage',
+                pers: [4, 8, 3],
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        }, {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'),
+                n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])])
+    },
+
+    {
+        name: 'hn3: MODE_PARTION',
+        render: () => n('div', {
+            style: {
+                width: 400,
+                height: 200
             }
-          },
-                                              [
-                                                n('span', 'this is 1'),
-                                                n('span', 'this is 2..'),
-                                                n('span', 'this is 3....')
-                                              ]) ])
-  },
+        }, [
+            n(Hn, {
+                mode: 'partion',
+                leftPartions: [50, 30],
+                rightPartions: [20, 25],
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        },
+                        {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        },
+                        {
+                            backgroundColor: 'purple'
+                        },
+                        {
+                            backgroundColor: 'green'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'), n('span', 'this is 2..'),
+                n('div style="width:340px;background-color:white;"',
+                    'this is 3'),
+                n('div', 'in bottom'), n('div', 'last in bottom')
+            ])
+        ])
+    },
 
-  {
-    name : 'hn2: percentage',
-    render : () =>
-        n('div', {style : {width : 400}}, [ n(Hn, {
-            mode : 'percentage',
-            pers : [ 4, 8, 3 ],
-            style : {
-              childs : [
-                {backgroundColor : 'blue'}, {backgroundColor : 'red'},
-                {backgroundColor : 'yellow'}
-              ]
+    {
+        name: 'vn',
+        render: () =>
+            n('div', {
+                style: {
+                    width: 400
+                }
+            }, [n(Vn, {
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        }, {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'),
+                n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])])
+    },
+
+    {
+        name: 'vn2: MODE_PERCENTAGE',
+        render: () => n('div', {
+            style: {
+                width: 400,
+                height: 200
             }
-          },
-                                              [
-                                                n('span', 'this is 1'),
-                                                n('span', 'this is 2..'),
-                                                n('span', 'this is 3....')
-                                              ]) ])
-  },
+        }, [
+            n(Vn, {
+                mode: 'percentage',
+                pers: [3, 6, 9],
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        },
+                        {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'), n('span', 'this is 2..'),
+                n('span', 'this is 3....')
+            ])
+        ])
+    },
+    {
+        name: 'vn3: MODE_PARTION',
+        render:
+            () => n('div', {
+                style: {
+                    width: 400,
+                    height: 200
+                }
+            }, [n(Vn, {
+                mode: 'partion',
+                topPartions: [50, 30],
+                bottomPartions: [20, 25],
+                style: {
+                    childs: [{
+                            backgroundColor: 'blue'
+                        },
+                        {
+                            backgroundColor: 'red'
+                        },
+                        {
+                            backgroundColor: 'yellow'
+                        },
+                        {
+                            backgroundColor: 'purple'
+                        },
+                        {
+                            backgroundColor: 'green'
+                        }
+                    ]
+                }
+            }, [
+                n('span', 'this is 1'), n('span', 'this is 2..'),
+                n('div', [1, 1, 1, 1, 1, 1, 1].map(
+                    (_, index) => n('div', `this is 3:${index}....`))),
+                n('div', 'in bottom'), n('div', 'last in bottom')
+            ])])
+    },
+    {
+        name: 'notice',
 
-  {
-    name : 'hn3: MODE_PARTION',
-    render : () => n('div', {style : {width : 400, height : 200}},
-                     [
-                       n(Hn, {
-                         mode : 'partion',
-                         leftPartions : [ 50, 30 ],
-                         rightPartions : [ 20, 25 ],
-                         style : {
-                           childs : [
-                             {backgroundColor : 'blue'},
-                             {backgroundColor : 'red'},
-                             {backgroundColor : 'yellow'},
-                             {backgroundColor : 'purple'},
-                             {backgroundColor : 'green'}
-                           ]
-                         }
-                       },
-                         [
-                           n('span', 'this is 1'), n('span', 'this is 2..'),
-                           n('div style="width:340px;background-color:white;"',
-                             'this is 3'),
-                           n('div', 'in bottom'), n('div', 'last in bottom')
-                         ])
-                     ])
-  },
+        render: () => n(Notice, {
+            text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................',
+            onsignal: logSignal
+        })
+    },
 
-  {
-    name : 'vn',
-    render : () =>
-        n('div', {style : {width : 400}}, [ n(Vn, {
-            style : {
-              childs : [
-                {backgroundColor : 'blue'}, {backgroundColor : 'red'},
-                {backgroundColor : 'yellow'}
-              ]
-            }
-          },
-                                              [
-                                                n('span', 'this is 1'),
-                                                n('span', 'this is 2..'),
-                                                n('span', 'this is 3....')
-                                              ]) ])
-  },
+    {
+        name: 'textLoading',
+        render: () => n(TextLoading)
+    },
 
-  {
-    name : 'vn2: MODE_PERCENTAGE',
-    render : () => n('div', {style : {width : 400, height : 200}},
-                     [
-                       n(Vn, {
-                         mode : 'percentage',
-                         pers : [ 3, 6, 9 ],
-                         style : {
-                           childs : [
-                             {backgroundColor : 'blue'},
-                             {backgroundColor : 'red'},
-                             {backgroundColor : 'yellow'}
-                           ]
-                         }
-                       },
-                         [
-                           n('span', 'this is 1'), n('span', 'this is 2..'),
-                           n('span', 'this is 3....')
-                         ])
-                     ])
-  },
-  {
-    name : 'vn3: MODE_PARTION',
-    render :
-        () => n('div', {style : {width : 400, height : 200}},
-                [ n(Vn,
-                    {
-                      mode : 'partion',
-                      topPartions : [ 50, 30 ],
-                      bottomPartions : [ 20, 25 ],
-                      style : {
-                        childs :
-                            [
-                              {backgroundColor : 'blue'},
-                              {backgroundColor : 'red'},
-                              {backgroundColor : 'yellow'},
-                              {backgroundColor : 'purple'},
-                              {backgroundColor : 'green'}
-                            ]
-                      }
+    {
+        name: 'TestSignalUpdateStateRunnerView',
+        render: () =>
+            n(TestSignalUpdateStateRunnerView, {
+                text: 'init',
+                onsignal: onSignalType('doTestSUS', ChangeText)
+            })
+    },
+
+    {
+        name: 'TestSignalActionFlow',
+        render: () => n(TestSignalActionFlow, {
+            text: 'start',
+            text2: 'start2',
+            onsignal: signalActionFlow({
+                'doTestSAF': [{
+                        type: 'updateState',
+                        content: '.viewState.props.text = "cccc!!!"'
                     },
-                    [
-                      n('span', 'this is 1'), n('span', 'this is 2..'),
-                      n('div',
-                        [ 1, 1, 1, 1, 1, 1, 1 ].map(
-                            (_, index) => n('div', `this is 3:${index}....`))),
-                      n('div', 'in bottom'), n('div', 'last in bottom')
-                    ]) ])
-  },
-  {
-    name : 'notice',
+                    {
+                        type: 'updateState',
+                        content: '.viewState.props.text2 = "eeee!!!"'
+                    }
+                ]
+            })
+        })
+    },
 
-    render : () => n(Notice, {
-      text :
-          'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................',
-      onsignal : logSignal
-    })
-  },
+    {
+        name: 'Modal',
+        render: () => n(Modal, {
+            autoHide: true
+        }, [n('div', 123)])
+    },
 
-  {name : 'textLoading', render : () => n(TextLoading)},
+    {
+        name: 'InputDialog',
+        render: () => n(InputDialog, {
+            title: 'test',
+            text: 'start',
+            autoHide: true,
+            placeholder: 'place something',
+            onsignal: logSignal
+        })
+    }
 
-  {
-    name : 'TestSignalUpdateStateRunnerView',
-    render : () =>
-        n(TestSignalUpdateStateRunnerView,
-          {text : 'init', onsignal : onSignalType('doTestSUS', ChangeText)})
-  },
+    /*
+    {
+        name: 'pageMask',
+        render: () => n(PageMask)
+    },
 
-  {
-    name : 'TestSignalActionFlow',
-    render : () => n(TestSignalActionFlow, {
-      text : 'start',
-      text2 : 'start2',
-      onsignal : signalActionFlow({
-        'doTestSAF' : [
-          {type : 'updateState', content : '.viewState.props.text = "cccc!!!"'},
-          {
-            type : 'updateState',
-            content : '.viewState.props.text2 = "eeee!!!"'
-          }
-        ]
-      })
-    })
-  },
-
-  {
-    name : 'Modal',
-    render : () => n(Modal, {autoHide : true}, [ n('div', 123) ])
-  },
-
-  {
-    name : 'InputDialog',
-    render : () => n(InputDialog, {
-      title : 'test',
-      text : 'start',
-      autoHide : true,
-      placeholder : 'place something',
-      onsignal : logSignal
-    })
-  }
-
-  /*
-  {
-      name: 'pageMask',
-      render: () => n(PageMask)
-  },
-
-  {
-      name: 'PageLoading',
-      render: () => n(PageLoading)
-  },
-
-  */
+    {
+        name: 'PageLoading',
+        render: () => n(PageLoading)
+    }
+    */
 ];
 
 let Pager = n(
     'div', {
-      style : {
-        width : '100%',
-        height : '100%',
-        backgroundColor : steadyTheme.basics.pageColor
-      }
+        style: {
+            width: '100%',
+            height: '100%',
+            backgroundColor: steadyTheme.basics.pageColor
+        }
     },
-    examples.map(({name, render}) => {
-      return n('div', {style : {padding : 8}}, [
-        n('div style="font-weight:bold;"', {
-          style : {
-            width : '100%',
-            backgroundColor : steadyTheme.basics.borderColor
-          }
-        },
-          name),
+    examples.map(({
+        name,
+        render
+    }) => {
+        return n('div', {
+            style: {
+                padding: 8
+            }
+        }, [
+            n('div style="font-weight:bold;"', {
+                    style: steadyTheme.oneLineBulk
+                },
+                name),
 
-        n('div', {style : {padding : 8}},
-          [
-            n('div', 'code'), n(TextArea, {value : render.toString()}), n('br'),
+            n('div', {
+                style: {
+                    padding: 8
+                }
+            }, [
+                n('div', 'code'), n(TextArea, {
+                    value: render.toString()
+                }), n('br'),
 
-            n('div', 'UI'), render()
-          ])
-      ]);
+                n('div', 'UI'), render()
+            ])
+        ]);
     }));
 
 mount(Pager, document.body);
