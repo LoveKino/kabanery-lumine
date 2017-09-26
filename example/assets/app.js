@@ -813,6 +813,7 @@ module.exports = {
 "use strict";
 
 
+let ripple = __webpack_require__(112);
 let Buttoner = __webpack_require__(111);
 let {
     styles
@@ -825,9 +826,18 @@ module.exports = Buttoner({
 
     classTable: (theme) => {
         return {
+            '@keyframes ripple': ripple,
+            'btn::after': theme.flatRippleMask,
             'btn:hover': theme.actions.hover,
             'btn:active': theme.actions.active,
-            'btn:focus': theme.actions.focus
+            'btn:focus': theme.actions.focus,
+            'btn:focus:not(:active)::after': ({
+                getClassName
+            }) => {
+                return {
+                    animation: `${getClassName('ripple')} 1s ease-out`
+                };
+            }
         };
     }
 });
@@ -1677,11 +1687,14 @@ let base = __webpack_require__(104);
 module.exports = base({
     pageColor: 'white',
     hoverColor: '#90CAF9',
-    blockColor: '#2196F3',
+    blockColor: '#2196F3', // rgb(33,150,243)
     borderColor: '#1565C0',
     veilColor: 'rgba(60,60,60,0.6)',
     fontColor: 'white',
     noticeColor: 'rgb(23, 21, 21)',
+
+    // half
+    halfBlockColor: 'rgba(33,150,243,0.5)',
 
     titleSize: 20,
     normalSize: 16,
@@ -4705,7 +4718,7 @@ module.exports = (classTable) => {
                     });
                 }
                 let styleRuleContent = parseStyle(classCnt, {
-                    valueWrapper: (value) => `${value} !important`
+                    valueWrapper: (value) => `${value !== ''? value: '\'\''} !important`
                 });
                 styleCssRules += `\n${styleRuleName} {${styleRuleContent}}`;
             }
@@ -8817,11 +8830,26 @@ module.exports = (basics, layout, bulks) => {
         'border-bottom': `1px solid ${basics.blockColor}`
     };
 
+    let flatRippleMask = {
+        content: '',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: 5,
+        height: 5,
+        backgroundColor: basics.halfBlockColor,
+        opacity: '0',
+        borderRadius: '100%',
+        transform: 'scale(1, 1) translate(-50%)',
+        transformOrigin: '50% 50%'
+    };
+
     return {
         inputBox,
         textAreaBox,
         underLineBorder,
-        underLineFocus
+        underLineFocus,
+        flatRippleMask
     };
 };
 
@@ -8836,6 +8864,7 @@ module.exports = (basics, layout, bulks) => {
 
 
 let Buttoner = __webpack_require__(111);
+let ripple = __webpack_require__(112);
 
 module.exports = Buttoner({
     defaultProps: {
@@ -8846,9 +8875,18 @@ module.exports = Buttoner({
 
     classTable: (theme) => {
         return {
+            '@keyframes ripple': ripple,
+            'btn::after': theme.flatRippleMask,
             'btn:hover': theme.actions.flatHover,
             'btn:active': theme.actions.flatActive,
-            'btn:focus': theme.actions.focus
+            'btn:focus': theme.actions.focus,
+            'btn:focus:not(:active)::after': ({
+                getClassName
+            }) => {
+                return {
+                    animation: `${getClassName('ripple')} 1s ease-out`
+                };
+            }
         };
     }
 });
@@ -9018,6 +9056,25 @@ module.exports = lumineViewer(({
     }
     return n('button', attributes, children[0]);
 });
+
+
+/***/ }),
+/* 112 */
+/***/ (function(module, exports) {
+
+module.exports = `
+    0% {
+        transform: scale(0, 0);
+        opacity: 1;
+    }
+    20% {
+        transform: scale(25, 25);
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(40, 40);
+    }`;
 
 
 /***/ })
