@@ -7,7 +7,7 @@ let Skelton = require('../lib/build/skelton');
 let yargs = require('yargs');
 let path = require('path');
 
-yargs.usage(`Usage: $0
+yargs.usage(`Usage: lumine-skelton
     -d [web module direcotry]
     `).demandOption([]).help('h').alias('h', 'help');
 

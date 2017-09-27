@@ -5,6 +5,7 @@
 Common UIs
 - [install](#install)
 - [features](#features)
+- [document site](#document-site)
 - [usage](#usage)
   * [CLI quick run](#cli-quick-run)
   * [CLI options](#cli-options)
@@ -40,7 +41,10 @@ Install on global, using `npm i kabanery-lumine -g`
   - skelton tools
   
   - other tools
- document address [http://lovekino.github.io/project/kabanery-lumine/index.html](http://lovekino.github.io/project/kabanery-lumine/index.html)
+
+## document site
+
+ [http://lovekino.github.io/project/kabanery-lumine/index.html](http://lovekino.github.io/project/kabanery-lumine/index.html)
 
 ## usage
 
@@ -57,8 +61,7 @@ Install on global, using `npm i kabanery-lumine -g`
 
 $ ./node_modules/kabanery-lumine/bin/lumine-skelton -h
 
-Usage:
-/Users/yuer/workspaceforme/work/basis/ui/kabanery-lumine/bin/lumine-skelton
+Usage: lumine-skelton
     -d [web module direcotry]
 
 
@@ -82,6 +85,7 @@ Options:
 .    
 │──LICENSE    
 │──README.md    
+│──README_zh.md    
 │──bin    
 │   └──lumine-skelton    
 │──docSite    
