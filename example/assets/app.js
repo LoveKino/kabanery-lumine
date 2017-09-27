@@ -1692,6 +1692,7 @@ module.exports = base({
     veilColor: 'rgba(60,60,60,0.6)',
     fontColor: 'white',
     noticeColor: 'rgb(23, 21, 21)',
+    shadowColor: 'rgba(100,100,100,0.2)',
 
     // half
     halfBlockColor: 'rgba(33,150,243,0.5)',
@@ -1700,6 +1701,11 @@ module.exports = base({
     normalSize: 16,
 
     narrowPadding: '4 8 4 8',
+    narrowPaddingTop: 4,
+    narrowPaddingRight: 8,
+    narrowPaddingBottom: 4,
+    narrowPaddingLeft: 8,
+
     narrowMargin: '4 8 4 8',
 
     contrastBlockColor: 'white',
@@ -8702,7 +8708,8 @@ module.exports = (basics) => {
     });
 
     let modalBulk = styles(oneLineBulk, contrastBulk, {
-        display: 'inline-block'
+        display: 'inline-block',
+        boxShadow: `3px 3px 5px ${basics.shadowColor}`
     });
 
     return {
@@ -8827,7 +8834,8 @@ module.exports = (basics, layout, bulks) => {
     };
 
     let underLineFocus = {
-        'border-bottom': `1px solid ${basics.blockColor}`
+        paddingBottom: basics.narrowPaddingBottom - 1,
+        'border-bottom': `2px solid ${basics.blockColor}`
     };
 
     let flatRippleMask = {
