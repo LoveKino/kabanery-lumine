@@ -1,6 +1,6 @@
 # kabanery-lumine
 
-Front end framework, which provide:
+Front end framework, which provides:
 
 - the simple way to define view
 
@@ -22,4 +22,4 @@ Front end framework, which provide:
 
 ## document address
 
-(http://lovekino.github.io/project/kabanery-lumine/index.html)[http://lovekino.github.io/project/kabanery-lumine/index.html]
+[http://lovekino.github.io/project/kabanery-lumine/index.html](http://lovekino.github.io/project/kabanery-lumine/index.html)
