@@ -1,28 +1,11 @@
 let n = require('../../lib/util/n');
 let lumineView = require('../../lib/util/lumineView');
-
-let FunctionBar = require('../../lib/view/header/functionBar');
-let Button = require('../../lib/view/button/button');
-let Input = require('../../lib/view/input/input');
-let TextArea = require('../../lib/view/input/textarea');
-let Hn = require('../../lib/view/layout/hn');
-let Vn = require('../../lib/view/layout/vn');
-let Notice = require('../../lib/view/notice/notice');
-let TextLoading = require('../../lib/view/loading/textLoading');
-let TestSignalUpdateStateRunnerView =
-    require('../testViews/TestSignalUpdateStateRunnerView');
-let TestSignalActionFlow = require('../testViews/TestSignalActionFlow');
-let Modal = require('../../lib/view/modal/modal');
-let InputDialog = require('../../lib/view/modal/inputDialog');
-// let PageMask = require('../../lib/view/mask/pageMask');
-// let PageLoading = require('../../lib/view/loading/pageLoading');
 let {
     signalUpdateStateRunner
 } = require('../../lib/flow/updateFlow');
 let {
     signalActionFlow
 } = require('../../lib/flow/actionFlow');
-let steadyTheme = require('../../lib/theme/steady');
 let {
     onSignalType
 } = require('../../lib/util/signal');
@@ -30,8 +13,26 @@ let {
     styles
 } = require('../../lib/util/helper');
 
-let ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
+let FunctionBar = require('../../lib/view/header/functionBar');
+let Button = require('../../lib/view/button/button');
+let FlatButton = require('../../lib/view/button/flatButton');
+let Input = require('../../lib/view/input/input');
+let TextArea = require('../../lib/view/input/textarea');
+let Hn = require('../../lib/view/layout/hn');
+let Vn = require('../../lib/view/layout/vn');
+let Notice = require('../../lib/view/notice/notice');
+let TextLoading = require('../../lib/view/loading/textLoading');
+//let TestSignalUpdateStateRunnerView = require('../testViews/TestSignalUpdateStateRunnerView');
+//let TestSignalActionFlow = require('../testViews/TestSignalActionFlow');
+let Modal = require('../../lib/view/modal/modal');
+let InputDialog = require('../../lib/view/modal/inputDialog');
+let Fold = require('../../lib/view/fold/fold');
+let Toc = require('../../lib/view/toc/toc');
+// let PageMask = require('../../lib/view/mask/pageMask');
+// let PageLoading = require('../../lib/view/loading/pageLoading');
 
+//
+let ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
 let log = console.log; // eslint-disable-line
 
 let logSignal = (signal, data) => {
@@ -43,36 +44,38 @@ let examples = [
 
     {
         name: 'function bar',
-        render: `// Head bar
+        code: `// Head bar
 n(FunctionBar, {
     title: 'demo',
     leftLogos: [n('div', '<'), 'a', 'b'],
-    rightLogos: ['c', 'd'],
-
-    onsignal: logSignal
+    rightLogos: ['c', 'd']
 })`
     },
 
     {
         name: 'button',
-        render: `// normal button
-n(Button, {
-    onsignal: logSignal
-}, ['demo'])`
+        code: `// normal button
+n(Button, {}, ['demo'])`
+    },
+
+    {
+        name: 'flat button',
+        code: `// flat button
+n(FlatButton, {}, ['demo'])`
     },
 
     {
         name: 'input',
-        render: `// normal Input
+        code: `// normal Input
 n(Input, {
-    value: 'abc',
-    onsignal: logSignal
+    value: 'abc'
 })`
     },
 
     {
         name: 'hn',
-        render: `// horizontal layout
+        description: 'Layout children in horizontal direction.',
+        code: `// horizontal layout
 n('div', {
     style: {
         width: 400
@@ -98,8 +101,9 @@ n('div', {
     },
 
     {
-        name: 'hn2: percentage',
-        render: `//horizontal layout by percentage
+        name: 'hn-percentage',
+        description: 'In percentage mode, children will divide container in terms of percentage',
+        code: `//horizontal layout by percentage
 n('div', {
     style: {
         width: 400
@@ -126,8 +130,9 @@ n('div', {
     },
 
     {
-        name: 'hn3: MODE_PARTION',
-        render: `// horizontal layout, partion mode
+        name: 'hn-partion',
+        description: 'In partion mode, one child\'s width will be flexible, the left and right of the child will have fixed width.',
+        code: `// horizontal layout, partion mode
 n('div', {
     style: {
         width: 400,
@@ -167,7 +172,8 @@ n('div', {
 
     {
         name: 'vn',
-        render: `// vertical layout
+        description: 'Layout children in vertical direction.',
+        code: `// vertical layout
 n('div', {
     style: {
         width: 400
@@ -192,8 +198,8 @@ n('div', {
     },
 
     {
-        name: 'vn2: MODE_PERCENTAGE',
-        render: `// vertical percentage
+        name: 'vn-percentage',
+        code: `// vertical percentage
 n('div', {
     style: {
         width: 400,
@@ -222,8 +228,8 @@ n('div', {
 ])`
     },
     {
-        name: 'vn3: MODE_PARTION',
-        render: `// vertical layout: partion mode
+        name: 'vn-partion',
+        code: `// vertical layout: partion mode
 n('div', {
     style: {
         width: 400,
@@ -253,15 +259,42 @@ n('div', {
     }
 }, [
     n('span', 'this is 1'), n('span', 'this is 2..'),
-    n('div', ${[1, 1, 1, 1, 1, 1, 1].map(
-        (_, index) => `n('div', 'this is 3: $ {index}....')`)}),
+    n('div', [${[1, 1, 1, 1, 1, 1, 1].map(
+        (_, index) => `n('div', 'this is 3: ${index}....')`).join(',')}]),
     n('div', 'in bottom'), n('div', 'last in bottom')
 ])])`
     },
+
+    {
+        name: 'fold',
+        code: `// fold
+n(Fold, {hide: true}, [n('span', 'head'), n('div', 'body')]);
+`
+    },
+
+    {
+        name: 'toc',
+        code: `//toc 
+n(Toc, {
+    toc: [{
+        name: 'chapter1',
+        next: [{
+           name: 'paragraph1'
+        }, {
+           name: 'paragraph2'
+        }]
+    }, {
+        name: 'chapter2'
+    }]
+});
+`
+    }
+
+    /*
     {
         name: 'notice',
 
-        render: ` // notice view
+        code: ` // notice view
 n(Notice, {
     text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................',
     onsignal: logSignal
@@ -270,13 +303,13 @@ n(Notice, {
 
     {
         name: 'textLoading',
-        render: `// textLoading
+        code: `// textLoading
 n(TextLoading)`
     },
 
     {
         name: 'TestSignalUpdateStateRunnerView',
-        render: `// TestSignalUpdateStateRunnerView
+        code: `// TestSignalUpdateStateRunnerView
 n(TestSignalUpdateStateRunnerView, {
     text: 'init',
     onsignal: onSignalType('doTestSUS', ChangeText)
@@ -285,7 +318,7 @@ n(TestSignalUpdateStateRunnerView, {
 
     {
         name: 'TestSignalActionFlow',
-        render: `// TestSignalActionFlow
+        code: `// TestSignalActionFlow
 n(TestSignalActionFlow, {
     text: 'start',
     text2: 'start2',
@@ -302,10 +335,12 @@ n(TestSignalActionFlow, {
     })
 })`
     },
+    */
 
+    /*
     {
         name: 'Modal',
-        render: `// Modal
+        code: `// Modal
 n(Modal, {
     autoHide: true
 }, [n('div', 123)])`
@@ -313,7 +348,7 @@ n(Modal, {
 
     {
         name: 'InputDialog',
-        render: `// InputDialog
+        code: `// InputDialog
 n(InputDialog, {
     title: 'test',
     text: 'start',
@@ -323,15 +358,14 @@ n(InputDialog, {
 })`
     },
 
-    /*
     {
         name: 'pageMask',
-        render: () => n(PageMask)
+        code: () => n(PageMask)
     },
 
     {
         name: 'PageLoading',
-        render: () => n(PageLoading)
+        code: () => n(PageLoading)
     }
     */
 ];

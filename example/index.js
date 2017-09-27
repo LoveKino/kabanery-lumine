@@ -11,6 +11,7 @@ let {
     examples
 } = require('./demoData');
 
+let FunctionBar = require('../lib/view/header/functionBar');
 let TestView = require('./view/testView');
 let TOCView = require('../lib/view/toc/toc');
 let Hn = require('../lib/view/layout/hn');
@@ -33,31 +34,48 @@ let Pager = n('div', {
         backgroundColor: steadyTheme.basics.pageColor
     }
 }, [
-    n(Hn, {
-        mode: 'partion',
-        leftPartions: [250]
-    }, [
-        n(TOCView, {
-            toc: getToc()
+    n(Vn, [
+        n(FunctionBar, {
+            title: 'Demos of kabanery-lumine views',
+            rightLogos: [
+                n('a href="https://github.com/LoveKino/kabanery-lumine" target="_blank"', {
+                    style: {
+                        color: 'white',
+                        'text-decoration': 'none',
+                        'display': 'block',
+                        'height': '100%',
+                        'line-height': '30px'
+                    }
+                }, 'github')
+            ]
         }),
+        n(Hn, {
+            mode: 'partion',
+            leftPartions: [200]
+        }, [
+            n(TOCView, {
+                toc: getToc()
+            }),
 
-        n(Vn, [
-            examples.map((example) => n('div', {
-                id: example.name,
-                style: {
-                    margin: 8,
-                    padding: 8,
-                    borderRadius: 8,
-                    border: '1px solid rgba(100,100,100,0.5)',
-                    boxShadow: '3px 3px 5px rgba(100, 100, 100, 0.5)'
-                }
-            }, [
-                n(TestView, {
-                    example
-                })
-            ]))
+            n(Vn, [
+                examples.map((example) => n('div', {
+                    id: example.name,
+                    style: {
+                        margin: 8,
+                        padding: 8,
+                        borderRadius: 8,
+                        border: '1px solid rgba(100,100,100,0.5)',
+                        boxShadow: '3px 3px 5px rgba(100, 100, 100, 0.5)'
+                    }
+                }, [
+                    n(TestView, {
+                        example
+                    })
+                ]))
+            ])
         ])
     ])
+
 ]);
 
 mount(Pager, document.body);

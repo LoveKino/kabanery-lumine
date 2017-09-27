@@ -24,6 +24,11 @@ module.exports = lumineView(({
 }, ctx) => {
     return n(Vn, [
         n('h3 style="font-weight:bold;"', props.example.name),
+        props.example.description && n('div', {
+            style: {
+                margin: '0 0 18 0'
+            }
+        }, props.example.description),
 
         n(Hn, {
             mode: 'percentage',
@@ -35,7 +40,7 @@ module.exports = lumineView(({
                 n('div style="display:inline-block"', 'code'),
 
                 n(TextArea, syncBindWithKeyMap(ctx, {
-                    'example.render': 'value'
+                    'example.code': 'value'
                 }, {
                     bindedProps: {
                         style: {
@@ -48,12 +53,7 @@ module.exports = lumineView(({
                 }))
             ]),
 
-            n(Fold, {
-                hide: false
-            }, [
-                n('div style="display:inline-block"', 'UI'),
-                renderExample(props.example.render)
-            ])
+            renderExample(props.example.code)
         ])
     ]);
 });

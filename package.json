@@ -1,6 +1,6 @@
 {
     "name": "kabanery-lumine",
-    "version": "0.0.39",
+    "version": "0.0.40",
     "description": "Common UIs",
     "main": "index.js",
     "scripts": {
@@ -25,6 +25,7 @@
     "devDependencies": {
         "browser-js-env": "0.0.11",
         "mocha": "^3.5.0",
+        "uglifyjs-webpack-plugin": "^1.0.0-beta.1",
         "webpack": "^3.5.6"
     },
     "dependencies": {
