@@ -813,7 +813,7 @@ module.exports = {
 "use strict";
 
 
-let ripple = __webpack_require__(112);
+let rippleClassTables = __webpack_require__(120);
 let Buttoner = __webpack_require__(111);
 let {
     styles
@@ -825,20 +825,16 @@ module.exports = Buttoner({
     },
 
     classTable: (theme) => {
-        return {
-            '@keyframes ripple': ripple,
-            'btn::after': theme.flatRippleMask,
+        console.log(Object.assign(rippleClassTables({
+            theme
+        }), {}));
+        return Object.assign(rippleClassTables({
+            theme
+        }), {
             'btn:hover': theme.actions.hover,
             'btn:active': theme.actions.active,
-            'btn:focus': theme.actions.focus,
-            'btn:focus:not(:active)::after': ({
-                getClassName
-            }) => {
-                return {
-                    animation: `${getClassName('ripple')} 1s ease-out`
-                };
-            }
-        };
+            'btn:focus': theme.actions.focus
+        });
     }
 });
 
@@ -2814,75 +2810,59 @@ let {
 
 let n = __webpack_require__(5);
 let steadyTheme = __webpack_require__(23);
-let lumineView = __webpack_require__(1);
 
-let TextArea = __webpack_require__(88);
-let Fold = __webpack_require__(114);
+let {
+    examples
+} = __webpack_require__(113);
+
+let TestView = __webpack_require__(118);
+let TOCView = __webpack_require__(119);
 let Hn = __webpack_require__(89);
 let Vn = __webpack_require__(90);
 
-let {
-    onSignalType
-} = __webpack_require__(3);
-
-let {
-    syncBindWithKeyMap
-} = __webpack_require__(99);
-
-let {
-    examples,
-    renderExample
-} = __webpack_require__(113);
-
-let TestView = lumineView(({
-    props
-}, ctx) => {
-    return n(Vn, [
-        n('h3 style="font-weight:bold;"', props.example.name),
-
-        n(Hn, {
-            mode: 'percentage',
-            pers: [3, 5]
-        }, [
-            n(Fold, {
-                hide: false
-            }, [
-                n('div style="display:inline-block"', 'code'),
-
-                n(TextArea, syncBindWithKeyMap(ctx, {
-                    'example.render': 'value'
-                }, {
-                    bindedProps: {
-                        style: {
-                            fontSize: 14,
-                            width: "95%"
-                        }
-                    },
-
-                    autoUpdate: true
-                }))
-            ]),
-
-            n(Fold, {
-                hide: false
-            }, [
-                n('div style="display:inline-block"', 'UI'),
-                renderExample(props.example.render)
-            ])
-        ])
-    ]);
-});
+let getToc = () => {
+    return examples.map(({
+        name
+    }) => {
+        return {
+            name
+        };
+    });
+};
 
 let Pager = n('div', {
-        style: {
-            width: '100%',
-            height: '100%',
-            backgroundColor: steadyTheme.basics.pageColor
-        }
-    },
-    examples.map((example) => n(TestView, {
-        example
-    })));
+    style: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: steadyTheme.basics.pageColor
+    }
+}, [
+    n(Hn, {
+        mode: 'partion',
+        leftPartions: [250]
+    }, [
+        n(TOCView, {
+            toc: getToc()
+        }),
+
+        n(Vn, [
+            examples.map((example) => n('div', {
+                id: example.name,
+                style: {
+                    margin: 8,
+                    padding: 8,
+                    borderRadius: 8,
+                    border: '1px solid rgba(100,100,100,0.5)',
+                    boxShadow: '3px 3px 5px rgba(100, 100, 100, 0.5)'
+                }
+            }, [
+                n(TestView, {
+                    example
+                })
+            ]))
+        ])
+    ])
+]);
 
 mount(Pager, document.body);
 
@@ -7661,43 +7641,63 @@ let n = __webpack_require__(5);
 
 let Full = __webpack_require__(34);
 
-const {MODE_PILE, MODE_PERCENTAGE, MODE_PARTION} = __webpack_require__(35);
+const {
+    MODE_PILE,
+    MODE_PERCENTAGE,
+    MODE_PARTION
+} = __webpack_require__(35);
 
 let {
-  getChildStylesInPercentage,
-  getChildStylesInPile,
-  getChildStylesInPartion
+    getChildStylesInPercentage,
+    getChildStylesInPile,
+    getChildStylesInPartion
 } = __webpack_require__(36);
 
-module.exports = lumineView(({props, children}) => {
-  let {theme, style, mode, pers, topPartions, bottomPartions} = props;
+module.exports = lumineView(({
+    props,
+    children
+}) => {
+    let {
+        theme,
+        style,
+        mode,
+        pers,
+        topPartions,
+        bottomPartions
+    } = props;
 
-  // child container style
-  if (mode === MODE_PERCENTAGE) {
-    style.childs = getChildStylesInPercentage(children, pers, style.childs,
-                                              theme, 'height');
-  } else if (mode === MODE_PILE) {
-    style.childs =
-        getChildStylesInPile(children, theme, style.childs, 'height');
-  } else if (mode === MODE_PARTION) {
-    style.childs = getChildStylesInPartion(topPartions, bottomPartions,
-                                           style.childs, theme, 'height');
-  }
+    // child container style
+    if (mode === MODE_PERCENTAGE) {
+        style.childs = getChildStylesInPercentage(children, pers, style.childs,
+            theme, 'height');
+    } else if (mode === MODE_PILE) {
+        style.childs =
+            getChildStylesInPile(children, theme, style.childs, 'height');
+    } else if (mode === MODE_PARTION) {
+        style.childs = getChildStylesInPartion(topPartions, bottomPartions,
+            style.childs, theme, 'height');
+    }
 
-  return n(
-      Full, {style : style.container, theme},
-      [ children.map((child, i) => n('div', {style : style.childs[i] || {}},
-                                     [ child ])) ]);
+    return n(
+        Full, {
+            style: style.container,
+            theme
+        }, [children.map((child, i) => n('div', {
+            style: style.childs[i] || {}
+        }, [child]))]);
 }, {
-  defaultProps : {
-    mode : MODE_PILE,
-    pers : [], // percentage distribution
+    defaultProps: {
+        mode: MODE_PILE,
+        pers: [], // percentage distribution
 
-    topPartions : [],    // fixed width or height in top direction
-    bottomPartions : [], // fixed width or height in bottom direction
+        topPartions: [], // fixed width or height in top direction
+        bottomPartions: [], // fixed width or height in bottom direction
 
-    style : {container : {}, childs : {}}
-  }
+        style: {
+            container: {},
+            childs: {}
+        }
+    }
 });
 
 
@@ -8414,6 +8414,7 @@ module.exports = (basics) => {
     });
 
     let flatOneLineBulk = styles(oneLineBulk, {
+        display: 'inline-block',
         backgroundColor: basics.contrastBlockColor,
         color: basics.blockColor
     });
@@ -8583,7 +8584,7 @@ module.exports = (basics, layout, bulks) => {
 
 
 let Buttoner = __webpack_require__(111);
-let ripple = __webpack_require__(112);
+let rippleClassTables = __webpack_require__(120);
 
 module.exports = Buttoner({
     defaultProps: {
@@ -8593,20 +8594,13 @@ module.exports = Buttoner({
     },
 
     classTable: (theme) => {
-        return {
-            '@keyframes ripple': ripple,
-            'btn::after': theme.flatRippleMask,
+        return Object.assign(rippleClassTables({
+            theme
+        }), {
             'btn:hover': theme.actions.flatHover,
             'btn:active': theme.actions.flatActive,
-            'btn:focus': theme.actions.focus,
-            'btn:focus:not(:active)::after': ({
-                getClassName
-            }) => {
-                return {
-                    animation: `${getClassName('ripple')} 1s ease-out`
-                };
-            }
-        };
+            'btn:focus': theme.actions.focus
+        });
     }
 });
 
@@ -9237,7 +9231,7 @@ module.exports = lumineView(({
     return n('span', {
         style: {
             display: 'inline-block',
-            paddingRight: 8
+            padding: '0 8 0 8'
         }
     }, [angle({
         direction: props.hide ? 'bottom' : 'top',
@@ -9342,6 +9336,177 @@ module.exports = ({
                 transform: `rotate(${angle}deg)`
             }
         });
+};
+
+
+/***/ }),
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let n = __webpack_require__(5);
+let lumineView = __webpack_require__(1);
+
+let TextArea = __webpack_require__(88);
+let Fold = __webpack_require__(114);
+let Hn = __webpack_require__(89);
+let Vn = __webpack_require__(90);
+let {
+    renderExample
+} = __webpack_require__(113);
+
+let {
+    onSignalType
+} = __webpack_require__(3);
+
+let {
+    syncBindWithKeyMap
+} = __webpack_require__(99);
+
+module.exports = lumineView(({
+    props
+}, ctx) => {
+    return n(Vn, [
+        n('h3 style="font-weight:bold;"', props.example.name),
+
+        n(Hn, {
+            mode: 'percentage',
+            pers: [3, 5]
+        }, [
+            n(Fold, {
+                hide: false
+            }, [
+                n('div style="display:inline-block"', 'code'),
+
+                n(TextArea, syncBindWithKeyMap(ctx, {
+                    'example.render': 'value'
+                }, {
+                    bindedProps: {
+                        style: {
+                            fontSize: 14,
+                            width: "95%"
+                        }
+                    },
+
+                    autoUpdate: true
+                }))
+            ]),
+
+            n(Fold, {
+                hide: false
+            }, [
+                n('div style="display:inline-block"', 'UI'),
+                renderExample(props.example.render)
+            ])
+        ])
+    ]);
+});
+
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let n = __webpack_require__(5);
+let lumineView = __webpack_require__(1);
+let rippleClassTables = __webpack_require__(120);
+let {
+    styles
+} = __webpack_require__(2);
+
+/**
+ *
+ * TOC data = [
+ *  {
+ *      name, String
+ *      id,
+ *      next: TOC DATA
+ *  }
+ * ] 
+ */
+module.exports = lumineView(({
+    props
+}, {
+    getClassName
+}) => {
+    return renderToc(props.toc, {
+        container: props.style.container,
+        nameItem: props.style.nameItem,
+        itemClass: getClassName('tocItem')
+    });
+}, {
+    defaultProps: {
+        style: (theme) => {
+            return {
+                container: styles(theme.contrastBulk, {
+                    padding: theme.basics.narrowPadding
+                }),
+                nameItem: styles(theme.flatOneLineBulk)
+            };
+        },
+        toc: []
+    },
+
+    classTable: (theme) => {
+        return Object.assign(rippleClassTables({
+            className: 'tocItem',
+            theme
+        }), {
+            'tocItem:hover': theme.actions.flatHover,
+            'tocItem:active': theme.actions.flatActive,
+            'tocItem:focus': theme.actions.focus
+        });
+    }
+});
+
+let renderToc = (toc, options) => {
+    return n('div', {
+        style: options.container
+    }, [
+        toc.map(({
+            name,
+            id,
+            next
+        }) => {
+            id = id || name;
+            return n('div', [
+                n(`a href="#${id}" class=${options.itemClass}`, {
+                    style: options.nameItem
+                }, name),
+                next && next.length && renderToc(next, options)
+            ]);
+        })
+    ]);
+};
+
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+let ripple = __webpack_require__(112);
+
+module.exports = ({
+    theme,
+    frameName = 'ripple',
+    className = 'btn'
+}) => {
+    return {
+        [`@keyframes ${frameName}`]: ripple,
+        [`${className}::after`]: theme.flatRippleMask,
+        [`${className}:focus:not(:active)::after`]: ({
+            getClassName
+        }) => {
+            return {
+                animation: `${getClassName(frameName)} 1s ease-out`
+            };
+        }
+    }
 };
 
 

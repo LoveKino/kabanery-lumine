@@ -6,74 +6,58 @@ let {
 
 let n = require('../lib/util/n');
 let steadyTheme = require('../lib/theme/steady');
-let lumineView = require('../lib/util/lumineView');
 
-let TextArea = require('../lib/view/input/textarea');
-let Fold = require('../lib/view/fold/fold');
+let {
+    examples
+} = require('./demoData');
+
+let TestView = require('./view/testView');
+let TOCView = require('../lib/view/toc/toc');
 let Hn = require('../lib/view/layout/hn');
 let Vn = require('../lib/view/layout/vn');
 
-let {
-    onSignalType
-} = require('../lib/util/signal');
-
-let {
-    syncBindWithKeyMap
-} = require('../lib/view/compose/mapUI');
-
-let {
-    examples,
-    renderExample
-} = require('./demoData');
-
-let TestView = lumineView(({
-    props
-}, ctx) => {
-    return n(Vn, [
-        n('h3 style="font-weight:bold;"', props.example.name),
-
-        n(Hn, {
-            mode: 'percentage',
-            pers: [3, 5]
-        }, [
-            n(Fold, {
-                hide: false
-            }, [
-                n('div style="display:inline-block"', 'code'),
-
-                n(TextArea, syncBindWithKeyMap(ctx, {
-                    'example.render': 'value'
-                }, {
-                    bindedProps: {
-                        style: {
-                            fontSize: 14,
-                            width: "95%"
-                        }
-                    },
-
-                    autoUpdate: true
-                }))
-            ]),
-
-            n(Fold, {
-                hide: false
-            }, [
-                n('div style="display:inline-block"', 'UI'),
-                renderExample(props.example.render)
-            ])
-        ])
-    ]);
-});
+let getToc = () => {
+    return examples.map(({
+        name
+    }) => {
+        return {
+            name
+        };
+    });
+};
 
 let Pager = n('div', {
-        style: {
-            width: '100%',
-            height: '100%',
-            backgroundColor: steadyTheme.basics.pageColor
-        }
-    },
-    examples.map((example) => n(TestView, {
-        example
-    })));
+    style: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: steadyTheme.basics.pageColor
+    }
+}, [
+    n(Hn, {
+        mode: 'partion',
+        leftPartions: [250]
+    }, [
+        n(TOCView, {
+            toc: getToc()
+        }),
+
+        n(Vn, [
+            examples.map((example) => n('div', {
+                id: example.name,
+                style: {
+                    margin: 8,
+                    padding: 8,
+                    borderRadius: 8,
+                    border: '1px solid rgba(100,100,100,0.5)',
+                    boxShadow: '3px 3px 5px rgba(100, 100, 100, 0.5)'
+                }
+            }, [
+                n(TestView, {
+                    example
+                })
+            ]))
+        ])
+    ])
+]);
 
 mount(Pager, document.body);
