@@ -28,6 +28,7 @@ let Modal = require('../../lib/view/modal/modal');
 let InputDialog = require('../../lib/view/modal/inputDialog');
 let Fold = require('../../lib/view/fold/fold');
 let Toc = require('../../lib/view/toc/toc');
+let Card = require('../../lib/view/card/card')
 // let PageMask = require('../../lib/view/mask/pageMask');
 // let PageLoading = require('../../lib/view/loading/pageLoading');
 
@@ -287,6 +288,16 @@ n(Toc, {
         name: 'chapter2'
     }]
 });
+`
+    },
+    {
+        name: 'card',
+        code: `//card
+n(Card, {
+   title: 'card to test'
+},[
+    n('span', 1234)
+])
 `
     }
 
