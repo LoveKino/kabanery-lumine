@@ -22,6 +22,9 @@
  *   - skelton tools
  *   
  *   - other tools
- *  document address [http://lovekino.github.io/project/kabanery-lumine/index.html](http://lovekino.github.io/project/kabanery-lumine/index.html)
+ *
+ * ## document site
+ *
+ *  [http://lovekino.github.io/project/kabanery-lumine/index.html](http://lovekino.github.io/project/kabanery-lumine/index.html)
  *
  */
