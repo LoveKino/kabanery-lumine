@@ -1689,9 +1689,9 @@ module.exports = base({
     hoverColor: '#90CAF9',
     blockColor: '#2196F3', // rgb(33,150,243)
     borderColor: '#1565C0',
-    veilColor: 'rgba(60,60,60,0.6)',
+    veilColor: 'rgba(125,125,125,0.6)',
     fontColor: 'white',
-    noticeColor: 'rgb(23, 21, 21)',
+    noticeColor: 'rgb(2, 40, 51)',
     shadowColor: 'rgba(100,100,100,0.2)',
 
     // half
@@ -2813,365 +2813,76 @@ let {
 } = __webpack_require__(6);
 
 let n = __webpack_require__(5);
+let steadyTheme = __webpack_require__(23);
+let lumineView = __webpack_require__(1);
 
-let FunctionBar = __webpack_require__(59);
-let Button = __webpack_require__(8);
-let Input = __webpack_require__(33);
 let TextArea = __webpack_require__(88);
+let Fold = __webpack_require__(114);
 let Hn = __webpack_require__(89);
 let Vn = __webpack_require__(90);
-let Notice = __webpack_require__(91);
-let TextLoading = __webpack_require__(93);
-let TestSignalUpdateStateRunnerView =
-    __webpack_require__(94);
-let TestSignalActionFlow = __webpack_require__(95);
-let Modal = __webpack_require__(37);
-let InputDialog = __webpack_require__(98);
-// let PageMask = require('../lib/view/mask/pageMask');
-// let PageLoading = require('../lib/view/loading/pageLoading');
-let {
-    signalUpdateStateRunner
-} = __webpack_require__(38);
-let {
-    signalActionFlow
-} = __webpack_require__(100);
-let steadyTheme = __webpack_require__(23);
+
 let {
     onSignalType
 } = __webpack_require__(3);
+
 let {
-    styles
-} = __webpack_require__(2);
+    syncBindWithKeyMap
+} = __webpack_require__(99);
 
-let ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
+let {
+    examples,
+    renderExample
+} = __webpack_require__(113);
 
-let log = console.log; // eslint-disable-line
+let TestView = lumineView(({
+    props
+}, ctx) => {
+    return n(Vn, [
+        n('h3 style="font-weight:bold;"', props.example.name),
 
-let logSignal = (signal, data) => {
-    log(JSON.stringify(signal));
-    log(JSON.stringify(data));
-};
-
-let examples = [
-
-    {
-        name: 'function bar',
-        render: () => n(FunctionBar, {
-            title: 'demo',
-            leftLogos: [n('div', '<'), 'a', 'b'],
-            rightLogos: ['c', 'd'],
-
-            onsignal: logSignal
-        })
-    },
-    {
-        name: 'button',
-        render: () => n(Button, {
-            onsignal: logSignal
-        }, ['demo'])
-    },
-
-    {
-        name: 'input',
-        render: () => n(Input, {
-            value: 'abc',
-            onsignal: logSignal
-        })
-    },
-
-    {
-        name: 'hn',
-        render: () =>
-            n('div', {
-                style: {
-                    width: 400
-                }
-            }, [n(Hn, {
-                style: {
-                    childs: [{
-                            backgroundColor: 'blue'
-                        }, {
-                            backgroundColor: 'red'
-                        },
-                        {
-                            backgroundColor: 'yellow'
-                        }
-                    ]
-                }
-            }, [
-                n('span', 'this is 1'),
-                n('span', 'this is 2..'),
-                n('span', 'this is 3....')
-            ])])
-    },
-
-    {
-        name: 'hn2: percentage',
-        render: () =>
-            n('div', {
-                style: {
-                    width: 400
-                }
-            }, [n(Hn, {
-                mode: 'percentage',
-                pers: [4, 8, 3],
-                style: {
-                    childs: [{
-                            backgroundColor: 'blue'
-                        }, {
-                            backgroundColor: 'red'
-                        },
-                        {
-                            backgroundColor: 'yellow'
-                        }
-                    ]
-                }
-            }, [
-                n('span', 'this is 1'),
-                n('span', 'this is 2..'),
-                n('span', 'this is 3....')
-            ])])
-    },
-
-    {
-        name: 'hn3: MODE_PARTION',
-        render: () => n('div', {
-            style: {
-                width: 400,
-                height: 200
-            }
+        n(Hn, {
+            mode: 'percentage',
+            pers: [3, 5]
         }, [
-            n(Hn, {
-                mode: 'partion',
-                leftPartions: [50, 30],
-                rightPartions: [20, 25],
-                style: {
-                    childs: [{
-                            backgroundColor: 'blue'
-                        },
-                        {
-                            backgroundColor: 'red'
-                        },
-                        {
-                            backgroundColor: 'yellow'
-                        },
-                        {
-                            backgroundColor: 'purple'
-                        },
-                        {
-                            backgroundColor: 'green'
-                        }
-                    ]
-                }
+            n(Fold, {
+                hide: false
             }, [
-                n('span', 'this is 1'), n('span', 'this is 2..'),
-                n('div style="width:340px;background-color:white;"',
-                    'this is 3'),
-                n('div', 'in bottom'), n('div', 'last in bottom')
-            ])
-        ])
-    },
+                n('div style="display:inline-block"', 'code'),
 
-    {
-        name: 'vn',
-        render: () =>
-            n('div', {
-                style: {
-                    width: 400
-                }
-            }, [n(Vn, {
-                style: {
-                    childs: [{
-                            backgroundColor: 'blue'
-                        }, {
-                            backgroundColor: 'red'
-                        },
-                        {
-                            backgroundColor: 'yellow'
+                n(TextArea, syncBindWithKeyMap(ctx, {
+                    'example.render': 'value'
+                }, {
+                    bindedProps: {
+                        style: {
+                            fontSize: 14,
+                            width: "95%"
                         }
-                    ]
-                }
-            }, [
-                n('span', 'this is 1'),
-                n('span', 'this is 2..'),
-                n('span', 'this is 3....')
-            ])])
-    },
-
-    {
-        name: 'vn2: MODE_PERCENTAGE',
-        render: () => n('div', {
-            style: {
-                width: 400,
-                height: 200
-            }
-        }, [
-            n(Vn, {
-                mode: 'percentage',
-                pers: [3, 6, 9],
-                style: {
-                    childs: [{
-                            backgroundColor: 'blue'
-                        },
-                        {
-                            backgroundColor: 'red'
-                        },
-                        {
-                            backgroundColor: 'yellow'
-                        }
-                    ]
-                }
-            }, [
-                n('span', 'this is 1'), n('span', 'this is 2..'),
-                n('span', 'this is 3....')
-            ])
-        ])
-    },
-    {
-        name: 'vn3: MODE_PARTION',
-        render:
-            () => n('div', {
-                style: {
-                    width: 400,
-                    height: 200
-                }
-            }, [n(Vn, {
-                mode: 'partion',
-                topPartions: [50, 30],
-                bottomPartions: [20, 25],
-                style: {
-                    childs: [{
-                            backgroundColor: 'blue'
-                        },
-                        {
-                            backgroundColor: 'red'
-                        },
-                        {
-                            backgroundColor: 'yellow'
-                        },
-                        {
-                            backgroundColor: 'purple'
-                        },
-                        {
-                            backgroundColor: 'green'
-                        }
-                    ]
-                }
-            }, [
-                n('span', 'this is 1'), n('span', 'this is 2..'),
-                n('div', [1, 1, 1, 1, 1, 1, 1].map(
-                    (_, index) => n('div', `this is 3:${index}....`))),
-                n('div', 'in bottom'), n('div', 'last in bottom')
-            ])])
-    },
-    {
-        name: 'notice',
-
-        render: () => n(Notice, {
-            text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................',
-            onsignal: logSignal
-        })
-    },
-
-    {
-        name: 'textLoading',
-        render: () => n(TextLoading)
-    },
-
-    {
-        name: 'TestSignalUpdateStateRunnerView',
-        render: () =>
-            n(TestSignalUpdateStateRunnerView, {
-                text: 'init',
-                onsignal: onSignalType('doTestSUS', ChangeText)
-            })
-    },
-
-    {
-        name: 'TestSignalActionFlow',
-        render: () => n(TestSignalActionFlow, {
-            text: 'start',
-            text2: 'start2',
-            onsignal: signalActionFlow({
-                'doTestSAF': [{
-                        type: 'updateState',
-                        content: '.viewState.props.text = "cccc!!!"'
                     },
-                    {
-                        type: 'updateState',
-                        content: '.viewState.props.text2 = "eeee!!!"'
-                    }
-                ]
-            })
-        })
-    },
 
-    {
-        name: 'Modal',
-        render: () => n(Modal, {
-            autoHide: true
-        }, [n('div', 123)])
-    },
+                    autoUpdate: true
+                }))
+            ]),
 
-    {
-        name: 'InputDialog',
-        render: () => n(InputDialog, {
-            title: 'test',
-            text: 'start',
-            autoHide: true,
-            placeholder: 'place something',
-            onsignal: logSignal
-        })
-    }
+            n(Fold, {
+                hide: false
+            }, [
+                n('div style="display:inline-block"', 'UI'),
+                renderExample(props.example.render)
+            ])
+        ])
+    ]);
+});
 
-    /*
-    {
-        name: 'pageMask',
-        render: () => n(PageMask)
-    },
-
-    {
-        name: 'PageLoading',
-        render: () => n(PageLoading)
-    }
-    */
-];
-
-let Pager = n(
-    'div', {
+let Pager = n('div', {
         style: {
             width: '100%',
             height: '100%',
             backgroundColor: steadyTheme.basics.pageColor
         }
     },
-    examples.map(({
-        name,
-        render
-    }) => {
-        return n('div', {
-            style: {
-                padding: 8
-            }
-        }, [
-            n('div style="font-weight:bold;"', {
-                    style: steadyTheme.oneLineBulk
-                },
-                name),
-
-            n('div', {
-                style: {
-                    padding: 8
-                }
-            }, [
-                n('div', 'code'), n(TextArea, {
-                    value: render.toString()
-                }), n('br'),
-
-                n('div', 'UI'), render()
-            ])
-        ]);
-    }));
+    examples.map((example) => n(TestView, {
+        example
+    })));
 
 mount(Pager, document.body);
 
@@ -9083,6 +8794,555 @@ module.exports = `
         opacity: 0;
         transform: scale(40, 40);
     }`;
+
+
+/***/ }),
+/* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+let n = __webpack_require__(5);
+let lumineView = __webpack_require__(1);
+
+let FunctionBar = __webpack_require__(59);
+let Button = __webpack_require__(8);
+let Input = __webpack_require__(33);
+let TextArea = __webpack_require__(88);
+let Hn = __webpack_require__(89);
+let Vn = __webpack_require__(90);
+let Notice = __webpack_require__(91);
+let TextLoading = __webpack_require__(93);
+let TestSignalUpdateStateRunnerView =
+    __webpack_require__(94);
+let TestSignalActionFlow = __webpack_require__(95);
+let Modal = __webpack_require__(37);
+let InputDialog = __webpack_require__(98);
+// let PageMask = require('../../lib/view/mask/pageMask');
+// let PageLoading = require('../../lib/view/loading/pageLoading');
+let {
+    signalUpdateStateRunner
+} = __webpack_require__(38);
+let {
+    signalActionFlow
+} = __webpack_require__(100);
+let steadyTheme = __webpack_require__(23);
+let {
+    onSignalType
+} = __webpack_require__(3);
+let {
+    styles
+} = __webpack_require__(2);
+
+let ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
+
+let log = console.log; // eslint-disable-line
+
+let logSignal = (signal, data) => {
+    log(JSON.stringify(signal));
+    log(JSON.stringify(data));
+};
+
+let examples = [
+
+    {
+        name: 'function bar',
+        render: `// Head bar
+n(FunctionBar, {
+    title: 'demo',
+    leftLogos: [n('div', '<'), 'a', 'b'],
+    rightLogos: ['c', 'd'],
+
+    onsignal: logSignal
+})`
+    },
+
+    {
+        name: 'button',
+        render: `// normal button
+n(Button, {
+    onsignal: logSignal
+}, ['demo'])`
+    },
+
+    {
+        name: 'input',
+        render: `// normal Input
+n(Input, {
+    value: 'abc',
+    onsignal: logSignal
+})`
+    },
+
+    {
+        name: 'hn',
+        render: `// horizontal layout
+n('div', {
+    style: {
+        width: 400
+    }
+}, [n(Hn, {
+    style: {
+        childs: [
+            {
+                backgroundColor: 'blue'
+            }, {
+                backgroundColor: 'red'
+            },
+            {
+                backgroundColor: 'yellow'
+            }
+        ]
+    }
+}, [
+    n('span', 'this is 1'),
+    n('span', 'this is 2..'),
+    n('span', 'this is 3....')
+])])`
+    },
+
+    {
+        name: 'hn2: percentage',
+        render: `//horizontal layout by percentage
+n('div', {
+    style: {
+        width: 400
+    }
+}, [n(Hn, {
+    mode: 'percentage',
+    pers: [4, 8, 3],
+    style: {
+        childs: [{
+                backgroundColor: 'blue'
+            }, {
+                backgroundColor: 'red'
+            },
+            {
+                backgroundColor: 'yellow'
+            }
+        ]
+    }
+}, [
+    n('span', 'this is 1'),
+    n('span', 'this is 2..'),
+    n('span', 'this is 3....')
+])])`
+    },
+
+    {
+        name: 'hn3: MODE_PARTION',
+        render: `// horizontal layout, partion mode
+n('div', {
+    style: {
+        width: 400,
+        height: 200
+    }
+}, [
+    n(Hn, {
+        mode: 'partion',
+        leftPartions: [50, 30],
+        rightPartions: [20, 25],
+        style: {
+            childs: [{
+                    backgroundColor: 'blue'
+                },
+                {
+                    backgroundColor: 'red'
+                },
+                {
+                    backgroundColor: 'yellow'
+                },
+                {
+                    backgroundColor: 'purple'
+                },
+                {
+                    backgroundColor: 'green'
+                }
+            ]
+        }
+    }, [
+        n('span', 'this is 1'), n('span', 'this is 2..'),
+        n('div style="width:340px;background-color:white;"',
+            'this is 3'),
+        n('div', 'in bottom'), n('div', 'last in bottom')
+    ])
+])`
+    },
+
+    {
+        name: 'vn',
+        render: `// vertical layout
+n('div', {
+    style: {
+        width: 400
+    }
+}, [n(Vn, {
+    style: {
+        childs: [{
+                backgroundColor: 'blue'
+            }, {
+                backgroundColor: 'red'
+            },
+            {
+                backgroundColor: 'yellow'
+            }
+        ]
+    }
+}, [
+    n('span', 'this is 1'),
+    n('span', 'this is 2..'),
+    n('span', 'this is 3....')
+])])`
+    },
+
+    {
+        name: 'vn2: MODE_PERCENTAGE',
+        render: `// vertical percentage
+n('div', {
+    style: {
+        width: 400,
+        height: 200
+    }
+}, [
+    n(Vn, {
+        mode: 'percentage',
+        pers: [3, 6, 9],
+        style: {
+            childs: [{
+                    backgroundColor: 'blue'
+                },
+                {
+                    backgroundColor: 'red'
+                },
+                {
+                    backgroundColor: 'yellow'
+                }
+            ]
+        }
+    }, [
+        n('span', 'this is 1'), n('span', 'this is 2..'),
+        n('span', 'this is 3....')
+    ])
+])`
+    },
+    {
+        name: 'vn3: MODE_PARTION',
+        render: `// vertical layout: partion mode
+n('div', {
+    style: {
+        width: 400,
+        height: 200
+    }
+}, [n(Vn, {
+    mode: 'partion',
+    topPartions: [50, 30],
+    bottomPartions: [20, 25],
+    style: {
+        childs: [{
+                backgroundColor: 'blue'
+            },
+            {
+                backgroundColor: 'red'
+            },
+            {
+                backgroundColor: 'yellow'
+            },
+            {
+                backgroundColor: 'purple'
+            },
+            {
+                backgroundColor: 'green'
+            }
+        ]
+    }
+}, [
+    n('span', 'this is 1'), n('span', 'this is 2..'),
+    n('div', ${[1, 1, 1, 1, 1, 1, 1].map(
+        (_, index) => `n('div', 'this is 3: $ {index}....')`)}),
+    n('div', 'in bottom'), n('div', 'last in bottom')
+])])`
+    },
+    {
+        name: 'notice',
+
+        render: ` // notice view
+n(Notice, {
+    text: 'notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................notice hint ...................',
+    onsignal: logSignal
+})`
+    },
+
+    {
+        name: 'textLoading',
+        render: `// textLoading
+n(TextLoading)`
+    },
+
+    {
+        name: 'TestSignalUpdateStateRunnerView',
+        render: `// TestSignalUpdateStateRunnerView
+n(TestSignalUpdateStateRunnerView, {
+    text: 'init',
+    onsignal: onSignalType('doTestSUS', ChangeText)
+})`
+    },
+
+    {
+        name: 'TestSignalActionFlow',
+        render: `// TestSignalActionFlow
+n(TestSignalActionFlow, {
+    text: 'start',
+    text2: 'start2',
+    onsignal: signalActionFlow({
+        'doTestSAF': [{
+                type: 'updateState',
+                content: '.viewState.props.text = "cccc!!!"'
+            },
+            {
+                type: 'updateState',
+                content: '.viewState.props.text2 = "eeee!!!"'
+            }
+        ]
+    })
+})`
+    },
+
+    {
+        name: 'Modal',
+        render: `// Modal
+n(Modal, {
+    autoHide: true
+}, [n('div', 123)])`
+    },
+
+    {
+        name: 'InputDialog',
+        render: `// InputDialog
+n(InputDialog, {
+    title: 'test',
+    text: 'start',
+    autoHide: true,
+    placeholder: 'place something',
+    onsignal: logSignal
+})`
+    },
+
+    /*
+    {
+        name: 'pageMask',
+        render: () => n(PageMask)
+    },
+
+    {
+        name: 'PageLoading',
+        render: () => n(PageLoading)
+    }
+    */
+];
+
+let renderExample = (exampleCode) => {
+    try {
+        return eval(exampleCode);
+    } catch (err) {
+        return n(ErrorView, {
+            errMsg: err.toString()
+        });
+    }
+};
+
+let ErrorView = lumineView(({
+    props
+}) => {
+    return n('div', {
+        style: {
+            color: 'red'
+        }
+    }, props.errMsg);
+});
+
+// TODO link view file code
+
+module.exports = {
+    examples,
+    renderExample
+};
+
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let n = __webpack_require__(5);
+let lumineView = __webpack_require__(1);
+let FoldArrow = __webpack_require__(115);
+
+module.exports = lumineView(({
+    props,
+    children
+}, {
+    updateWithNotify
+}) => {
+    let Body = children[1];
+
+    let Head = n('div', {
+        onclick: () => {
+            updateWithNotify(null, 'props.hide', !props.hide)
+        },
+        style: {
+            cursor: 'pointer'
+        }
+    }, [
+        props.arrow && n(FoldArrow, {
+            hide: props.hide
+        }),
+        children[0]
+    ])
+
+    return n('div', {
+        style: props.style.container
+    }, [
+        Head,
+
+        !props.hide && Body
+    ]);
+}, {
+    defaultProps: {
+        hide: false,
+        arrow: true,
+        style: {
+            container: {}
+        }
+    }
+});
+
+
+/***/ }),
+/* 115 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(6);
+
+let angle = __webpack_require__(116);
+let lumineView = __webpack_require__(1);
+
+module.exports = lumineView(({
+    props
+}) => {
+    return n('span', {
+        style: {
+            display: 'inline-block',
+            paddingRight: 8
+        }
+    }, [angle({
+        direction: props.hide ? 'bottom' : 'top',
+        length: 5,
+        color: '#666666'
+    })]);
+}, {
+    defaultProps: {
+        hide: false
+    }
+});
+
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let line = __webpack_require__(117);
+let {
+    n
+} = __webpack_require__(6);
+
+module.exports = ({
+    length = 10,
+    bold = 1,
+    color = 'black',
+    angle = 0,
+    direction
+} = {}) => {
+    if (direction === 'left') {
+        angle = 45;
+    } else if (direction === 'top') {
+        angle = 135;
+    } else if (direction === 'right') {
+        angle = 225;
+    } else if (direction === 'bottom') {
+        angle = 315;
+    }
+    return n('div', {
+        style: {
+            display: 'inline-block',
+            transform: `rotate(${angle}deg)`
+        }
+    }, [
+        line({
+            color,
+            bold,
+            length
+        }),
+
+        n('div', {
+            style: {
+                marginLeft: length / 2 - bold / 2,
+                marginTop: -1 * length / 2 - bold / 2
+            }
+        }, [
+            line({
+                color,
+                bold,
+                length,
+                angle: 90
+            })
+        ])
+    ]);
+};
+
+
+/***/ }),
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let {
+    n
+} = __webpack_require__(6);
+
+module.exports = ({
+    color = 'black',
+    bold = 3,
+    length = 20,
+    direction = 'vertical',
+    angle = 0
+} = {}) => {
+    return direction === 'vertical' ?
+        n('div', {
+            style: {
+                width: bold,
+                height: length,
+                backgroundColor: color,
+                transform: `rotate(${angle}deg)`
+            }
+        }) : n('div', {
+            style: {
+                height: bold,
+                width: length,
+                backgroundColor: color,
+                transform: `rotate(${angle}deg)`
+            }
+        });
+};
 
 
 /***/ })
