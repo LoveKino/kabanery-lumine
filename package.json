@@ -1,7 +1,7 @@
 {
     "name": "kabanery-lumine",
     "version": "0.0.43",
-    "description": "DSL driven, Data migration, common view integration Front end framework",
+    "description": "DSL driven, Data migration from signal system, Common views integration Front End framework",
     "main": "index.js",
     "scripts": {
         "test": "mocha \"test/function/**/*.js\" -t 300000"
