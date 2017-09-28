@@ -1,23 +1,23 @@
 'use strict';
 
-let n = require('../../lib/util/n');
-let lumineView = require('../../lib/util/lumineView');
+let n = require('../../../lib/util/n');
+let lumineView = require('../../../lib/util/lumineView');
 
-let TextArea = require('../../lib/view/input/textarea');
-let Fold = require('../../lib/view/fold/fold');
-let Hn = require('../../lib/view/layout/hn');
-let Vn = require('../../lib/view/layout/vn');
+let TextArea = require('../../../lib/view/input/textarea');
+let Fold = require('../../../lib/view/fold/fold');
+let Hn = require('../../../lib/view/layout/hn');
+let Vn = require('../../../lib/view/layout/vn');
 let {
     renderExample
 } = require('../demoData');
 
 let {
     onSignalType
-} = require('../../lib/util/signal');
+} = require('../../../lib/util/signal');
 
 let {
     syncBindWithKeyMap
-} = require('../../lib/view/compose/mapUI');
+} = require('../../../lib/view/compose/mapUI');
 
 module.exports = lumineView(({
     props

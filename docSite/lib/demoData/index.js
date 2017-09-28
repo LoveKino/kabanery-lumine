@@ -1,39 +1,39 @@
-let n = require('../../lib/util/n');
-let lumineView = require('../../lib/util/lumineView');
+let n = require('../../../lib/util/n');
+let lumineView = require('../../../lib/util/lumineView');
 let {
     signalUpdateStateRunner
-} = require('../../lib/flow/updateFlow');
+} = require('../../../lib/flow/updateFlow');
 let {
     signalActionFlow
-} = require('../../lib/flow/actionFlow');
+} = require('../../../lib/flow/actionFlow');
 let {
     onSignalType
-} = require('../../lib/util/signal');
+} = require('../../../lib/util/signal');
 let {
     styles
-} = require('../../lib/util/helper');
+} = require('../../../lib/util/helper');
 
-let FunctionBar = require('../../lib/view/header/functionBar');
-let Button = require('../../lib/view/button/button');
-let FlatButton = require('../../lib/view/button/flatButton');
-let Input = require('../../lib/view/input/input');
-let TextArea = require('../../lib/view/input/textarea');
-let Hn = require('../../lib/view/layout/hn');
-let Vn = require('../../lib/view/layout/vn');
-let Notice = require('../../lib/view/notice/notice');
-let TextLoading = require('../../lib/view/loading/textLoading');
+let FunctionBar = require('../../../lib/view/header/functionBar');
+let Button = require('../../../lib/view/button/button');
+let FlatButton = require('../../../lib/view/button/flatButton');
+let Input = require('../../../lib/view/input/input');
+let TextArea = require('../../../lib/view/input/textarea');
+let Hn = require('../../../lib/view/layout/hn');
+let Vn = require('../../../lib/view/layout/vn');
+let Notice = require('../../../lib/view/notice/notice');
+let TextLoading = require('../../../lib/view/loading/textLoading');
 //let TestSignalUpdateStateRunnerView = require('../testViews/TestSignalUpdateStateRunnerView');
 //let TestSignalActionFlow = require('../testViews/TestSignalActionFlow');
-let Modal = require('../../lib/view/modal/modal');
-let InputDialog = require('../../lib/view/modal/inputDialog');
-let Fold = require('../../lib/view/fold/fold');
-let Toc = require('../../lib/view/toc/toc');
-let Card = require('../../lib/view/card/card')
-// let PageMask = require('../../lib/view/mask/pageMask');
-// let PageLoading = require('../../lib/view/loading/pageLoading');
+let Modal = require('../../../lib/view/modal/modal');
+let InputDialog = require('../../../lib/view/modal/inputDialog');
+let Fold = require('../../../lib/view/fold/fold');
+let Toc = require('../../../lib/view/toc/toc');
+let Card = require('../../../lib/view/card/card')
+// let PageMask = require('../../../lib/view/mask/pageMask');
+// let PageLoading = require('../../../lib/view/loading/pageLoading');
 
 //
-let ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
+ ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
 let log = console.log; // eslint-disable-line
 
 let logSignal = (signal, data) => {

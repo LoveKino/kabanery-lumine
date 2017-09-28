@@ -1,7 +1,7 @@
 {
     "name": "kabanery-lumine",
     "version": "0.0.43",
-    "description": "Common UIs",
+    "description": "DSL driven, Data migration, common view integration Front end framework",
     "main": "index.js",
     "scripts": {
         "test": "mocha \"test/function/**/*.js\" -t 300000"
@@ -32,7 +32,7 @@
     "dependencies": {
         "es6-promisify": "^5.0.0",
         "kabanery": "^0.2.13",
-        "kabanery-spa": "0.0.17",
+        "kabanery-spa": "0.0.18",
         "mkdirp": "^0.5.1",
         "pfc-compiler": "^0.1.9",
         "tree-script": "0.0.5",

@@ -1,21 +1,19 @@
 'use strict';
 
-let {
-    mount
-} = require('kabanery');
-
-let n = require('../lib/util/n');
-let steadyTheme = require('../lib/theme/steady');
+let lumineView = require('../../../lib/util/lumineView');
+let n = require('../../../lib/util/n');
 
 let {
     examples
-} = require('./demoData');
-
-let FunctionBar = require('../lib/view/header/functionBar');
-let TestView = require('./view/testView');
-let TOCView = require('../lib/view/toc/toc');
-let Hn = require('../lib/view/layout/hn');
-let Vn = require('../lib/view/layout/vn');
+} = require('../demoData');
+let {
+    onSignalType
+} = require('../../../lib/util/signal');
+let FunctionBar = require('../../../lib/view/header/functionBar');
+let TestView = require('../view/testView');
+let TOCView = require('../../../lib/view/toc/toc');
+let Hn = require('../../../lib/view/layout/hn');
+let Vn = require('../../../lib/view/layout/vn');
 
 let getToc = () => {
     return examples.map(({
@@ -27,16 +25,22 @@ let getToc = () => {
     });
 };
 
-let Pager = n('div', {
+module.exports = lumineView(({
+    props
+}) => n('div', {
     style: {
         width: '100%',
         height: '100%',
-        backgroundColor: steadyTheme.basics.pageColor
+        backgroundColor: props.theme.basics.pageColor
     }
 }, [
     n(Vn, [
         n(FunctionBar, {
             title: 'Demos of kabanery-lumine views',
+            leftLogos: [
+                n('div', '<')
+            ],
+
             rightLogos: [
                 n('a href="https://github.com/LoveKino/kabanery-lumine" target="_blank"', {
                     style: {
@@ -47,7 +51,15 @@ let Pager = n('div', {
                         'line-height': '30px'
                     }
                 }, 'github')
-            ]
+            ],
+
+            onsignal: onSignalType('click', (signal) => {
+                if (signal.data.sourceType === 'leftLogos') {
+                    if (signal.data.index === 0) {
+                        window.location.href = '?page=indexPage';
+                    }
+                }
+            })
         }),
         n(Hn, {
             mode: 'partion',
@@ -75,7 +87,4 @@ let Pager = n('div', {
             ])
         ])
     ])
-
-]);
-
-mount(Pager, document.body);
+]));
