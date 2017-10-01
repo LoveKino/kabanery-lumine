@@ -31,8 +31,8 @@
     },
     "dependencies": {
         "es6-promisify": "^5.0.0",
-        "kabanery": "^0.2.13",
-        "kabanery-spa": "0.0.18",
+        "kabanery": "^0.2.14",
+        "kabanery-spa": "0.0.19",
         "mkdirp": "^0.5.1",
         "pfc-compiler": "^0.1.9",
         "tree-script": "0.0.5",
