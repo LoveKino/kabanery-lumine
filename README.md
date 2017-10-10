@@ -2,7 +2,7 @@
 
 [中文文档](./README_zh.md)   [document](./README.md)
 
-Common UIs
+DSL driven, Data migration from signal system, Common views integration Front End framework
 - [install](#install)
 - [features](#features)
 - [document site](#document-site)
@@ -24,9 +24,9 @@ Install on global, using `npm i kabanery-lumine -g`
 
  Front end framework, which provides:
 
-  - the simple way to define view
+  - View definition DSL, data & view auto binding
   
-  - data migration system
+  - Signal Handler DSL, Request DSL
   
     signal system
   
@@ -86,18 +86,18 @@ Options:
 │──LICENSE    
 │──README.md    
 │──README_zh.md    
+│──TODO.md    
 │──bin    
 │   └──lumine-skelton    
 │──docSite    
-│   │──assets    
+│   │──asset    
 │   │   └──app.js    
-│   │──demoData    
-│   │   └──index.js    
 │   │──index.html    
-│   │──index.js    
-│   │──testViews    
-│   │   │──TestSignalActionFlow.js    
-│   │   └──TestSignalUpdateStateRunnerView.js    
+│   │──lib    
+│   │   │──demoData    
+│   │   │   └──index.js    
+│   │   │──index.js    
+│   │   └──signals.js    
 │   └──webpack.config.js    
 │──index.js    
 │──lib    

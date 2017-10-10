@@ -5,9 +5,9 @@
  *
  *  Front end framework, which provides:
  *
- *   - the simple way to define view
+ *   - View definition DSL, data & view auto binding
  *   
- *   - data migration system
+ *   - Signal Handler DSL, Request DSL
  *   
  *     signal system
  *   
