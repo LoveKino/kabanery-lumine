@@ -4,7 +4,8 @@
     "description": "DSL driven, Data migration from signal system, Common views integration Front End framework",
     "main": "index.js",
     "scripts": {
-        "test": "mocha \"test/function/**/*.js\" -t 300000"
+        "test": "mocha \"test/function/**/*.js\" -t 300000",
+        "doc-watch": "cd ./docSite && webpack --watch"
     },
     "bin": {
         "lumine-skelton": "./bin/lumine-skelton"

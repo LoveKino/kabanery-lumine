@@ -269,7 +269,7 @@ n('div', {
     {
         name: 'fold',
         code: `// fold
-n(Fold, {hide: true}, [n('span', 'head'), n('div', 'body')]);
+n(Fold, {hide: true, style: {title: {color: 'red'}}}, [n('span', 'head'), n('div', 'body')]);
 `
     },
 
