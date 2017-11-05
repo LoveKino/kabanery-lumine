@@ -20,3 +20,5 @@
   When place view in layoutView, need a container, which decide the position in layoutView, and make view Full in container.
 
 - child container style expression way
+
+- debug: log signals

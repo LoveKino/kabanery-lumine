@@ -1,17 +1,5 @@
 let n = require('../../../lib/util/n');
 let lumineView = require('../../../lib/util/lumineView');
-let {
-    signalUpdateStateRunner
-} = require('../../../lib/flow/updateFlow');
-let {
-    signalActionFlow
-} = require('../../../lib/flow/actionFlow');
-let {
-    onSignalType
-} = require('../../../lib/util/signal');
-let {
-    styles
-} = require('../../../lib/util/helper');
 
 let FunctionBar = require('../../../lib/view/header/functionBar');
 let Button = require('../../../lib/view/button/button');
@@ -33,7 +21,6 @@ let Card = require('../../../lib/view/card/card')
 // let PageLoading = require('../../../lib/view/loading/pageLoading');
 
 //
- ChangeText = signalUpdateStateRunner('.viewState.props.text="changed!"');
 let log = console.log; // eslint-disable-line
 
 let logSignal = (signal, data) => {
