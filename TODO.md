@@ -33,7 +33,13 @@
 
 - for mobile mode, no hover
 
+- general example of apiMap and runApi, add to skelton
+
+## opt
+
 - hung syncBindWithKeyMap, deliver, ... to ctx
+
+- skelton, eslint and require
 
 ## bugs
 
