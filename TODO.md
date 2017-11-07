@@ -22,3 +22,19 @@
 - child container style expression way
 
 - debug: log signals
+
+- opt loading animation
+    (1) loading shape
+    (2) disappear animation
+
+- simple pager, general try catch error and display error message
+
+## features
+
+- for mobile mode, no hover
+
+- hung syncBindWithKeyMap, deliver, ... to ctx
+
+## bugs
+
+- autohide for modal, sometimes it just not working
