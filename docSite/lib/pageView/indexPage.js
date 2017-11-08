@@ -4,24 +4,11 @@ let SimplePager = require('../../../lib/page/simplePager');
 let lumineView = require('../../../lib/util/lumineView');
 let n = require('../../../lib/util/n');
 let {
-    syncBindWithKeyMap
-} = require('../../../lib/view/compose/mapUI');
-let {
-    deliver,
     onSignalType
 } = require('../../../lib/util/signal');
-let {
-    styles
-} = require('../../../lib/util/helper');
-
-let {
-    // SIGNAL CONSTANTS
-} = require('../signals');
-
 
 // views
 let FunctionBar = require('../../../lib/view/header/functionBar');
-let Hn = require('../../../lib/view/layout/hn');
 let Vn = require('../../../lib/view/layout/vn');
 let Block = require('../../../lib/view/block/block');
 let Flat = require('../../../lib/view/block/flat');
@@ -50,9 +37,7 @@ let Flat = require('../../../lib/view/block/flat');
  *     demo: n(Button, {onsignal: onSignalType('click', deliver(ctx, SIGNAL_TYPE))}, 'save')
  */
 
-module.exports = SimplePager(lumineView(({
-    props
-}, ctx) => {
+module.exports = SimplePager(lumineView(() => {
     return n(Vn, [
         n(FunctionBar, {
             title: 'kabanery lumine',
@@ -129,7 +114,7 @@ module.exports = SimplePager(lumineView(({
                 n(Flat, 'Other tools')
             ])
         ])
-    ])
+    ]);
 }, {
     defaultProps: {}
 }));

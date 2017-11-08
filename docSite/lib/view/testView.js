@@ -11,14 +11,6 @@ let {
     renderExample
 } = require('../demoData');
 
-let {
-    onSignalType
-} = require('../../../lib/util/signal');
-
-let {
-    syncBindWithKeyMap
-} = require('../../../lib/view/compose/mapUI');
-
 module.exports = lumineView(({
     props
 }, ctx) => {
@@ -39,18 +31,16 @@ module.exports = lumineView(({
             }, [
                 n('div style="display:inline-block"', 'code'),
 
-                n(TextArea, syncBindWithKeyMap(ctx, {
+                ctx.bn({
                     'example.code': 'value'
                 }, {
-                    bindedProps: {
-                        style: {
-                            fontSize: 14,
-                            width: "95%"
-                        }
-                    },
-
                     autoUpdate: true
-                }))
+                })(TextArea, {
+                    style: {
+                        fontSize: 14,
+                        width: '95%'
+                    }
+                })
             ]),
 
             renderExample(props.example.code)
