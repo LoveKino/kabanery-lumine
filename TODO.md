@@ -35,12 +35,14 @@
 
 - general example of apiMap and runApi, add to skelton
 
+- seperate skelton as a sub project
+
 ## opt
 
-- hung syncBindWithKeyMap, deliver, ... to ctx
+- hung syncBindWithKeyMap, deliver, ... to ctx done!
 
 - skelton, eslint and require
 
 ## bugs
 
-- autohide for modal, sometimes it just not working
+- autohide for modal, sometimes it is just not working
