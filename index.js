@@ -28,3 +28,5 @@
  *  [http://lovekino.github.io/project/kabanery-lumine/index.html](http://lovekino.github.io/project/kabanery-lumine/index.html)
  *
  */
+
+module.exports = require('./lib');

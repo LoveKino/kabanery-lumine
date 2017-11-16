@@ -20,3 +20,29 @@
   When place view in layoutView, need a container, which decide the position in layoutView, and make view Full in container.
 
 - child container style expression way
+
+- debug: log signals
+
+- opt loading animation
+    (1) loading shape
+    (2) disappear animation
+
+- simple pager, general try catch error and display error message
+
+## features
+
+- for mobile mode, no hover
+
+- general example of apiMap and runApi, add to skelton
+
+- seperate skelton as a sub project
+
+## opt
+
+- hung syncBindWithKeyMap, deliver, ... to ctx done!
+
+- skelton, eslint and require
+
+## bugs
+
+- autohide for modal, sometimes it is just not working
