@@ -37,6 +37,12 @@
 
 - seperate skelton as a sub project
 
+- auto focus for view
+
+- formation views for easy to require
+
+- ctx.pass support map
+
 ## opt
 
 - hung syncBindWithKeyMap, deliver, ... to ctx done!
