@@ -1,6 +1,6 @@
 {
     "name": "kabanery-lumine",
-    "version": "0.0.58",
+    "version": "0.0.59",
     "description": "DSL driven, Data migration from signal system, Common views integration Front End framework",
     "main": "index.js",
     "scripts": {
@@ -33,7 +33,7 @@
     "dependencies": {
         "es6-promisify": "^5.0.0",
         "kabanery": "^0.2.15",
-        "kabanery-signal-flow": "0.0.4",
+        "kabanery-signal-flow": "0.0.5",
         "kabanery-spa": "0.0.20",
         "mkdirp": "^0.5.1",
         "pfc-compiler": "^0.1.9",
