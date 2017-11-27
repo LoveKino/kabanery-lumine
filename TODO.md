@@ -49,6 +49,8 @@
 
 - skelton, eslint and require
 
+- seperate signal system
+
 ## bugs
 
 - autohide for modal, sometimes it is just not working
