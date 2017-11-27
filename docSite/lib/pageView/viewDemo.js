@@ -1,14 +1,11 @@
 'use strict';
 
-let lumineView = require('../../../lib/util/lumineView');
-let n = require('../../../lib/util/n');
-
 let {
     examples
 } = require('../demoData');
 let {
-    onSignalType
-} = require('../../../lib/util/signal');
+    onSignalType, n, lumineView
+} = require('../../..');
 let FunctionBar = require('../../../lib/view/header/functionBar');
 let TestView = require('../view/testView');
 let TOCView = require('../../../lib/view/toc/toc');

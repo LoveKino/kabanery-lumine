@@ -1,11 +1,9 @@
 'use strict';
 
 let SimplePager = require('../../../lib/page/simplePager');
-let lumineView = require('../../../lib/util/lumineView');
-let n = require('../../../lib/util/n');
 let {
-    onSignalType
-} = require('../../../lib/util/signal');
+    onSignalType, n, lumineView
+} = require('../../..');
 
 // views
 let FunctionBar = require('../../../lib/view/header/functionBar');
