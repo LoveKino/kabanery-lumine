@@ -1,6 +1,6 @@
 {
     "name": "kabanery-lumine",
-    "version": "0.0.61",
+    "version": "0.0.62",
     "description": "DSL driven, Data migration from signal system, Common views integration Front End framework",
     "main": "index.js",
     "scripts": {
