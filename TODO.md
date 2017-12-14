@@ -43,6 +43,8 @@
 
 - ctx.pass support map
 
+- default signal variable map
+
 ## opt
 
 - hung syncBindWithKeyMap, deliver, ... to ctx done!
@@ -54,3 +56,5 @@
 ## bugs
 
 - autohide for modal, sometimes it is just not working
+
+- general window resize signal
