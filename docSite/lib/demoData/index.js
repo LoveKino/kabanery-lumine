@@ -16,7 +16,7 @@ let Modal = require('../../../lib/view/modal/modal');
 let InputDialog = require('../../../lib/view/modal/inputDialog');
 let Fold = require('../../../lib/view/fold/fold');
 let Toc = require('../../../lib/view/toc/toc');
-let Card = require('../../../lib/view/card/card')
+let Card = require('../../../lib/view/card/card');
 // let PageMask = require('../../../lib/view/mask/pageMask');
 // let PageLoading = require('../../../lib/view/loading/pageLoading');
 
@@ -24,46 +24,46 @@ let Card = require('../../../lib/view/card/card')
 let log = console.log; // eslint-disable-line
 
 let logSignal = (signal, data) => {
-    log(JSON.stringify(signal));
-    log(JSON.stringify(data));
+  log(JSON.stringify(signal));
+  log(JSON.stringify(data));
 };
 
 let examples = [
 
-    {
-        name: 'function bar',
-        code: `// Head bar
+  {
+    name: 'function bar',
+    code: `// Head bar
 n(FunctionBar, {
     title: 'demo',
     leftLogos: [n('div', '<'), 'a', 'b'],
     rightLogos: ['c', 'd']
 })`
-    },
+  },
 
-    {
-        name: 'button',
-        code: `// normal button
+  {
+    name: 'button',
+    code: `// normal button
 n(Button, {}, ['demo'])`
-    },
+  },
 
-    {
-        name: 'flat button',
-        code: `// flat button
+  {
+    name: 'flat button',
+    code: `// flat button
 n(FlatButton, {}, ['demo'])`
-    },
+  },
 
-    {
-        name: 'input',
-        code: `// normal Input
+  {
+    name: 'input',
+    code: `// normal Input
 n(Input, {
     value: 'abc'
 })`
-    },
+  },
 
-    {
-        name: 'hn',
-        description: 'Layout children in horizontal direction.',
-        code: `// horizontal layout
+  {
+    name: 'hn',
+    description: 'Layout children in horizontal direction.',
+    code: `// horizontal layout
 n('div', {
     style: {
         width: 400
@@ -86,12 +86,12 @@ n('div', {
     n('span', 'this is 2..'),
     n('span', 'this is 3....')
 ])])`
-    },
+  },
 
-    {
-        name: 'hn-percentage',
-        description: 'In percentage mode, children will divide container in terms of percentage',
-        code: `//horizontal layout by percentage
+  {
+    name: 'hn-percentage',
+    description: 'In percentage mode, children will divide container in terms of percentage',
+    code: `//horizontal layout by percentage
 n('div', {
     style: {
         width: 400
@@ -115,12 +115,12 @@ n('div', {
     n('span', 'this is 2..'),
     n('span', 'this is 3....')
 ])])`
-    },
+  },
 
-    {
-        name: 'hn-partion',
-        description: 'In partion mode, one child\'s width will be flexible, the left and right of the child will have fixed width.',
-        code: `// horizontal layout, partion mode
+  {
+    name: 'hn-partion',
+    description: 'In partion mode, one child\'s width will be flexible, the left and right of the child will have fixed width.',
+    code: `// horizontal layout, partion mode
 n('div', {
     style: {
         width: 400,
@@ -156,12 +156,12 @@ n('div', {
         n('div', 'in bottom'), n('div', 'last in bottom')
     ])
 ])`
-    },
+  },
 
-    {
-        name: 'vn',
-        description: 'Layout children in vertical direction.',
-        code: `// vertical layout
+  {
+    name: 'vn',
+    description: 'Layout children in vertical direction.',
+    code: `// vertical layout
 n('div', {
     style: {
         width: 400
@@ -183,11 +183,11 @@ n('div', {
     n('span', 'this is 2..'),
     n('span', 'this is 3....')
 ])])`
-    },
+  },
 
-    {
-        name: 'vn-percentage',
-        code: `// vertical percentage
+  {
+    name: 'vn-percentage',
+    code: `// vertical percentage
 n('div', {
     style: {
         width: 400,
@@ -214,10 +214,10 @@ n('div', {
         n('span', 'this is 3....')
     ])
 ])`
-    },
-    {
-        name: 'vn-partion',
-        code: `// vertical layout: partion mode
+  },
+  {
+    name: 'vn-partion',
+    code: `// vertical layout: partion mode
 n('div', {
     style: {
         width: 400,
@@ -248,21 +248,21 @@ n('div', {
 }, [
     n('span', 'this is 1'), n('span', 'this is 2..'),
     n('div', [${[1, 1, 1, 1, 1, 1, 1].map(
-        (_, index) => `n('div', 'this is 3: ${index}....')`).join(',')}]),
+    (_, index) => `n('div', 'this is 3: ${index}....')`).join(',')}]),
     n('div', 'in bottom'), n('div', 'last in bottom')
 ])])`
-    },
+  },
 
-    {
-        name: 'fold',
-        code: `// fold
+  {
+    name: 'fold',
+    code: `// fold
 n(Fold, {hide: true, style: {title: {color: 'red'}}}, [n('span', 'head'), n('div', 'body')]);
 `
-    },
+  },
 
-    {
-        name: 'toc',
-        code: `//toc 
+  {
+    name: 'toc',
+    code: `//toc 
 n(Toc, {
     toc: [{
         name: 'chapter1',
@@ -276,19 +276,19 @@ n(Toc, {
     }]
 });
 `
-    },
-    {
-        name: 'card',
-        code: `//card
+  },
+  {
+    name: 'card',
+    code: `//card
 n(Card, {
    title: 'card to test'
 },[
     n('span', 1234)
 ])
 `
-    }
+  }
 
-    /*
+  /*
     {
         name: 'notice',
 
@@ -335,7 +335,7 @@ n(TestSignalActionFlow, {
     },
     */
 
-    /*
+  /*
     {
         name: 'Modal',
         code: `// Modal
@@ -369,28 +369,28 @@ n(InputDialog, {
 ];
 
 let renderExample = (exampleCode) => {
-    try {
-        return eval(exampleCode);
-    } catch (err) {
-        return n(ErrorView, {
-            errMsg: err.toString()
-        });
-    }
+  try {
+    return eval(exampleCode);
+  } catch (err) {
+    return n(ErrorView, {
+      errMsg: err.toString()
+    });
+  }
 };
 
 let ErrorView = lumineView(({
-    props
+  props
 }) => {
-    return n('div', {
-        style: {
-            color: 'red'
-        }
-    }, props.errMsg);
+  return n('div', {
+    style: {
+      color: 'red'
+    }
+  }, props.errMsg);
 });
 
 // TODO link view file code
 
 module.exports = {
-    examples,
-    renderExample
+  examples,
+  renderExample
 };

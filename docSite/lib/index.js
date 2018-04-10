@@ -1,21 +1,19 @@
 'use strict';
 
-let {
-    SPA
+const {
+  SPA
 } = require('../../lib/page/flowPfcSPA');
-let pageSignalActionMap = require('./pageSignalAction');
-let pageViewMap = require('./pageView');
-
+const pageSignalActionMap = require('./pageSignalAction');
+const pageViewMap = require('./pageView');
 
 SPA({
-    
-    pageViewMap,
-    pageSignalActionMap,
-    pageOptionsMap: {
-        indexPage: {
-            localStateStore: false,
-            localStateStoreWhiteList: []
-        }
-    },
-    defaultPage: 'indexPage'
+  pageViewMap,
+  pageSignalActionMap,
+  pageOptionsMap: {
+    indexPage: {
+      localStateStore: false,
+      localStateStoreWhiteList: []
+    }
+  },
+  defaultPage: 'indexPage'
 });
