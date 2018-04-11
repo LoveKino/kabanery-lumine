@@ -32,9 +32,9 @@
     },
     "dependencies": {
         "es6-promisify": "^5.0.0",
-        "kabanery": "^0.2.18",
+        "kabanery": "^0.2.19",
         "kabanery-signal-flow": "0.0.5",
-        "kabanery-spa": "0.0.21",
+        "kabanery-spa": "0.0.22",
         "lumine-signal": "0.0.1",
         "mkdirp": "^0.5.1",
         "pfc-compiler": "^0.1.9",
