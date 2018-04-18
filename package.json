@@ -1,14 +1,11 @@
 {
     "name": "kabanery-lumine",
-    "version": "0.0.67",
+    "version": "0.0.68",
     "description": "DSL driven, Data migration from signal system, Common views integration Front End framework",
     "main": "index.js",
     "scripts": {
         "test": "mocha \"test/function/**/*.js\" -t 300000",
         "doc-watch": "cd ./docSite && webpack --watch"
-    },
-    "bin": {
-        "lumine-skelton": "./bin/lumine-skelton"
     },
     "repository": {
         "type": "git",
@@ -31,15 +28,12 @@
         "webpack": "^3.5.6"
     },
     "dependencies": {
-        "es6-promisify": "^5.0.0",
         "kabanery": "^0.2.21",
         "kabanery-signal-flow": "0.0.5",
         "kabanery-spa": "0.0.23",
         "lumine-signal": "0.0.1",
-        "mkdirp": "^0.5.1",
         "pfc-compiler": "^0.1.9",
-        "tree-script": "0.0.5",
-        "yargs": "^8.0.2"
+        "tree-script": "0.0.5"
     },
     "readmeDocOptions": {
         "ignores": [
