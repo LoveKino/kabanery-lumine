@@ -2,36 +2,36 @@
 
 let assert = require('assert');
 let {
-    syncBindWithKeyMap
+  syncBindWithKeyMap
 } = require('../../../../lib/view/compose/mapUI');
 let lumineView = require('../../../../lib/util/lumineView');
 let n = require('../../../../lib/util/n');
 let Input = require('../../../../lib/view/input/input');
 let {
-    mount,
-    dispatchEvent
+  mount,
+  dispatchEvent
 } = require('kabanery');
 
 let TestView = lumineView((_, ctx) => {
-    return n(Input, syncBindWithKeyMap(ctx, {
-        'a': 'value'
-    }, {
-        bindedProps: {
-            id: 'test'
-        }
-    }));
-}, {
-    defaultProps: {
-        a: '1'
+  return n(Input, syncBindWithKeyMap(ctx, {
+    'a': 'value'
+  }, {
+    bindedProps: {
+      id: 'test'
     }
+  }));
+}, {
+  defaultProps: {
+    a: '1'
+  }
 });
 
 let nowa = null;
 
 let testView = n(TestView, {
-    onsignal: (signal, data) => {
-        nowa = data.props.a;
-    }
+  onsignal: (signal, data) => {
+    nowa = data.props.a;
+  }
 });
 
 mount(testView, document.body);
@@ -40,7 +40,7 @@ mount(testView, document.body);
 let inputNode = document.getElementById('test');
 inputNode.value = '123';
 dispatchEvent('input', {
-    target: inputNode
+  target: inputNode
 });
 
 assert.equal(nowa, '123');
