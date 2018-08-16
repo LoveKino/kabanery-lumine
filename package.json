@@ -1,6 +1,6 @@
 {
     "name": "kabanery-lumine",
-    "version": "0.0.68",
+    "version": "0.0.69",
     "description": "DSL driven, Data migration from signal system, Common views integration Front End framework",
     "main": "index.js",
     "scripts": {
@@ -28,9 +28,9 @@
         "webpack": "^3.5.6"
     },
     "dependencies": {
-        "kabanery": "^0.2.21",
+        "kabanery": "^0.2.22",
         "kabanery-signal-flow": "0.0.5",
-        "kabanery-spa": "0.0.23",
+        "kabanery-spa": "0.0.24",
         "lumine-signal": "0.0.1",
         "pfc-compiler": "^0.1.9",
         "tree-script": "0.0.5"
